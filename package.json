@@ -22,6 +22,10 @@
   "bugs": {
     "url": "https://github.com/keybase/proofs/issues"
   },
+  "dependencies" : {
+      "kbpgp" : "keybase/kbpgp",
+      "triplesec" : "keybase/triplesec"
+  },
   "devDependencies" : {
       "iced-coffee-script" : "*",
       "browserify" : "*",

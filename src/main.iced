@@ -1,6 +1,6 @@
 
 mods = [
-  require('./src/web_service')
+  require('./web_service')
 ]
 
 for m in mods

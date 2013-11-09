@@ -1,11 +1,7 @@
 kbpgp = require 'kbpgp'
 {Base} = require './base'
 {constants} = require './constants'
-KCP = kbpgp.const.openpgp
-{unix_time,base64u} = kbpgp.util
-triplesec = require('triplesec')
-{WordArray} = triplesec
-{SHA256} = triplesec.hash
+{unix_time} = kbpgp.util
 
 #==========================================================================
 

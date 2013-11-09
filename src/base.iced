@@ -5,6 +5,20 @@ KCP = kbpgp.const.openpgp
 triplesec = require('triplesec')
 {WordArray} = triplesec
 {SHA256} = triplesec.hash
+{Message} = kbpgp.processor
+
+#==========================================================================
+
+class Verifier 
+
+  constructor : ({@pgp, @json, @id, @short_id}, @km) ->
+
+  verify : (cb) ->
+    esc = make_err cb, "Verifier::verfiy"
+    await @_check_ids esc defer()
+    await @_check_expired esc defer()
+    await @_parse_and_process esc defer()
+    await @_check_json esc defer()
 
 #==========================================================================
 
@@ -17,6 +31,20 @@ class Base
   #------
 
   hash : (pgp) -> (SHA256.transform(WordArray.from_utf8 pgp)).to_buffer()
+
+  #------
+
+  _v_check : (cb) -> cb null
+
+  #------
+
+  json : ({tag, expire_in, body, seqno}) ->
+    expire_in or= constants.expire_in
+    tag  = constants.tags.sig,
+    date = unix_time()
+    out  = { tag, expire_in, body, date }
+    out.seqno = seqno if seqno?
+    out
 
   #------
 
@@ -33,6 +61,15 @@ class Base
         short_id = base64u.encode hash[0...constants.short_id_bytes]
         out = { pgp, json, id, short_id }
     cb err, out
+
+  #------
+
+  verify : (obj, cb) ->
+    esc = make_err cb, "Base::verfiy"
+    verifier = new Verifier obj, @km
+    await @_v_check obj, esc defer()
+    await verifier.verify esc defer()
+    cb null
 
 #==========================================================================
 

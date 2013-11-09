@@ -13,9 +13,9 @@ class WebServiceBinding extends Base
   #------
 
   json : () ->
-    return {
-      tag : constants.tags.sig
-      body :
+    super { 
+      seqno : @seqno
+      body : 
         version : constants.versions.sig
         type : constants.sig_types.web_service_binding
         service :
@@ -26,10 +26,17 @@ class WebServiceBinding extends Base
           username : @username.local
           key_id : @km.get_pgp_key_id().toString('hex')
           fingerprint : @km.get_pgp_fingerprint().toString('hex')
-        date : unix_time()
-        expire_in : constants.expire_in
-        seqno : @seqno
     }
+
+  #---------------
+
+  _v_check : ({json}, cb) -> 
+    err = if (a = json?.body?.type) isnt (b = constants.sig_types.web_service_binding)
+      new Error "Wrong signature type; got '#{a}' but wanted '#{b}'"
+    else if (a = json?.body?.service) isnt (b = @service_name())
+      new Error "Wrong service name; got '#{a}' but wanted '#{b}'"
+    else
+      null
 
 #==========================================================================
 

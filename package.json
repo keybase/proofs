@@ -24,13 +24,11 @@
   },
   "dependencies" : {
       "kbpgp" : "keybase/kbpgp",
-      "triplesec" : "keybase/triplesec"
+      "triplesec" : "keybase/triplesec#header_v3",
+      "iced-error" : "*"
   },
   "devDependencies" : {
       "iced-coffee-script" : "*",
-      "browserify" : "*",
-      "uglify-js" : "*",
-      "iced-error" : "*",
       "iced-test" : "*"
   }
 }

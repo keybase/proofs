@@ -35,6 +35,10 @@ class WebServiceBinding extends Base
       new Error "Wrong signature type; got '#{a}' but wanted '#{b}'"
     else if (a = json?.body?.service) isnt (b = @service_name())
       new Error "Wrong service name; got '#{a}' but wanted '#{b}'"
+    else if not bufeq_secure @km.get_pgp_key_id(), json?.body?.key?.key_id
+      new Error "Verification key doesn't match packet (via key ID)"
+    else if not bufeq_secure @km.get_pgp_fingerprint(), json?.body?.key?.fingerprint
+      new Error "Verifiation key doesn't match packet (via fingerprint)"
     else
       null
 

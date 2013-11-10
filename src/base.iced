@@ -1,11 +1,12 @@
 kbpgp = require 'kbpgp'
 constants = require './constants'
 KCP = kbpgp.const.openpgp
-{bufeq_secure,json_stringify_sorted,unix_time,base64u} = kbpgp.util
+{akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u} = kbpgp.util
 triplesec = require('triplesec')
 {WordArray} = triplesec
 {SHA256} = triplesec.hash
 {Message} = kbpgp.processor
+{decode} = kbpgp.armor
 
 #==========================================================================
 
@@ -18,6 +19,12 @@ make_ids = (pgp) ->
   id = hash.to_hex()
   short_id = base64u.encode hash[0...constants.short_id_bytes]
   { id, short_id }
+
+#==========================================================================
+
+class SingleKeyFetch
+
+  constructor : (@km) ->
 
 #==========================================================================
 
@@ -41,6 +48,33 @@ class Verifier
     else null
     cb err
 
+  _check_expired : (cb) ->
+    now = unix_time()
+    expired = (now - json.date - json.expire_in)
+    err = if expired > 0 then new Error "Expired #{expired}s ago"
+    else null
+    cb err
+
+  _parse_and_process : (cb) ->
+    esc = make_err cb, "Verifier::_parse_and_process"
+    err = null
+    await akatch (() -> decode @pgp), esc defer msg
+    if msg.type isnt KCP.message_types.generic
+      err = new Error "wrong mesasge type; expected a generic message"
+    else
+      eng = new Message @km
+      await end.parse_and_process msg.body, esc defer literals
+      if (n = literals.length) isnt 1
+        err = new Error "Expected only one pgp literal; got #{n}"
+      else if (json_stringify_sorted(@json) isnt (l = literals[0]).data)
+        err = new Error "Payload mismatch"
+      else if not (sw = l.signed_with)?
+        err = new Error "Expected one signature on the payload message"
+      else if not bufeq_secure @km.get_pgp_key_id(), sw.get_key_id()
+        err = new Error "Key in signature packet didn't match"
+    cb err
+
+
 #==========================================================================
 
 class Base
@@ -51,7 +85,7 @@ class Base
 
   #------
 
-  _v_check : (cb) -> cb null
+  _v_check : (obj, cb) -> cb null
 
   #------
 

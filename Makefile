@@ -15,7 +15,8 @@ $(BUILD_STAMP): \
 	lib/main.js \
 	lib/constants.js \
 	lib/base.js \
-	lib/web_service.js
+	lib/web_service.js \
+	lib/alloc.js
 	date > $@
 
 build: $(BUILD_STAMP) 

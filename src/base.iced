@@ -22,15 +22,11 @@ make_ids = (pgp) ->
 
 #==========================================================================
 
-class SingleKeyFetch
-
-  constructor : (@km) ->
-
-#==========================================================================
-
 class Verifier 
 
   constructor : ({@pgp, @id, @short_id}, @km, @base) ->
+
+  #---------------
 
   verify : (cb) ->
     esc = make_err cb, "Verifier::verfiy"
@@ -40,14 +36,18 @@ class Verifier
     await @_check_json esc defer ret
     cb null, ret
 
+  #---------------
+
   _check_ids : (cb) ->
     {short_id, id} = make_ids @pgp
-    err = if not bufeq_secure short_id, @short_id
-      new Error "Short IDs aren't equal: wanted #{short_id} but got #{@short_id}"
-    else if not bufeq_secure id, @id
+    err = if not bufeq_secure id, @id
       new Error "Long IDs aren't equal; wanted #{id} but got #{@id}"
+    else if not bufeq_secure short_id, @short_id
+      new Error "Short IDs aren't equal: wanted #{short_id} but got #{@short_id}"
     else null
     cb err
+
+  #---------------
 
   _check_expired : (cb) ->
     now = unix_time()
@@ -55,6 +55,8 @@ class Verifier
     err = if expired > 0 then new Error "Expired #{expired}s ago"
     else null
     cb err
+
+  #---------------
 
   _parse_and_process : (cb) ->
     esc = make_err cb, "Verifier::_parse_and_process"
@@ -67,13 +69,15 @@ class Verifier
       await end.parse_and_process msg.body, esc defer @literals
     cb err
 
+  #---------------
+
   _check_json : (cb) -> 
     err = json = null
     if (n = @literals.length) isnt 1
       err = new Error "Expected only one pgp literal; got #{n}"
     else 
       try
-        json = JSON.parse @literals[0].data
+        json = JSON.parse (l = @literals[0]).data
         await @base._v_check {json}, esc defer()
         if not (sw = l.signed_with)?
           err = new Error "Expected a signature on the payload message"
@@ -99,7 +103,7 @@ class Base
 
   json : ({tag, expire_in, body, seqno}) ->
     expire_in or= constants.expire_in
-    tag  = constants.tags.sig,
+    tag  = constants.tags.sig
     date = unix_time()
     out  = { tag, expire_in, body, date }
     out.seqno = seqno if seqno?

@@ -30,14 +30,15 @@ class SingleKeyFetch
 
 class Verifier 
 
-  constructor : ({@pgp, @json, @id, @short_id}, @km) ->
+  constructor : ({@pgp, @id, @short_id}, @km, @base) ->
 
   verify : (cb) ->
     esc = make_err cb, "Verifier::verfiy"
     await @_check_ids esc defer()
     await @_check_expired esc defer()
     await @_parse_and_process esc defer()
-    await @_check_json esc defer()
+    await @_check_json esc defer ret
+    cb null, ret
 
   _check_ids : (cb) ->
     {short_id, id} = make_ids @pgp
@@ -63,17 +64,24 @@ class Verifier
       err = new Error "wrong mesasge type; expected a generic message"
     else
       eng = new Message @km
-      await end.parse_and_process msg.body, esc defer literals
-      if (n = literals.length) isnt 1
-        err = new Error "Expected only one pgp literal; got #{n}"
-      else if (json_stringify_sorted(@json) isnt (l = literals[0]).data)
-        err = new Error "Payload mismatch"
-      else if not (sw = l.signed_with)?
-        err = new Error "Expected one signature on the payload message"
-      else if not bufeq_secure @km.get_pgp_key_id(), sw.get_key_id()
-        err = new Error "Key in signature packet didn't match"
+      await end.parse_and_process msg.body, esc defer @literals
     cb err
 
+  _check_json : (cb) -> 
+    err = json = null
+    if (n = @literals.length) isnt 1
+      err = new Error "Expected only one pgp literal; got #{n}"
+    else 
+      try
+        json = JSON.parse @literals[0].data
+        await @base._v_check {json}, esc defer()
+        if not (sw = l.signed_with)?
+          err = new Error "Expected a signature on the payload message"
+        else if not bufeq_secure @km.get_pgp_key_id(), sw.get_key_id()
+          err = new Error "Key in signature packet didn't match"
+      catch e
+        err = new Error "Couldn't parse JSON signed message: #{e.message}"
+    cb err, json
 
 #==========================================================================
 
@@ -115,10 +123,9 @@ class Base
 
   verify : (obj, cb) ->
     esc = make_err cb, "Base::verfiy"
-    verifier = new Verifier obj, @km
-    await @_v_check obj, esc defer()
-    await verifier.verify esc defer()
-    cb null
+    verifier = new Verifier obj, @km, @
+    await verifier.verify esc defer ret
+    cb null, ret
 
 #==========================================================================
 

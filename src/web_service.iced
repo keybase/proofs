@@ -47,6 +47,7 @@ class WebServiceBinding extends Base
 class TwitterBinding extends WebServiceBinding
 
   service_name : -> "twitter.com"
+  proof_type   : -> constants.proof_types.twitter
 
 #==========================================================================
 

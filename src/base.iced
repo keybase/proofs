@@ -1,5 +1,5 @@
 kbpgp = require 'kbpgp'
-constants = require './constants'
+{constants} = require './constants'
 KCP = kbpgp.const.openpgp
 {akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u} = kbpgp.util
 triplesec = require('triplesec')
@@ -7,16 +7,17 @@ triplesec = require('triplesec')
 {SHA256} = triplesec.hash
 {Message} = kbpgp.processor
 {decode} = kbpgp.armor
+{make_esc} = require 'iced-error'
 
 #==========================================================================
 
-sha256 = (pgp) -> (SHA256.transform(WordArray.from_utf8 pgp)).to_buffer()
+sha256 = (pgp) -> (new SHA256).bufhash(new Buffer pgp, 'utf8')
 
 #------
 
 make_ids = (pgp) ->
   hash = sha256 pgp
-  id = hash.to_hex()
+  id = hash.toString('hex')
   short_id = base64u.encode hash[0...constants.short_id_bytes]
   { id, short_id }
 
@@ -25,11 +26,13 @@ make_ids = (pgp) ->
 class Verifier 
 
   constructor : ({@pgp, @id, @short_id}, @km, @base) ->
+    console.log "constructing verifier"
+    console.log @
 
   #---------------
 
   verify : (cb) ->
-    esc = make_err cb, "Verifier::verfiy"
+    esc = make_esc cb, "Verifier::verfiy"
     await @_check_ids esc defer()
     await @_check_expired esc defer()
     await @_parse_and_process esc defer()
@@ -59,7 +62,7 @@ class Verifier
   #---------------
 
   _parse_and_process : (cb) ->
-    esc = make_err cb, "Verifier::_parse_and_process"
+    esc = make_esc cb, "Verifier::_parse_and_process"
     err = null
     await akatch (() -> decode @pgp), esc defer msg
     if msg.type isnt KCP.message_types.generic
@@ -125,8 +128,12 @@ class Base
 
   #------
 
+  # @param {Object} obj with options as specified:
+  # @option obj {string} pgp The PGP signature that's being uploaded
+  # @option obj {string} id The keybase-appropriate ID that's the PGP signature's hash
+  # @option obj {string} short_id The shortened sig ID that's for the tweet (or similar)
   verify : (obj, cb) ->
-    esc = make_err cb, "Base::verfiy"
+    esc = make_esc cb, "Base::verfiy"
     verifier = new Verifier obj, @km, @
     await verifier.verify esc defer ret
     cb null, ret

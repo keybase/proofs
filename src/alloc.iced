@@ -8,7 +8,7 @@ get_klass = (type) ->
   klass = switch type
     when "web_service_binding.twitter" then web_service.TwitterBinding
     else  
-      err = new Error "Uknown proof class: #{type}"
+      err = new Error "Unknown proof class: #{type}"
       null
   [err, klass]
 
@@ -19,7 +19,7 @@ alloc = (type, arg) ->
   [err, klass] = get_klass type
   if klass?
     ret = new klass arg
-  [err, ret]
+  ret
 
 #=======================================================
 

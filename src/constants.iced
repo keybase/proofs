@@ -9,4 +9,6 @@ exports.constants =
   proof_types :
     none : 0
     twitter : 1
+  expire_in : 60*60*24*365*5 # 5 years....
+  short_id_bytes : 27
 

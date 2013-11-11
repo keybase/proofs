@@ -14,11 +14,11 @@ get_klass = (type) ->
 
 #=======================================================
 
-alloc = (type, arg) ->
+alloc = (type, args) ->
   ret = null
   [err, klass] = get_klass type
   if klass?
-    ret = new klass arg
+    ret = new klass args
   ret
 
 #=======================================================

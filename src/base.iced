@@ -1,7 +1,7 @@
 kbpgp = require 'kbpgp'
 {constants} = require './constants'
 KCP = kbpgp.const.openpgp
-{akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u} = kbpgp.util
+{akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u,streq_secure} = kbpgp.util
 triplesec = require('triplesec')
 {WordArray} = triplesec
 {SHA256} = triplesec.hash
@@ -34,18 +34,18 @@ class Verifier
   verify : (cb) ->
     esc = make_esc cb, "Verifier::verfiy"
     await @_check_ids esc defer()
-    await @_check_expired esc defer()
     await @_parse_and_process esc defer()
     await @_check_json esc defer ret
+    await @_check_expired esc defer()
     cb null, ret
 
   #---------------
 
   _check_ids : (cb) ->
     {short_id, id} = make_ids @pgp
-    err = if not bufeq_secure id, @id
+    err = if not streq_secure id, @id
       new Error "Long IDs aren't equal; wanted #{id} but got #{@id}"
-    else if not bufeq_secure short_id, @short_id
+    else if not streq_secure short_id, @short_id
       new Error "Short IDs aren't equal: wanted #{short_id} but got #{@short_id}"
     else null
     cb err
@@ -54,7 +54,7 @@ class Verifier
 
   _check_expired : (cb) ->
     now = unix_time()
-    expired = (now - json.date - json.expire_in)
+    expired = (now - @json.date - @json.expire_in)
     err = if expired > 0 then new Error "Expired #{expired}s ago"
     else null
     cb err
@@ -62,14 +62,13 @@ class Verifier
   #---------------
 
   _parse_and_process : (cb) ->
-    esc = make_esc cb, "Verifier::_parse_and_process"
     err = null
-    await akatch (() -> decode @pgp), esc defer msg
-    if msg.type isnt KCP.message_types.generic
-      err = new Error "wrong mesasge type; expected a generic message"
-    else
+    [ err, msg] = decode @pgp
+    if not err? and (msg.type isnt KCP.message_types.generic)
+      err = new Error "wrong mesasge type; expected a generic message; got #{msg.type}"
+    if not err?
       eng = new Message @km
-      await end.parse_and_process msg.body, esc defer @literals
+      await eng.parse_and_process msg.body, defer err, @literals
     cb err
 
   #---------------
@@ -80,7 +79,7 @@ class Verifier
       err = new Error "Expected only one pgp literal; got #{n}"
     else 
       try
-        json = JSON.parse (l = @literals[0]).data
+        @json = JSON.parse (l = @literals[0]).data
         await @base._v_check {json}, esc defer()
         if not (sw = l.signed_with)?
           err = new Error "Expected a signature on the payload message"
@@ -88,7 +87,7 @@ class Verifier
           err = new Error "Key in signature packet didn't match"
       catch e
         err = new Error "Couldn't parse JSON signed message: #{e.message}"
-    cb err, json
+    cb err, @json
 
 #==========================================================================
 

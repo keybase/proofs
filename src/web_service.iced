@@ -7,7 +7,7 @@ kbpgp = require 'kbpgp'
 
 class WebServiceBinding extends Base
 
-  constructor : ({km, @seqno, @username, @host}) ->
+  constructor : ({km, @seqno, @usernames, @host}) ->
     super { km }
 
   #------
@@ -20,10 +20,10 @@ class WebServiceBinding extends Base
         type : constants.sig_types.web_service_binding
         service :
           name : @service_name()
-          username : @username.remote
+          username : @usernames.remote
         key :
           host : @host
-          username : @username.local
+          username : @usernames.local
           key_id : @km.get_pgp_key_id().toString('hex')
           fingerprint : @km.get_pgp_fingerprint().toString('hex')
     }
@@ -31,9 +31,11 @@ class WebServiceBinding extends Base
   #---------------
 
   _v_check : ({json}, cb) -> 
-    err = if (a = json?.body?.type) isnt (b = constants.sig_types.web_service_binding)
+    err = if (a = json?.body?.key?.username) isnt (b = @usernames.local)
+      new Error "Wrong local user: got '#{a}' but wanted '#{b}'"
+    else if (a = json?.body?.type) isnt (b = constants.sig_types.web_service_binding)
       new Error "Wrong signature type; got '#{a}' but wanted '#{b}'"
-    else if (a = json?.body?.service) isnt (b = @service_name())
+    else if (a = json?.body?.service?.name) isnt (b = @service_name())
       new Error "Wrong service name; got '#{a}' but wanted '#{b}'"
     else if not bufeq_secure @km.get_pgp_key_id(), json?.body?.key?.key_id
       new Error "Verification key doesn't match packet (via key ID)"

@@ -1,5 +1,5 @@
 
-exports.contants = 
+exports.constants = 
   tags :
     sig : "signature"
   versions :

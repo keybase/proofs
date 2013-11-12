@@ -1,7 +1,7 @@
 kbpgp = require 'kbpgp'
 {Base} = require './base'
 {constants} = require './constants'
-{unix_time} = kbpgp.util
+{bufeq_secure,unix_time} = kbpgp.util
 
 #==========================================================================
 
@@ -37,12 +37,17 @@ class WebServiceBinding extends Base
       new Error "Wrong signature type; got '#{a}' but wanted '#{b}'"
     else if (a = json?.body?.service?.name) isnt (b = @service_name())
       new Error "Wrong service name; got '#{a}' but wanted '#{b}'"
-    else if not bufeq_secure @km.get_pgp_key_id(), json?.body?.key?.key_id
+    else if not (kid = json?.body?.key?.key_id)?
+      new Error "Needed a body.key.key_id but none given"
+    else if not bufeq_secure @km.get_pgp_key_id(), (new Buffer kid, "hex")
       new Error "Verification key doesn't match packet (via key ID)"
-    else if not bufeq_secure @km.get_pgp_fingerprint(), json?.body?.key?.fingerprint
+    else if not (fp = json?.body?.key?.fingerprint)?
+      new Error "Needed a body.key.fingerprint but none given"
+    else if not bufeq_secure @km.get_pgp_fingerprint(), (new Buffer fp, "hex")
       new Error "Verifiation key doesn't match packet (via fingerprint)"
     else
       null
+    cb err
 
 #==========================================================================
 

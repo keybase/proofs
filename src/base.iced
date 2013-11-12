@@ -1,13 +1,14 @@
 kbpgp = require 'kbpgp'
 {constants} = require './constants'
 KCP = kbpgp.const.openpgp
-{akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u,streq_secure} = kbpgp.util
+{katch,akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u,streq_secure} = kbpgp.util
 triplesec = require('triplesec')
 {WordArray} = triplesec
 {SHA256} = triplesec.hash
 {Message} = kbpgp.processor
 {decode} = kbpgp.armor
 {make_esc} = require 'iced-error'
+util = require 'util'
 
 #==========================================================================
 
@@ -26,8 +27,6 @@ make_ids = (pgp) ->
 class Verifier 
 
   constructor : ({@pgp, @id, @short_id}, @km, @base) ->
-    console.log "constructing verifier"
-    console.log @
 
   #---------------
 
@@ -78,15 +77,16 @@ class Verifier
     if (n = @literals.length) isnt 1
       err = new Error "Expected only one pgp literal; got #{n}"
     else 
-      try
-        @json = JSON.parse (l = @literals[0]).data
-        await @base._v_check {json}, esc defer()
-        if not (sw = l.signed_with)?
-          err = new Error "Expected a signature on the payload message"
-        else if not bufeq_secure @km.get_pgp_key_id(), sw.get_key_id()
-          err = new Error "Key in signature packet didn't match"
-      catch e
-        err = new Error "Couldn't parse JSON signed message: #{e.message}"
+      l = @literals[0]
+      [e, @json] = katch (() -> JSON.parse l.data)
+      err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?
+    if not err?
+      await @base._v_check {@json}, defer err
+      if err? then #noop
+      else if not (sw = l.signed_with)?
+        err = new Error "Expected a signature on the payload message"
+      else if not (@km.find_pgp_key (b = sw.get_key_id()))?
+        err = new Error "Failed sanity check; didn't have a key for '#{b.toString('hex')}'"
     cb err, @json
 
 #==========================================================================

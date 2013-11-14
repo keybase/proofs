@@ -7,36 +7,42 @@ kbpgp = require 'kbpgp'
 
 class WebServiceBinding extends Base
 
-  constructor : ({km, @seqno, @usernames, @host}) ->
+  constructor : ({km, @seqno, @user, @host}) ->
     super { km }
 
   #------
 
   json : () ->
-    super { 
+    ret = { 
       seqno : @seqno
       body : 
         version : constants.versions.sig
         type : constants.sig_types.web_service_binding
-        service :
-          name : @service_name()
-          username : @usernames.remote
         key :
           host : @host
-          username : @usernames.local
+          username : @user.local.username
+          uid : @user.local.uid
           key_id : @km.get_pgp_key_id().toString('hex')
           fingerprint : @km.get_pgp_fingerprint().toString('hex')
     }
+    ret.body.service = o if (o = @service_obj())?
+    super ret
+
+  #---------------
+
+  _service_obj_check : (x) -> return not(x?)
 
   #---------------
 
   _v_check : ({json}, cb) -> 
-    err = if (a = json?.body?.key?.username) isnt (b = @usernames.local)
+    err = if (a = json?.body?.key?.username) isnt (b = @user.local.username)
       new Error "Wrong local user: got '#{a}' but wanted '#{b}'"
+    else if (a = json?.body?.key?.uid) isnt (b = @user.local.uid)
+      new Error "Wrong local uid: got '#{a}' but wanted '#{b}'"
     else if (a = json?.body?.type) isnt (b = constants.sig_types.web_service_binding)
       new Error "Wrong signature type; got '#{a}' but wanted '#{b}'"
-    else if (a = json?.body?.service?.name) isnt (b = @service_name())
-      new Error "Wrong service name; got '#{a}' but wanted '#{b}'"
+    else if not @_service_obj_check json?.body?.service 
+      new Error "Bad service object found"
     else if not (kid = json?.body?.key?.key_id)?
       new Error "Needed a body.key.key_id but none given"
     else if not bufeq_secure @km.get_pgp_key_id(), (new Buffer kid, "hex")
@@ -53,7 +59,11 @@ class WebServiceBinding extends Base
 
 class TwitterBinding extends WebServiceBinding
 
-  service_name : -> "twitter.com"
+  _service_obj_check : (x) ->
+    so = @service_obj()
+    return (x? and (so.username is x.username) and (so.name is x.name))
+
+  service_obj  : -> { name : "twitter.com", username : @user.remote }
   proof_type   : -> constants.proof_types.twitter
 
 #==========================================================================

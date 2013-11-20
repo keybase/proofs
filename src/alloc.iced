@@ -7,6 +7,7 @@ get_klass = (type) ->
   err = klass = null
   klass = switch type
     when "web_service_binding.twitter" then web_service.TwitterBinding
+    when "web_service_binding.keybase" then web_service.KeybaseBinding
     else  
       err = new Error "Unknown proof class: #{type}"
       null

@@ -76,5 +76,6 @@ class KeybaseBinding extends WebServiceBinding
 #==========================================================================
 
 exports.TwitterBinding = TwitterBinding
+exports.KeybaseBinding = KeybaseBinding
 
 #==========================================================================

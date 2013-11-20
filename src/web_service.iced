@@ -68,6 +68,13 @@ class TwitterBinding extends WebServiceBinding
 
 #==========================================================================
 
+class KeybaseBinding extends WebServiceBinding
+
+  _service_obj_check : (x) -> not x? 
+  proof_type         : -> constants.proof_types.keybase
+
+#==========================================================================
+
 exports.TwitterBinding = TwitterBinding
 
 #==========================================================================

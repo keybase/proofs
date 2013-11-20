@@ -83,7 +83,7 @@ class Verifier
     if not err?
       await @base._v_check {@json}, defer err
       if err? then #noop
-      else if not (sw = l.signed_with)?
+      else if not (sw = l.get_data_signer()?.sig)?
         err = new Error "Expected a signature on the payload message"
       else if not (@km.find_pgp_key (b = sw.get_key_id()))?
         err = new Error "Failed sanity check; didn't have a key for '#{b.toString('hex')}'"

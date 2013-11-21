@@ -4,6 +4,7 @@ mods = [
   require('./util')
   require('./alloc')
   require('./constants')
+  require('./twitter_scraper')
 ]
 
 for m in mods

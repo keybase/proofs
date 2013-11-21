@@ -2,6 +2,8 @@ request   = require 'request'
 cheerio   = require 'cheerio'
 v_codes   = require('./constants').constants.v_codes
 
+#================================================================================
+
 class TwitterScraper
 
   constructor: ->
@@ -9,27 +11,26 @@ class TwitterScraper
   # ---------------------------------------------------------------------------
 
   hunt: (username, signature, cb) ->
-    # calls back with err, tweet_id
-    err      = null
+    # calls back with rc, tweet_id
+    rc       = v_codes.OK
     tweet_id = null
 
-    await @_get_url_body "https://twitter.com/#{username}", defer err, html
-    if err?
-      res = v_codes.FAILED_LOAD
-    else
+    await @_get_url_body "https://twitter.com/#{username}", defer err, rc, html
+    if rc is v_codes.OK
+
       $ = cheerio.load html
       #
       # Only look inside the stream
       #
       stream = $('.profile-stream li.stream-item .tweet')
       if not stream.length
-        err = v_codes.CONTENT_FAILURE
+        rc = v_codes.CONTENT_FAILURE
         # 
         # special case of no stream found 
         # - if their tweets are protected
         #
         if $('.stream-protected').length
-          err = v_codes.NOT_PUBLIC
+          rc = v_codes.PERMISSION_DENIED
       else
         #
         # find the first tweet in the stream
@@ -40,30 +41,35 @@ class TwitterScraper
           item = $(stream_item)
           if (item.data('screenName')?.toLowerCase() is username.toLowerCase()) and item.data('tweetId')?
             p = item.find 'p.tweet-text'
-            if (p.first().html().indexOf signature) isnt -1
+            if (p.first().html().indexOf signature) is 0
               tweet_id = item.data('tweetId')
+              rc = v_codes.OK
               break
         if not tweet_id?
-          err = v_codes.TEXT_NOT_FOUND
+          rc = v_codes.NOT_FOUND
 
-    cb err, tweet_id
+    cb err, rc, tweet_id
 
   # ---------------------------------------------------------------------------
 
-  check_status: (username, status_id, signature, cb) ->
+  id_to_url : (username, status_id) ->
+    "https://twitter.com/#{username}/status/#{status_id}"
+
+  # ---------------------------------------------------------------------------
+
+  check_status: (username, url, signature, cb) ->
     # calls back with a v_code or null if it was ok
-    err = null
-    await @_get_url_body "https://twitter.com/#{username}/status/#{status_id}", defer err, html
-    if err?
-      err = v_codes.FAILED_LOAD
-    else
+    await @_get_url_body url, defer err, rc, html
+
+    if rc is v_codes.OK
+
       $ = cheerio.load html
       #
       # only look inside the permalink tweet container
       # 
       div = $('.permalink-tweet-container .permalink-tweet')
       if not div.length
-        err = v_codes.FAILED_PARSE
+        rc = v_codes.FAILED_PARSE
       else
         div = div.first()
 
@@ -72,22 +78,13 @@ class TwitterScraper
         # in case twitter printed other tweets into the page
         # inside this container
         #
-        if username.toLowerCase() isnt div.data('screenName')?.toLowerCase()
-          err = v_codes.CONTENT_FAILURE
-        else if status_id isnt div.data('tweetId')
-          err = v_codes.CONTENT_FAILURE
-        else
+        rc = if (username.toLowerCase() isnt div.data('screenName')?.toLowerCase()) then v_codes.CONTENT_FAILURE
+        else if (status_id isnt div.data('tweetId')) then v_codes.CONTENT_FAILURE
+        else if not (p = div.find('p.tweet-text'))? or not p.length then v_codes.MISSING
+        else if (p.first().html().indexOf signature) is 0 then v_codes.OK
+        else v_codes.DELETED
 
-          #
-          # finally look inside for the signaure in the tweet text
-          #
-          p = div.find('p.tweet-text')
-          if not p.length
-            err = v_codes.FAILED_PARSE
-          else
-            if (p.first().html().indexOf signature) is -1
-              err = v_codes.TEXT_NOT_FOUND
-    cb err
+    cb err, rc
 
   # ---------------------------------------------------------------------------
 
@@ -95,11 +92,13 @@ class TwitterScraper
     ###
       cb(err, body) only replies with body if status is 200
     ###
+    body = null
     await request url, defer err, response, body
-    if (not err) and (response.statusCode is 200)
-      cb null, body
-    else
-      cb (response.statusCode or err), null
+    rc = if err? then v_codes.HOST_UNREACHABLE
+    else if (response.statusCode isnt 200) then v_codes.HTTP_NON_200
+    else v_codes.OK
+    cb err, rc, body
 
+#================================================================================
 
 module.exports = TwitterScraper

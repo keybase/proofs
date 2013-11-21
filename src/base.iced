@@ -19,8 +19,13 @@ sha256 = (pgp) -> (new SHA256).bufhash(new Buffer pgp, 'utf8')
 make_ids = (pgp) ->
   hash = sha256 pgp
   id = hash.toString('hex')
-  short_id = base64u.encode hash[0...constants.short_id_bytes]
+  short_id = sig_id_to_short_id hash
   { id, short_id }
+
+#------
+
+sig_id_to_short_id = (sig_id) ->
+  base64u.encode sig_id[0...constants.short_id_bytes]
 
 #==========================================================================
 
@@ -140,6 +145,7 @@ class Base
 #==========================================================================
 
 exports.Base = Base
+exports.sig_id_to_short_id = sig_id_to_short_id
 
 #==========================================================================
 

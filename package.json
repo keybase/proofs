@@ -26,8 +26,6 @@
       "kbpgp" : "keybase/kbpgp",
       "triplesec" : "keybase/triplesec#header_v3",
       "iced-error" : "*",
-      "cheerio" : "*",
-      "request" : "*"
   },
   "devDependencies" : {
       "iced-coffee-script" : "*",

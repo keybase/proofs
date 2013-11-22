@@ -25,7 +25,7 @@
   "dependencies" : {
       "kbpgp" : "keybase/kbpgp",
       "triplesec" : "keybase/triplesec#header_v3",
-      "iced-error" : "*",
+      "iced-error" : "*"
   },
   "devDependencies" : {
       "iced-coffee-script" : "*",

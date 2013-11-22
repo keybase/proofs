@@ -17,7 +17,8 @@ $(BUILD_STAMP): \
 	lib/base.js \
 	lib/web_service.js \
 	lib/alloc.js \
-	lib/util.js
+	lib/util.js \
+	lib/twitter_scraper.js
 	date > $@
 
 build: $(BUILD_STAMP) 

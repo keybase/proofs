@@ -95,8 +95,11 @@ class TwitterScraper
     body = null
     await request url, defer err, response, body
     rc = if err? then v_codes.HOST_UNREACHABLE
-    else if (response.statusCode isnt 200) then v_codes.HTTP_NON_200
-    else v_codes.OK
+    else if (response.statusCode is 200) then v_codes.OK
+    else if (response.statusCode >= 500) then v_codes.HTTP_500
+    else if (response.statusCode >= 400) then v_codes.HTTP_400
+    else if (response.statusCode >= 300) then v_codes.HTTP_300
+    else                                      v_codes.HTTP_OTHER
     cb err, rc, body
 
 #================================================================================

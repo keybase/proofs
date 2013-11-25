@@ -121,7 +121,9 @@ class Base
   generate : (cb) ->
     out = null
     json = json_stringify_sorted @json()
-    if not (signing_key = @km.find_best_pgp_key KCP.key_flags.sign_data)?
+    if not @km 
+      out = { json }
+    else if not (signing_key = @km.find_best_pgp_key KCP.key_flags.sign_data)?
       err = new Error "No signing key found"
     else
       await kbpgp.burn { msg : json, signing_key, armor : true  }, defer err, pgp

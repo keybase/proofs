@@ -12,7 +12,7 @@ class WebServiceBinding extends Base
 
   #------
 
-  json : () ->
+  _json : () ->
     ret = { 
       seqno : @seqno
       body : 
@@ -72,6 +72,8 @@ class KeybaseBinding extends WebServiceBinding
 
   _service_obj_check : (x) -> not x? 
   proof_type         : -> constants.proof_types.keybase
+  is_remote_proof    : -> false
+  service_obj        : ->  null
 
 #==========================================================================
 

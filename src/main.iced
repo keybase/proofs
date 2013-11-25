@@ -4,6 +4,7 @@ mods = [
   require('./util')
   require('./alloc')
   require('./constants')
+  require('./base')
 ]
 
 for m in mods

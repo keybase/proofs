@@ -16,11 +16,19 @@ sha256 = (pgp) -> (new SHA256).bufhash(new Buffer pgp, 'utf8')
 
 #------
 
-make_ids = (pgp) ->
+add_ids = (pgp, out) ->
   hash = sha256 pgp
   id = hash.toString('hex')
   short_id = sig_id_to_short_id hash
-  { id, short_id }
+  out.id = id
+  out.short_id = short_id
+
+#------
+
+make_ids = (pgp) -> 
+  out = {}
+  add_ids pgp, out
+  return out
 
 #------
 
@@ -108,7 +116,12 @@ class Base
 
   #------
 
-  json : ({tag, expire_in, body, seqno}) ->
+  is_remote_proof : () -> true
+
+  #------
+
+
+  _json : ({tag, expire_in, body, seqno}) ->
     expire_in or= constants.expire_in
     tag  = constants.tags.sig
     date = unix_time()
@@ -118,12 +131,14 @@ class Base
 
   #------
 
+  json : -> json_stringify_sorted @_json()
+
+  #------
+
   generate : (cb) ->
     out = null
-    json = json_stringify_sorted @json()
-    if not @km 
-      out = { json }
-    else if not (signing_key = @km.find_best_pgp_key KCP.key_flags.sign_data)?
+    json = @json()
+    if not (signing_key = @km.find_best_pgp_key KCP.key_flags.sign_data)?
       err = new Error "No signing key found"
     else
       await kbpgp.burn { msg : json, signing_key, armor : true  }, defer err, pgp
@@ -148,6 +163,8 @@ class Base
 
 exports.Base = Base
 exports.sig_id_to_short_id = sig_id_to_short_id
+exports.make_ids = make_ids
+exports.add_ids = add_ids
 
 #==========================================================================
 

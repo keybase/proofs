@@ -63,7 +63,8 @@ class TwitterBinding extends WebServiceBinding
     so = @service_obj()
     return (x? and (so.username is x.username) and (so.name is x.name))
 
-  service_obj  : -> { name : "twitter.com", username : @user.remote }
+  service_name : -> "twitter"
+  service_obj  : -> { name : @service_name(), username : @user.remote }
   proof_type   : -> constants.proof_types.twitter
 
 #==========================================================================
@@ -71,6 +72,7 @@ class TwitterBinding extends WebServiceBinding
 class KeybaseBinding extends WebServiceBinding
 
   _service_obj_check : (x) -> not x? 
+  service_name       : -> "keybase"
   proof_type         : -> constants.proof_types.keybase
   is_remote_proof    : -> false
   service_obj        : ->  null

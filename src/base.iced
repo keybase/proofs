@@ -39,13 +39,13 @@ sig_id_to_short_id = (sig_id) ->
 
 class Verifier 
 
-  constructor : ({@pgp, @id, @short_id}, @km, @base) ->
+  constructor : ({@pgp, @id, @short_id, @skip_ids}, @km, @base) ->
 
   #---------------
 
   verify : (cb) ->
     esc = make_esc cb, "Verifier::verfiy"
-    await @_check_ids esc defer()
+    await @_check_ids esc defer() unless @skip_ids
     await @_parse_and_process esc defer()
     await @_check_json esc defer ret
     await @_check_expired esc defer()
@@ -153,6 +153,7 @@ class Base
   # @option obj {string} pgp The PGP signature that's being uploaded
   # @option obj {string} id The keybase-appropriate ID that's the PGP signature's hash
   # @option obj {string} short_id The shortened sig ID that's for the tweet (or similar)
+  # @option obj {bool} skip_ids Don't bother checking IDs
   verify : (obj, cb) ->
     esc = make_esc cb, "Base::verfiy"
     verifier = new Verifier obj, @km, @

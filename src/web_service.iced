@@ -57,14 +57,19 @@ class WebServiceBinding extends Base
 
 #==========================================================================
 
-class TwitterBinding extends WebServiceBinding
+class RemoteBinding extends WebServiceBinding
 
   _service_obj_check : (x) ->
     so = @service_obj()
     return (x? and (so.username is x.username) and (so.name is x.name))
 
-  service_name : -> "twitter"
   service_obj  : -> { name : @service_name(), username : @user.remote }
+
+#==========================================================================
+
+class TwitterBinding extends RemoteBinding
+
+  service_name : -> "twitter"
   proof_type   : -> constants.proof_types.twitter
 
 #==========================================================================
@@ -79,7 +84,14 @@ class KeybaseBinding extends WebServiceBinding
 
 #==========================================================================
 
+class GithubBinding extends RemoteBinding
+  service_name : -> "github"
+  proof_type   : -> constants.proof_types.github
+
+#==========================================================================
+
 exports.TwitterBinding = TwitterBinding
 exports.KeybaseBinding = KeybaseBinding
+exports.GithubBinding = GithubBinding
 
 #==========================================================================

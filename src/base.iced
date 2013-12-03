@@ -47,9 +47,9 @@ class Verifier
     esc = make_esc cb, "Verifier::verfiy"
     await @_check_ids esc defer() unless @skip_ids
     await @_parse_and_process esc defer()
-    await @_check_json esc defer ret
+    await @_check_json esc defer json_obj, json_str
     await @_check_expired esc defer()
-    cb null, ret
+    cb null, json_obj, json_str
 
   #---------------
 
@@ -86,12 +86,13 @@ class Verifier
   #---------------
 
   _check_json : (cb) -> 
-    err = json = null
+    err = @json = jsons = null
     if (n = @literals.length) isnt 1
       err = new Error "Expected only one pgp literal; got #{n}"
     else 
       l = @literals[0]
-      [e, @json] = katch (() -> JSON.parse l.data)
+      jsons = l.data
+      [e, @json] = katch (() -> JSON.parse jsons)
       err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?
     if not err?
       await @base._v_check {@json}, defer err
@@ -100,7 +101,7 @@ class Verifier
         err = new Error "Expected a signature on the payload message"
       else if not (@km.find_pgp_key (b = sw.get_key_id()))?
         err = new Error "Failed sanity check; didn't have a key for '#{b.toString('hex')}'"
-    cb err, @json
+    cb err, @json, jsons
 
 #==========================================================================
 
@@ -157,8 +158,8 @@ class Base
   verify : (obj, cb) ->
     esc = make_esc cb, "Base::verfiy"
     verifier = new Verifier obj, @km, @
-    await verifier.verify esc defer ret
-    cb null, ret
+    await verifier.verify esc defer json_obj, json_str
+    cb null, json_obj, json_str
 
 #==========================================================================
 

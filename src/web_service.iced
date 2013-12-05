@@ -10,24 +10,17 @@ class WebServiceBinding extends Base
   #------
 
   _json : () ->
-    ret = { 
-      seqno : @seqno
-      body : 
-        version : constants.versions.sig
-        type : constants.sig_types.web_service_binding
-        key :
-          host : @host
-          username : @user.local.username
-          uid : @user.local.uid
-          key_id : @km.get_pgp_key_id().toString('hex')
-          fingerprint : @km.get_pgp_fingerprint().toString('hex')
-    }
+    ret = super {}
     ret.body.service = o if (o = @service_obj())?
-    super ret
+    return ret
 
   #---------------
 
   _service_obj_check : (x) -> return not(x?)
+
+  #---------------
+
+  _type : () -> constants.sig_types.web_service_binding
 
   #---------------
 

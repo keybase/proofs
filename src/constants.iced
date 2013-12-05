@@ -6,6 +6,7 @@ exports.constants = constants =
     sig : 1
   sig_types :
     web_service_binding : "web_service_binding"
+    track : "track"
   proof_types :
     none : 0
     keybase : 1

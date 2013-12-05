@@ -6,9 +6,16 @@ kbpgp = require 'kbpgp'
 
 #==========================================================================
 
-class TrackerProof extends Base
+class Track extends Base
 
-  constructor : ({km, @seqno, @user, @host}) ->
+  constructor : (obj) ->
+    @tracking = obj.tracking
 
+  _type : () -> constants.sig_types.track
+
+  _json : () -> 
+    ret = super {}
+    ret.tracking = @tracking
+    return ret
 
 #==========================================================================

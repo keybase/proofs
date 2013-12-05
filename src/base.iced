@@ -118,8 +118,6 @@ class Base
       new Error "Wrong local user: got '#{a}' but wanted '#{b}'"
     else if (a = json?.body?.key?.uid) isnt (b = @user.local.uid)
       new Error "Wrong local uid: got '#{a}' but wanted '#{b}'"
-    else if not @_service_obj_check json?.body?.service 
-      new Error "Bad service object found"
     else if not (kid = json?.body?.key?.key_id)?
       new Error "Needed a body.key.key_id but none given"
     else if not bufeq_secure @km.get_pgp_key_id(), (new Buffer kid, "hex")
@@ -143,7 +141,7 @@ class Base
   #------
 
   _json : ({expire_in}) ->
-    return { 
+    ret = { 
       seqno : @seqno
       date : unix_time()
       tag : constants.tags.sig
@@ -153,11 +151,12 @@ class Base
         type : constants.sig_types.web_service_binding
         key :
           host : @host
-          username @user.local.username
+          username : @user.local.username
           uid : @user.local.uid
           key_id : @km.get_pgp_key_id().toString('hex')
           fingerprint : @km.get_pgp_fingerprint().toString('hex')
     }
+    return ret
 
   #------
 
@@ -187,8 +186,8 @@ class Base
   verify : (obj, cb) ->
     esc = make_esc cb, "Base::verfiy"
     verifier = new Verifier obj, @km, @
-    await verifier.verify esc defer ret
-    cb null, ret
+    await verifier.verify esc defer json_obj, json_str
+    cb null, json_obj, json_str
 
 #==========================================================================
 

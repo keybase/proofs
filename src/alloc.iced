@@ -1,5 +1,6 @@
 
 web_service = require './web_service'
+{Track} = require './track'
 
 #=======================================================
 
@@ -9,6 +10,7 @@ get_klass = (type) ->
     when "web_service_binding.twitter" then web_service.TwitterBinding
     when "web_service_binding.github"  then web_service.GithubBinding
     when "web_service_binding.keybase" then web_service.KeybaseBinding
+    when "track"                       then Track
     else  
       err = new Error "Unknown proof class: #{type}"
       null

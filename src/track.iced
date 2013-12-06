@@ -6,16 +6,17 @@ kbpgp = require 'kbpgp'
 
 #==========================================================================
 
-class Track extends Base
+exports.Track = class Track extends Base
 
   constructor : (obj) ->
-    @tracking = obj.tracking
+    @track = obj.track
+    super obj
 
   _type : () -> constants.sig_types.track
 
   _json : () -> 
     ret = super {}
-    ret.tracking = @tracking
+    ret.track = @track
     return ret
 
 #==========================================================================

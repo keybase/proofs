@@ -7,7 +7,7 @@ exports.constants = constants =
   sig_types :
     web_service_binding : "web_service_binding"
     track : "track"
-    login : "login"
+    auth : "auth"
   proof_types :
     none : 0
     keybase : 1

@@ -6,13 +6,13 @@ kbpgp = require 'kbpgp'
 
 #==========================================================================
 
-exports.Login = class Login extends Base
+exports.Auth = class Auth extends Base
 
   constructor : (obj) ->
     @nonce = obj.nonce
     super obj
 
-  _type : () -> constants.sig_types.login
+  _type : () -> constants.sig_types.auth
 
   _json : () -> 
     ret = super { expire_in : 24*60*60 }

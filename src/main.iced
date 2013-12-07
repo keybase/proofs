@@ -6,7 +6,7 @@ mods = [
   require('./constants')
   require('./base')
   require('./track')
-  require('./login')
+  require('./auth')
 ]
 
 for m in mods

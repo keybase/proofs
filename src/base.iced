@@ -12,12 +12,13 @@ util = require 'util'
 
 #==========================================================================
 
-sha256 = (pgp) -> (new SHA256).bufhash(new Buffer pgp, 'utf8')
+exports.hash_sig = hash_sig = (pgp) -> 
+  (new SHA256).bufhash(new Buffer pgp, 'utf8')
 
 #------
 
 add_ids = (pgp, out) ->
-  hash = sha256 pgp
+  hash = hash_sig pgp
   id = hash.toString('hex')
   short_id = sig_id_to_short_id hash
   out.id = id

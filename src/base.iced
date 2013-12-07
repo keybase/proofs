@@ -148,7 +148,7 @@ class Base
       expire_in : expire_in or constants.expire_in
       body : 
         version : constants.versions.sig
-        type : constants.sig_types.web_service_binding
+        type : @_type()
         key :
           host : @host
           username : @user.local.username

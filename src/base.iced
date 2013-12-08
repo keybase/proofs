@@ -67,7 +67,7 @@ class Verifier
 
   _check_expired : (cb) ->
     now = unix_time()
-    expired = (now - @json.date - @json.expire_in)
+    expired = (now - @json.ctime - @json.expire_in)
     err = if expired > 0 then new Error "Expired #{expired}s ago"
     else null
     cb err
@@ -144,7 +144,7 @@ class Base
   _json : ({expire_in}) ->
     ret = { 
       seqno : @seqno
-      date : unix_time()
+      ctime : unix_time()
       tag : constants.tags.sig
       expire_in : expire_in or constants.expire_in
       body : 

@@ -110,7 +110,7 @@ class Base
 
   #------
 
-  constructor : ({@km, @seqno, @user, @host}) ->
+  constructor : ({@km, @seqno, @user, @host, @prev}) ->
 
   #------
 
@@ -131,6 +131,10 @@ class Base
       new Error "Wrong host: got '#{a}' but wanted '#{b}'"
     else if (a = json?.body?.type) isnt (b = @_type())
       new Error "Wrong signature type; got '#{a}' but wanted '#{b}'"
+    else if (a = @prev) and (a isnt (b = json?.prev))
+      new Error "Wrong previous sig; wanted '#{a}' but got '#{b}'"
+    else if (a = @seqno) and (a isnt (b = json?.seqno))
+      new Error "Wrong seqno; wanted '#{a}' but got '#{b}"
     else
       null
     cb err
@@ -144,6 +148,7 @@ class Base
   _json : ({expire_in}) ->
     ret = { 
       seqno : @seqno
+      prev : @prev
       ctime : unix_time()
       tag : constants.tags.sig
       expire_in : expire_in or constants.expire_in

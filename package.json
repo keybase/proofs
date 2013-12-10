@@ -24,7 +24,7 @@
   },
   "dependencies" : {
       "kbpgp" : "keybase/kbpgp",
-      "triplesec" : "keybase/triplesec#header_v3",
+      "triplesec" : ">=3.0.0",
       "iced-error" : "*"
   },
   "devDependencies" : {

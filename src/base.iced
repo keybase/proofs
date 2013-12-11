@@ -132,7 +132,7 @@ class Base
     else if (a = json?.body?.type) isnt (b = @_type())
       new Error "Wrong signature type; got '#{a}' but wanted '#{b}'"
     else if (a = @prev) and (a isnt (b = json?.prev))
-      new Error "Wrong previous sig; wanted '#{a}' but got '#{b}'"
+      new Error "Wrong previous hash; wanted '#{a}' but got '#{b}'"
     else if (a = @seqno) and (a isnt (b = json?.seqno))
       new Error "Wrong seqno; wanted '#{a}' but got '#{b}"
     else

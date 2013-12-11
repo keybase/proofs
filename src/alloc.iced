@@ -1,7 +1,7 @@
 
 web_service = require './web_service'
 {Track} = require './track'
-{Auth} = require './Auth'
+{Auth} = require './auth'
 
 #=======================================================
 

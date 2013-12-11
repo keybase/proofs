@@ -40,7 +40,7 @@ sig_id_to_short_id = (sig_id) ->
 
 class Verifier 
 
-  constructor : ({@pgp, @id, @short_id, @skip_ids}, @km, @base) ->
+  constructor : ({@pgp, @id, @short_id, @skip_ids, @make_ids}, @km, @base) ->
 
   #---------------
 
@@ -80,6 +80,8 @@ class Verifier
       err = new Error "wrong mesasge type; expected a generic message; got #{msg.type}"
     if not err? and not @skip_ids
       await @_check_ids msg.body, defer err
+    if not err? and @make_ids
+      {@short_id, @id} = make_ids msg.body
     if not err?
       eng = new Message @km
       await eng.parse_and_process msg.body, defer err, @literals
@@ -190,10 +192,14 @@ class Base
   # @option obj {string} id The keybase-appropriate ID that's the PGP signature's hash
   # @option obj {string} short_id The shortened sig ID that's for the tweet (or similar)
   # @option obj {bool} skip_ids Don't bother checking IDs
+  # @option obj {bool} make_ids Make Ids when verifying
   verify : (obj, cb) ->
     esc = make_esc cb, "Base::verfiy"
     verifier = new Verifier obj, @km, @
     await verifier.verify esc defer json_obj, json_str
+    if obj.make_ids 
+      obj.id = verifier.id
+      obj.short_id = verifier.short_id
     cb null, json_obj, json_str
 
 #==========================================================================

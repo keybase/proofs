@@ -23,7 +23,6 @@
     "url": "https://github.com/keybase/proofs/issues"
   },
   "dependencies" : {
-      "kbpgp" : "keybase/kbpgp",
       "triplesec" : ">=3.0.0",
       "iced-error" : "*"
   },

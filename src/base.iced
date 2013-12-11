@@ -12,13 +12,13 @@ util = require 'util'
 
 #==========================================================================
 
-exports.hash_sig = hash_sig = (pgp) -> 
-  (new SHA256).bufhash(new Buffer pgp, 'utf8')
+exports.hash_sig = hash_sig = (sig_body) ->
+  (new SHA256).bufhash(sig_body)
 
 #------
 
-add_ids = (pgp, out) ->
-  hash = hash_sig pgp
+add_ids = (sig_body, out) ->
+  hash = hash_sig sig_body
   id = hash.toString('hex')
   short_id = sig_id_to_short_id hash
   out.id = id
@@ -26,9 +26,9 @@ add_ids = (pgp, out) ->
 
 #------
 
-make_ids = (pgp) -> 
+make_ids = (sig_body) -> 
   out = {}
-  add_ids pgp, out
+  add_ids sig_body, out
   return out
 
 #------
@@ -46,7 +46,6 @@ class Verifier
 
   verify : (cb) ->
     esc = make_esc cb, "Verifier::verfiy"
-    await @_check_ids esc defer() unless @skip_ids
     await @_parse_and_process esc defer()
     await @_check_json esc defer json_obj, json_str
     await @_check_expired esc defer()
@@ -54,8 +53,8 @@ class Verifier
 
   #---------------
 
-  _check_ids : (cb) ->
-    {short_id, id} = make_ids @pgp
+  _check_ids : (body, cb) ->
+    {short_id, id} = make_ids body
     err = if not streq_secure id, @id
       new Error "Long IDs aren't equal; wanted #{id} but got #{@id}"
     else if not streq_secure short_id, @short_id
@@ -79,6 +78,8 @@ class Verifier
     [ err, msg] = decode @pgp
     if not err? and (msg.type isnt KCP.message_types.generic)
       err = new Error "wrong mesasge type; expected a generic message; got #{msg.type}"
+    if not err? and not @skip_ids
+      await @_check_ids msg.body, defer err
     if not err?
       eng = new Message @km
       await eng.parse_and_process msg.body, defer err, @literals
@@ -178,7 +179,7 @@ class Base
     else
       await kbpgp.burn { msg : json, signing_key }, defer err, pgp, raw
       unless err?
-        {short_id, id} = make_ids pgp
+        {short_id, id} = make_ids raw
         out = { pgp, json, id, short_id, raw }
     cb err, out
 

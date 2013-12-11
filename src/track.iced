@@ -20,3 +20,18 @@ exports.Track = class Track extends Base
     return ret
 
 #==========================================================================
+
+exports.Untrack = class Untrack extends Base
+
+  constructor : (obj) ->
+    @untrack = obj.untrack
+    super obj
+
+  _type : () -> constants.sig_types.untrack
+
+  _json : () -> 
+    ret = super {}
+    ret.untrack = @untrack
+    return ret
+
+#==========================================================================

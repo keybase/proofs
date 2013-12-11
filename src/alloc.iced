@@ -12,6 +12,7 @@ get_klass = (type) ->
     when "web_service_binding.github"  then web_service.GithubBinding
     when "web_service_binding.keybase" then web_service.KeybaseBinding
     when "track"                       then Track
+    when "untrack"                     then Untrack
     when "auth"                        then Auth
     else  
       err = new Error "Unknown proof class: #{type}"

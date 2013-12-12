@@ -194,13 +194,15 @@ class Base
   # @option obj {bool} skip_ids Don't bother checking IDs
   # @option obj {bool} make_ids Make Ids when verifying
   verify : (obj, cb) ->
-    esc = make_esc cb, "Base::verfiy"
     verifier = new Verifier obj, @km, @
-    await verifier.verify esc defer json_obj, json_str
-    if obj.make_ids 
-      obj.id = verifier.id
-      obj.short_id = verifier.short_id
-    cb null, json_obj, json_str
+    await verifier.verify defer err, json_obj, json_str
+    id = short_id = null
+    if obj.make_ids
+      id = verifier.id
+      short_id = verifier.short_id
+    out = if err? then {}
+    else { json_obj, json_str, id, short_id }
+    cb err, out
 
 #==========================================================================
 

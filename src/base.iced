@@ -77,7 +77,7 @@ class Verifier
     err = null
     [ err, msg] = decode @pgp
     if not err? and (msg.type isnt KCP.message_types.generic)
-      err = new Error "wrong mesasge type; expected a generic message; got #{msg.type}"
+      err = new Error "wrong message type; expected a generic message; got #{msg.type}"
     if not err? and not @skip_ids
       await @_check_ids msg.body, defer err
     if not err? and @make_ids
@@ -198,8 +198,8 @@ class Base
     await verifier.verify defer err, json_obj, json_str
     id = short_id = null
     if obj.make_ids
-      id = verifier.id
-      short_id = verifier.short_id
+      id = obj.id = verifier.id
+      short_id = obj.short_id = verifier.short_id
     out = if err? then {}
     else { json_obj, json_str, id, short_id }
     cb err, out

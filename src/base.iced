@@ -177,13 +177,10 @@ class Base
   generate : (cb) ->
     out = null
     json = @json()
-    if not (signing_key = @km().find_signing_pgp_key())
-      err = new Error "No signing key found"
-    else
-      await @sig_eng.box { msg : json, signing_key }, defer err, pgp, raw
-      unless err?
-        {short_id, id} = make_ids raw
-        out = { pgp, json, id, short_id, raw }
+    await @sig_eng.box json, defer err, {pgp, raw}
+    unless err?
+      {short_id, id} = make_ids raw
+      out = { pgp, json, id, short_id, raw }
     cb err, out
 
   #------

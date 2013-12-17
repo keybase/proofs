@@ -78,7 +78,7 @@ class Verifier
   _parse_and_process : (cb) ->
     err = null
     [ err, msg] = decode @pgp
-    if not err? and (msg.type isnt KCP.message_types.generic)
+    if not err? and (msg.type isnt "MESSAGE")
       err = new Error "wrong message type; expected a generic message; got #{msg.type}"
     if not err? and not @skip_ids
       await @_check_ids msg.body, defer err
@@ -177,7 +177,7 @@ class Base
   generate : (cb) ->
     out = null
     json = @json()
-    if not (signing_key = @km().find_best_pgp_key KCP.key_flags.sign_data)?
+    if not (signing_key = @km().find_signing_pgp_key())
       err = new Error "No signing key found"
     else
       await @sig_eng.box { msg : json, signing_key }, defer err, pgp, raw

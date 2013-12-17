@@ -1,12 +1,10 @@
-kbpgp = require 'kbpgp'
 {constants} = require './constants'
-KCP = kbpgp.const.openpgp
-{katch,akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u,streq_secure} = kbpgp.util
+pgp_utils = require('pgp-utils')
+{katch,akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u,streq_secure} = pgp_utils.utils
 triplesec = require('triplesec')
 {WordArray} = triplesec
 {SHA256} = triplesec.hash
-{Message} = kbpgp.processor
-{decode} = kbpgp.armor
+{decode} = pgp_utils.armor
 {make_esc} = require 'iced-error'
 util = require 'util'
 
@@ -40,7 +38,11 @@ sig_id_to_short_id = (sig_id) ->
 
 class Verifier 
 
-  constructor : ({@pgp, @id, @short_id, @skip_ids, @make_ids}, @km, @base) ->
+  constructor : ({@pgp, @id, @short_id, @skip_ids, @make_ids}, @sig_eng, @base) ->
+
+  #---------------
+
+  km : () -> @sig_eng.get_km()
 
   #---------------
 
@@ -83,8 +85,7 @@ class Verifier
     if not err? and @make_ids
       {@short_id, @id} = make_ids msg.body
     if not err?
-      eng = new Message @km
-      await eng.parse_and_process msg.body, defer err, @literals
+      await @sig_eng.unbox msg, defer err, @literals
     cb err
 
   #---------------
@@ -103,7 +104,7 @@ class Verifier
       if err? then #noop
       else if not (sw = l.get_data_signer()?.sig)?
         err = new Error "Expected a signature on the payload message"
-      else if not (@km.find_pgp_key (b = sw.get_key_id()))?
+      else if not (@km().find_pgp_key (b = sw.get_key_id()))?
         err = new Error "Failed sanity check; didn't have a key for '#{b.toString('hex')}'"
     cb err, @json, jsons
 
@@ -113,7 +114,7 @@ class Base
 
   #------
 
-  constructor : ({@km, @seqno, @user, @host, @prev}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev}) ->
 
   #------
 
@@ -124,11 +125,11 @@ class Base
       new Error "Wrong local uid: got '#{a}' but wanted '#{b}'"
     else if not (kid = json?.body?.key?.key_id)?
       new Error "Needed a body.key.key_id but none given"
-    else if not bufeq_secure @km.get_pgp_key_id(), (new Buffer kid, "hex")
+    else if not bufeq_secure @km().get_pgp_key_id(), (new Buffer kid, "hex")
       new Error "Verification key doesn't match packet (via key ID)"
     else if not (fp = json?.body?.key?.fingerprint)?
       new Error "Needed a body.key.fingerprint but none given"
-    else if not bufeq_secure @km.get_pgp_fingerprint(), (new Buffer fp, "hex")
+    else if not bufeq_secure @km().get_pgp_fingerprint(), (new Buffer fp, "hex")
       new Error "Verifiation key doesn't match packet (via fingerprint)"
     else if (a = json?.body?.key?.host) isnt (b = @host)
       new Error "Wrong host: got '#{a}' but wanted '#{b}'"
@@ -162,8 +163,8 @@ class Base
           host : @host
           username : @user.local.username
           uid : @user.local.uid
-          key_id : @km.get_pgp_key_id().toString('hex')
-          fingerprint : @km.get_pgp_fingerprint().toString('hex')
+          key_id : @km().get_pgp_key_id().toString('hex')
+          fingerprint : @km().get_pgp_fingerprint().toString('hex')
     }
     return ret
 
@@ -176,10 +177,10 @@ class Base
   generate : (cb) ->
     out = null
     json = @json()
-    if not (signing_key = @km.find_best_pgp_key KCP.key_flags.sign_data)?
+    if not (signing_key = @km().find_best_pgp_key KCP.key_flags.sign_data)?
       err = new Error "No signing key found"
     else
-      await kbpgp.burn { msg : json, signing_key }, defer err, pgp, raw
+      await @sig_eng.box { msg : json, signing_key }, defer err, pgp, raw
       unless err?
         {short_id, id} = make_ids raw
         out = { pgp, json, id, short_id, raw }
@@ -194,7 +195,7 @@ class Base
   # @option obj {bool} skip_ids Don't bother checking IDs
   # @option obj {bool} make_ids Make Ids when verifying
   verify : (obj, cb) ->
-    verifier = new Verifier obj, @km, @
+    verifier = new Verifier obj, @sig_eng, @
     await verifier.verify defer err, json_obj, json_str
     id = short_id = null
     if obj.make_ids
@@ -203,6 +204,10 @@ class Base
     out = if err? then {}
     else { json_obj, json_str, id, short_id }
     cb err, out
+
+  #-------
+  
+  km : () -> @sig_eng.get_km()
 
 #==========================================================================
 

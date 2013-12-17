@@ -1,6 +1,6 @@
 {constants} = require './constants'
 pgp_utils = require('pgp-utils')
-{katch,akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u,streq_secure} = pgp_utils.utils
+{katch,akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u,streq_secure} = pgp_utils.util
 triplesec = require('triplesec')
 {WordArray} = triplesec
 {SHA256} = triplesec.hash

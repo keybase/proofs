@@ -1,5 +1,5 @@
 
-{json_stringify_sorted,bufeq_secure} = require('pgp-utils').utils
+{json_stringify_sorted,bufeq_secure} = require('pgp-utils').util
 
 #----------
 

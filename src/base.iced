@@ -100,6 +100,7 @@ class Verifier
       [e, @json] = katch (() -> JSON.parse jsons)
       err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?
     if not err?
+      jsons = jsons.toString('utf8')
       await @base._v_check {@json}, defer err
       if err? then #noop
       else if not (sw = l.get_data_signer()?.sig)?

@@ -10,11 +10,19 @@ exports.Revoke = class Revoke extends Base
     @revoke = obj.revoke
     super obj
 
-  _type : () -> constants.sig_types.auth
+  _type : () -> constants.sig_types.revoke
 
   _json : () -> 
     ret = super {}
     ret.body.revoke = @revoke
+    util = require 'util'
     ret
+
+  _v_check : ({json}, cb) ->
+    await super { json }, defer err
+    unless err?
+      err = if not json.body?.revoke?.sig_id?
+        new Error "Missing revoke.sig_id in signature"
+    cb err
 
 #==========================================================================

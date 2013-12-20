@@ -20,7 +20,10 @@ $(BUILD_STAMP): \
 	lib/util.js \
 	lib/track.js \
 	lib/auth.js \
-        lib/revoke.js
+	lib/revoke.js \
+	lib/scrapers/base.js \
+	lib/scrapers/github.js \
+	lib/scrapers/twitter.js
 	date > $@
 
 build: $(BUILD_STAMP) 
@@ -40,7 +43,7 @@ $(TEST_STAMP): test/browser/test.js
 test: test-server test-browser
 
 clean:
-	rm -rf lib/* $(BUILD_STAMP) $(TEST_STAMP) test/browser/test.js
+	rm -rf lib/* lib/scrapers/* $(BUILD_STAMP) $(TEST_STAMP) 
 
 setup:
 	npm install -d

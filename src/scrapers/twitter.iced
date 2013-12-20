@@ -96,7 +96,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       cb(err, body) only replies with body if status is 200
     ###
     body = null
-    await request url, defer err, response, body
+    await @libs.request url, defer err, response, body
     rc = if err? then v_codes.HOST_UNREACHABLE
     else if (response.statusCode is 200) then v_codes.OK
     else if (response.statusCode >= 500) then v_codes.HTTP_500

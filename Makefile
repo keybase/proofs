@@ -19,7 +19,8 @@ $(BUILD_STAMP): \
 	lib/alloc.js \
 	lib/util.js \
 	lib/track.js \
-	lib/auth.js
+	lib/auth.js \
+        lib/revoke.js
 	date > $@
 
 build: $(BUILD_STAMP) 

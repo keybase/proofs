@@ -9,6 +9,7 @@ exports.constants = constants =
     track : "track"
     auth : "auth"
     untrack : "untrack"
+    revoke : "revoke"
   proof_types :
     none : 0
     keybase : 1

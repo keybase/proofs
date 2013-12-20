@@ -2,6 +2,7 @@
 web_service = require './web_service'
 {Untrack,Track} = require './track'
 {Auth} = require './auth'
+{Revoke} = require './revoke'
 
 #=======================================================
 
@@ -14,6 +15,7 @@ get_klass = (type) ->
     when "track"                       then Track
     when "untrack"                     then Untrack
     when "auth"                        then Auth
+    when "revoke"                      then Revoke
     else  
       err = new Error "Unknown proof class: #{type}"
       null

@@ -7,6 +7,7 @@ mods = [
   require('./base')
   require('./track')
   require('./auth')
+  require('./revoke')
 ]
 
 for m in mods

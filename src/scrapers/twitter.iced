@@ -67,13 +67,13 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  # Given a validated signature, check that the payload_text_check matches the sig.
-  _validate_text_check : ({sig, payload_text_check }) ->
+  # Given a validated signature, check that the proof_text_check matches the sig.
+  _validate_text_check : ({sig, proof_text_check }) ->
     [err, msg] = decode sig
     if not err?
       {short_id} = make_ids msg.body
-      if payload_text_check.indexOf(" " + short_id + " ")  < 0
-        err = new Error "Cannot find #{short_id} in #{payload_text_check}"
+      if proof_text_check.indexOf(" " + short_id + " ")  < 0
+        err = new Error "Cannot find #{short_id} in #{proof_text_check}"
     return err
 
   # ---------------------------------------------------------------------------

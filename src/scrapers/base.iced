@@ -13,7 +13,7 @@ class BaseScraper
 
   #-------------------------------------------------------------
 
-  # Obj should have: { api_url, username, sig, payload_text_check, remote_id }
+  # Obj should have: { api_url, username, sig, proof_text_check, remote_id }
   validate : (obj, cb) -> 
     err = null
     rc = null

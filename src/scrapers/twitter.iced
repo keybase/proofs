@@ -60,6 +60,11 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
+  check_url : ({url,username}) ->
+    return (url.indexOf("https://twitter.com/#{username}/") is 0)
+
+  # ---------------------------------------------------------------------------
+
   check_status: ({username, api_url, signature, remote_id}, cb) ->
     # calls back with a v_code or null if it was ok
     await @_get_url_body api_url, defer err, rc, html

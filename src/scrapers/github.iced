@@ -27,6 +27,11 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
+  check_url : ({url,username}) ->
+    return (url.indexOf("https://api.github.com/users/#{username}/gists") is 0)
+
+  # ---------------------------------------------------------------------------
+
   _search_gist : (gist_json_obj, sig, cb) ->
     out = {}
     if not (u = gist_json_obj.url)? then rc = v_codes.FAILED_PARSE

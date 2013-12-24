@@ -13,13 +13,17 @@ class BaseScraper
 
   #-------------------------------------------------------------
 
-  validate : ( { url, username, sig, payload_text_check }, cb) ->
+  # Obj should have: { api_url, username, sig, payload_text_check, remote_id }
+  validate : (obj, cb) -> 
     err = null
-    if not @_check_url { url, username } 
+    rc = null
+    if not @_check_api_url obj
       err = new Error "check url failed for #{url}, #{username}"
     else
-      await @_validate_text_check { sig, payload_text_check }, defer err
-    cb err
+      await @_validate_text_check obj, defer err
+    unless err?
+      await @check_status obj, defer err, rc
+    cb err, rc
 
   #-------------------------------------------------------------
 

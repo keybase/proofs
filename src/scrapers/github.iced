@@ -27,8 +27,8 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  _check_url : ({url,username}) ->
-    return (url.indexOf("https://api.github.com/users/#{username}/gists") is 0)
+  _check_api_url : ({api_url,username}) ->
+    return (api_url.indexOf("https://api.github.com/users/#{username}/gists") is 0)
 
   # ---------------------------------------------------------------------------
 

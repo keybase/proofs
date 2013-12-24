@@ -62,8 +62,8 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  _check_url : ({url,username}) ->
-    return (url.indexOf("https://twitter.com/#{username}/") is 0)
+  _check_api_url : ({api_url,username}) ->
+    return (api_url.indexOf("https://twitter.com/#{username}/") is 0)
 
   # ---------------------------------------------------------------------------
 

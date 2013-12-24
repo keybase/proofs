@@ -13,6 +13,16 @@ class BaseScraper
 
   #-------------------------------------------------------------
 
+  validate : ( { url, username, sig, payload_text_check }, cb) ->
+    err = null
+    if not @_check_url { url, username } 
+      err = new Error "check url failed for #{url}, #{username}"
+    else
+      await @_validate_text_check { sig, payload_text_check }, defer err
+    cb err
+
+  #-------------------------------------------------------------
+
   _get_url_body: (opts, cb) ->
     ###
       cb(err, body) only replies with body if status is 200

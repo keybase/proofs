@@ -1,6 +1,8 @@
 {BaseScraper} = require './base'
+{make_ids} = require '../base'
 {constants} = require '../constants'
 {v_codes} = constants
+{decode} = require('pgp-utils').armor
 
 #================================================================================
 
@@ -60,8 +62,19 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  check_url : ({url,username}) ->
+  _check_url : ({url,username}) ->
     return (url.indexOf("https://twitter.com/#{username}/") is 0)
+
+  # ---------------------------------------------------------------------------
+
+  # Given a validated signature, check that the payload_text_check matches the sig.
+  _validate_text_check : ({sig, payload_text_check }) ->
+    [err, msg] = decode sig
+    if not err?
+      {short_id} = make_ids msg.body
+      if payload_text_check.indexOf(" " + short_id + " ")  < 0
+        err = new Error "Cannot find #{short_id} in #{payload_text_check}"
+    return err
 
   # ---------------------------------------------------------------------------
 

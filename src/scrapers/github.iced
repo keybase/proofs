@@ -27,8 +27,17 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  check_url : ({url,username}) ->
+  _check_url : ({url,username}) ->
     return (url.indexOf("https://api.github.com/users/#{username}/gists") is 0)
+
+  # ---------------------------------------------------------------------------
+
+  # Given a validated signature, check that the payload_text_check matches the sig.
+  _validate_text_check : ({sig, payload_text_check }) ->
+    [err, msg] = decode sig
+    if not err? and ("\n\n" + msg.raw()) isnt payload_text_check
+      err = new Error "Bad payload text_check"
+    return err
 
   # ---------------------------------------------------------------------------
 

@@ -68,8 +68,8 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   # Given a validated signature, check that the proof_text_check matches the sig.
-  _validate_text_check : ({sig, proof_text_check }) ->
-    [err, msg] = decode sig
+  _validate_text_check : ({signature, proof_text_check }) ->
+    [err, msg] = decode signature
     if not err?
       {short_id} = make_ids msg.body
       if proof_text_check.indexOf(" " + short_id + " ")  < 0
@@ -100,7 +100,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
         # inside this container
         #
         rc = if (username.toLowerCase() isnt div.data('screenName')?.toLowerCase()) then v_codes.BAD_USERNAME
-        else if (remote_id isnt div.data('tweetId')) then v_codes.BAD_REMOTE_ID
+        else if (("" + remote_id) isnt ("" + div.data('tweetId'))) then v_codes.BAD_REMOTE_ID
         else if not (p = div.find('p.tweet-text'))? or not p.length then v_codes.MISSING
         else if (p.first().html().indexOf signature) is 0 then v_codes.OK
         else v_codes.DELETED

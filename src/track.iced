@@ -14,7 +14,7 @@ exports.Track = class Track extends Base
 
   _json : () -> 
     ret = super {}
-    ret.track = @track
+    ret.body.track = @track
     return ret
 
 #==========================================================================
@@ -29,7 +29,7 @@ exports.Untrack = class Untrack extends Base
 
   _json : () -> 
     ret = super {}
-    ret.untrack = @untrack
+    ret.body.untrack = @untrack
     return ret
 
 #==========================================================================

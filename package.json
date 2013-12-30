@@ -25,7 +25,7 @@
   "dependencies" : {
       "triplesec" : ">=3.0.0",
       "iced-error" : "*",
-      "pgp-utils" : ">=0.0.3"
+      "pgp-utils" : ">=0.0.4"
   },
   "devDependencies" : {
       "iced-coffee-script" : "*",

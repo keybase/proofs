@@ -1,6 +1,7 @@
 {BaseScraper} = require './base'
 {constants} = require '../constants'
 {v_codes} = constants
+{decode} = require('pgp-utils').armor
 
 #================================================================================
 
@@ -28,14 +29,14 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   _check_api_url : ({api_url,username}) ->
-    return (api_url.indexOf("https://api.github.com/users/#{username}/gists") is 0)
+    return (api_url.indexOf("https://gist.github.com/#{username}/") is 0)
 
   # ---------------------------------------------------------------------------
 
   # Given a validated signature, check that the payload_text_check matches the sig.
   _validate_text_check : ({signature, proof_text_check }) ->
     [err, msg] = decode signature
-    if not err? and ("\n\n" + msg.raw()) isnt proof_text_check
+    if not err? and ("\n\n" + msg.payload + "\n") isnt proof_text_check
       err = new Error "Bad payload text_check"
     return err
 
@@ -74,7 +75,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   _get_body : (url, json, cb) ->
-    @libs.log.info "+ HTTP request for URL '#{url}'"
+    @libs.log.debug "+ HTTP request for URL '#{url}'"
     args =
       url : url
       headers : 

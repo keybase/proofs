@@ -29,7 +29,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   _check_api_url : ({api_url,username}) ->
-    return (api_url.indexOf("https://gist.github.com/#{username}/") is 0)
+    return (api_url? and (api_url.indexOf("https://gist.github.com/#{username}/") is 0))
 
   # ---------------------------------------------------------------------------
 
@@ -75,7 +75,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   _get_body : (url, json, cb) ->
-    @libs.log.debug "+ HTTP request for URL '#{url}'"
+    @libs.log.debug "| HTTP request for URL '#{url}'"
     args =
       url : url
       headers : 

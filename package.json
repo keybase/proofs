@@ -23,9 +23,9 @@
     "url": "https://github.com/keybase/proofs/issues"
   },
   "dependencies" : {
-      "triplesec" : ">=3.0.0",
-      "iced-error" : "*",
-      "pgp-utils" : ">=0.0.4"
+      "triplesec" : ">=3.0.1",
+      "iced-error" : ">=0.0.8",
+      "pgp-utils" : ">=0.0.8"
   },
   "devDependencies" : {
       "iced-coffee-script" : "*",

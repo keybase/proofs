@@ -29,7 +29,8 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   _check_api_url : ({api_url,username}) ->
-    return (api_url? and (api_url.indexOf("https://gist.github.com/#{username}/") is 0))
+    rxx = new RegExp("^https://gist.github(usercontent)?\\.com/#{username}/")
+    return (api_url? and api_url.match(rxx));
 
   # ---------------------------------------------------------------------------
 

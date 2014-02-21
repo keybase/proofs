@@ -1,6 +1,6 @@
 {
   "name": "keybase-proofs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Publicly-verifiable proofs of identity",
   "main": "lib/main.js",
   "scripts": {
@@ -14,21 +14,21 @@
     "Keybase",
     "PKI"
   ],
-  "directories" : {
-      "lib" : "lib/"
+  "directories": {
+    "lib": "lib/"
   },
   "author": "Maxwell Krohn",
   "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/keybase/proofs/issues"
   },
-  "dependencies" : {
-      "triplesec" : ">=3.0.1",
-      "iced-error" : ">=0.0.8",
-      "pgp-utils" : ">=0.0.12"
+  "dependencies": {
+    "triplesec": ">=3.0.1",
+    "iced-error": ">=0.0.8",
+    "pgp-utils": ">=0.0.12"
   },
-  "devDependencies" : {
-      "iced-coffee-script" : "*",
-      "iced-test" : "*"
+  "devDependencies": {
+    "iced-coffee-script": "*",
+    "iced-test": "*"
   }
 }

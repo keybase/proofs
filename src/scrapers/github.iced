@@ -13,15 +13,23 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   hunt: (username, signature, cb) ->
+    @hunt2 { username, signature }, cb
+
+  # ---------------------------------------------------------------------------
+
+  hunt2 : ({username, signature, log}, cb) ->
+
     # calls back with rc, out
     rc       = v_codes.OK
     out      = {}
 
-    await @_get_body "https://api.github.com/users/#{username}/gists", true, defer err, rc, json
+    url = "https://api.github.com/users/#{username}/gists"
+    await @_get_body url, true, defer err, rc, json
+    log?.info "| #{url} -> #{rc}"
     if rc is v_codes.OK
       rc = v_codes.NOT_FOUND
       for gist in json 
-        await @_search_gist gist, signature, defer out
+        await @_search_gist { gist, sig, log}, defer out
         break if out.rc is v_codes.OK
     out.rc or= rc
     cb err, out
@@ -43,9 +51,11 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  _search_gist : (gist_json_obj, sig, cb) ->
+  _search_gist : ({gist, sig, log}, cb) ->
     out = {}
-    if not (u = gist_json_obj.url)? then rc = v_codes.FAILED_PARSE
+    if not (u = gist.url)? 
+      log?.info "| gist didn't have a URL"
+      rc = v_codes.FAILED_PARSE
     else
       await @_get_body u, true, defer err, rc, json
       if rc isnt v_codes.OK then # noop
@@ -57,9 +67,10 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
             rc = v_codes.OK
             out = 
               api_url : file.raw_url
-              remote_id : gist_json_obj.id
-              human_url : gist_json_obj.html_url
+              remote_id : gist.id
+              human_url : gist.html_url
             break
+      log?.info "| gist #{u} -> #{rc}"
     out.rc = rc
     cb out
 

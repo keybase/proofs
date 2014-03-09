@@ -25,11 +25,11 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
     url = "https://api.github.com/users/#{username}/gists"
     await @_get_body url, true, defer err, rc, json
-    log?.info "| #{url} -> #{rc}"
+    log?.info "| search index #{url} -> #{rc}"
     if rc is v_codes.OK
       rc = v_codes.NOT_FOUND
       for gist in json 
-        await @_search_gist { gist, sig, log}, defer out
+        await @_search_gist { gist, signature, log}, defer out
         break if out.rc is v_codes.OK
     out.rc or= rc
     cb err, out
@@ -51,7 +51,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  _search_gist : ({gist, sig, log}, cb) ->
+  _search_gist : ({gist, signature, log}, cb) ->
     out = {}
     if not (u = gist.url)? 
       log?.info "| gist didn't have a URL"
@@ -63,14 +63,17 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
       else
         rc = v_codes.NOT_FOUND
         for filename, file of json.files when (content = file.content)?
-          if (id = content.indexOf(sig)) >= 0
+          if (id = content.indexOf(signature)) >= 0
+            log?.info "| search #{filename} -> found"
             rc = v_codes.OK
             out = 
               api_url : file.raw_url
               remote_id : gist.id
               human_url : gist.html_url
             break
-      log?.info "| gist #{u} -> #{rc}"
+          else
+            log?.info "| search #{filename} -> miss"
+      log?.info "| search gist #{u} -> #{rc}"
     out.rc = rc
     cb out
 

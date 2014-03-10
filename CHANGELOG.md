@@ -3,6 +3,7 @@
 Bugfixes:
 
  - Loosen up checking for twitter proofs, allow @-prefixing.
+ - Better debug logging flexibility, and a cleanup
 
 ## 0.0.6 (2014-03-09)
 

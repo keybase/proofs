@@ -7,12 +7,13 @@
 
 exports.GithubScraper = class GithubScraper extends BaseScraper
 
-  constructor: ({@auth, libs}) ->
-    super { libs } 
+  constructor: (opts) ->
+    @auth = opts.auth
+    super opts
 
   # ---------------------------------------------------------------------------
 
-  hunt2 : ({username, signature, log}, cb) ->
+  hunt2 : ({username, signature}, cb) ->
 
     # calls back with rc, out
     rc       = v_codes.OK
@@ -20,11 +21,11 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
     url = "https://api.github.com/users/#{username}/gists"
     await @_get_body url, true, defer err, rc, json
-    log?.info "| search index #{url} -> #{rc}"
+    @log "| search index #{url} -> #{rc}"
     if rc is v_codes.OK
       rc = v_codes.NOT_FOUND
       for gist in json 
-        await @_search_gist { gist, signature, log}, defer out
+        await @_search_gist { gist, signature }, defer out
         break if out.rc is v_codes.OK
     out.rc or= rc
     cb err, out
@@ -46,10 +47,10 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  _search_gist : ({gist, signature, log}, cb) ->
+  _search_gist : ({gist, signature}, cb) ->
     out = {}
     if not (u = gist.url)? 
-      log?.info "| gist didn't have a URL"
+      @log "| gist didn't have a URL"
       rc = v_codes.FAILED_PARSE
     else
       await @_get_body u, true, defer err, rc, json
@@ -59,7 +60,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
         rc = v_codes.NOT_FOUND
         for filename, file of json.files when (content = file.content)?
           if (id = content.indexOf(signature)) >= 0
-            log?.info "| search #{filename} -> found"
+            @log "| search #{filename} -> found"
             rc = v_codes.OK
             out = 
               api_url : file.raw_url
@@ -67,8 +68,8 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
               human_url : gist.html_url
             break
           else
-            log?.info "| search #{filename} -> miss"
-      log?.info "| search gist #{u} -> #{rc}"
+            @log "| search #{filename} -> miss"
+      @log "| search gist #{u} -> #{rc}"
     out.rc = rc
     cb out
 
@@ -85,7 +86,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   _get_body : (url, json, cb) ->
-    @libs.log.debug "| HTTP request for URL '#{url}'"
+    @log "| HTTP request for URL '#{url}'"
     args =
       url : url
       headers : 

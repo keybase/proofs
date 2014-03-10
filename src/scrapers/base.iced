@@ -5,12 +5,18 @@
 #==============================================================
 
 class BaseScraper
-  constructor : ({@libs}) ->
+  constructor : ({@libs, log_level}) ->
+    @log_level = log_level or "debug"
 
   hunt : (username, signature, cb) -> hunt2 { username, signature }, cb
   hunt2 : (args, cb) -> cb new Error "unimplemented"
   id_to_url : (username, status_id) ->
   check_status : ({username, url, signature, status_id}, cb) -> 
+
+  #-------------------------------------------------------------
+
+  log : (msg) ->
+    if (k = @libs.log)? and @log_level? then k[@log_level](msg)
 
   #-------------------------------------------------------------
 

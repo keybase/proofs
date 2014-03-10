@@ -13,12 +13,14 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  hunt2 : ({username, signature}, cb) ->
+  hunt2 : ({username, signature, log}, cb) ->
     # calls back with err, out
     out      = {}
     rc       = v_codes.OK
 
-    await @_get_url_body "https://twitter.com/#{username}", defer err, rc, html
+    u = "https://twitter.com/#{username}"
+    await @_get_url_body u, defer err, rc, html
+    log?.info "| search index #{u} -> #{rc}"
     if rc is v_codes.OK
 
       $ = @libs.cheerio.load html
@@ -42,11 +44,12 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
         # the signature
         #
         rc = v_codes.NOT_FOUND
-        for stream_item in stream
+        for stream_item,i in stream
           item = $(stream_item)
           if (item.data('screenName')?.toLowerCase() is username.toLowerCase()) and item.data('tweetId')?
             p = item.find 'p.tweet-text'
-            if (p.first().html().indexOf signature) is 0
+            if (@find_sig_in_tweet { tweet_p : p.first(), signature, log }) is v_codes.OK
+              log?.info "| found valid tweet in stream @ #{i}"
               rc = v_codes.OK
               remote_id = item.data('tweetId')
               api_url = human_url = @_id_to_url username, remote_id
@@ -78,10 +81,11 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  find_sig_in_tweet : ({tweet, signature, log}) ->
-    inside = tweet
+  find_sig_in_tweet : ({tweet_p, signature, log}) ->
+    inside = tweet_p.text()
     x = /^(@[a-zA-Z0-9_-]+\s+)/
-    log?.info "+ Checking tweet '#{tweet}' for signature '#{signature}'"
+    log?.info "+ Checking tweet '#{tweet_p.text()}' for signature '#{signature}'"
+    log?.info "| html is: #{tweet_p.html()}"
     while (m = inside.match(x))?
       p = m[1]
       inside = inside[p.length...]
@@ -116,7 +120,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
         rc = if (username.toLowerCase() isnt div.data('screenName')?.toLowerCase()) then v_codes.BAD_USERNAME
         else if (("" + remote_id) isnt ("" + div.data('tweetId'))) then v_codes.BAD_REMOTE_ID
         else if not (p = div.find('p.tweet-text'))? or not p.length then v_codes.MISSING
-        else @find_sig_in_tweet { tweet : p.first().html(), signature, log }
+        else @find_sig_in_tweet { tweet_p : p.first(), signature, log }
 
     cb err, rc
 

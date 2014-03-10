@@ -78,7 +78,21 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  check_status: ({username, api_url, signature, remote_id}, cb) ->
+  find_sig_in_tweet : ({tweet, signature, log}) ->
+    inside = tweet
+    x = /^(@[a-zA-Z0-9_-]+\s+)/
+    log?.info "+ Checking tweet '#{tweet}' for signature '#{signature}'"
+    while (m = inside.match(x))?
+      p = m[1]
+      inside = inside[p.length...]
+      log?.info "| Stripping off @prefix: #{p}"
+    rc = if inside.indexOf(signature) is 0 then v_codes.OK else v_codes.DELETED
+    log?.info "- Result -> #{rc}"
+    return rc
+
+  # ---------------------------------------------------------------------------
+
+  check_status: ({username, api_url, signature, remote_id, log}, cb) ->
     # calls back with a v_code or null if it was ok
     await @_get_url_body api_url, defer err, rc, html
 
@@ -102,8 +116,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
         rc = if (username.toLowerCase() isnt div.data('screenName')?.toLowerCase()) then v_codes.BAD_USERNAME
         else if (("" + remote_id) isnt ("" + div.data('tweetId'))) then v_codes.BAD_REMOTE_ID
         else if not (p = div.find('p.tweet-text'))? or not p.length then v_codes.MISSING
-        else if (p.first().html().indexOf signature) is 0 then v_codes.OK
-        else v_codes.DELETED
+        else @find_sig_in_tweet { tweet : p.first().html(), signature, log }
 
     cb err, rc
 

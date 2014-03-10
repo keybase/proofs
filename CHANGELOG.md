@@ -1,4 +1,10 @@
-## 0.0.6
+## 0.0.7 (2014-03-10)
+
+Bugfixes:
+
+ - Loosen up checking for twitter proofs, allow @-prefixing.
+
+## 0.0.6 (2014-03-09)
 
 Bugfixes:
 

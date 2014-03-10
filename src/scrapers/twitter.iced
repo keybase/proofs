@@ -13,7 +13,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  hunt: (username, signature, cb) ->
+  hunt2 : ({username, signature}, cb) ->
     # calls back with err, out
     out      = {}
     rc       = v_codes.OK

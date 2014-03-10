@@ -7,8 +7,8 @@
 class BaseScraper
   constructor : ({@libs}) ->
 
-  hunt : (username, signature, cb) ->
-  hunt2 : ({username, signature, log}, cb) ->
+  hunt : (username, signature, cb) -> hunt2 { username, signature }, cb
+  hunt2 : (args, cb) -> cb new Error "unimplemented"
   id_to_url : (username, status_id) ->
   check_status : ({username, url, signature, status_id}, cb) -> 
 

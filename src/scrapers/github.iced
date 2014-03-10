@@ -12,11 +12,6 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  hunt: (username, signature, cb) ->
-    @hunt2 { username, signature }, cb
-
-  # ---------------------------------------------------------------------------
-
   hunt2 : ({username, signature, log}, cb) ->
 
     # calls back with rc, out

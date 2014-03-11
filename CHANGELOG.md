@@ -1,8 +1,9 @@
-## 0.0.8 (2014-03-11)
+## 0.0.8
 
 Features:
 
   - Allow proxy'ing of scraper calls
+  - Allow for ca's to be specified, useful when using a self-signed proxy above.
 
 ## 0.0.7 (2014-03-10)
 

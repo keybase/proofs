@@ -19,7 +19,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
     rc       = v_codes.OK
 
     u = "https://twitter.com/#{username}"
-    await @_get_url_body u, defer err, rc, html
+    await @_get_url_body { url : u }, defer err, rc, html
     @log "| search index #{u} -> #{rc}"
     if rc is v_codes.OK
 
@@ -98,7 +98,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   check_status: ({username, api_url, signature, remote_id}, cb) ->
     # calls back with a v_code or null if it was ok
-    await @_get_url_body api_url, defer err, rc, html
+    await @_get_url_body { url : api_url }, defer err, rc, html
 
     if rc is v_codes.OK
 
@@ -123,22 +123,6 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
         else @find_sig_in_tweet { tweet_p : p.first(), signature }
 
     cb err, rc
-
-  # ---------------------------------------------------------------------------
-
-  _get_url_body: (url, cb) ->
-    ###
-      cb(err, body) only replies with body if status is 200
-    ###
-    body = null
-    await @libs.request url, defer err, response, body
-    rc = if err? then v_codes.HOST_UNREACHABLE
-    else if (response.statusCode is 200) then v_codes.OK
-    else if (response.statusCode >= 500) then v_codes.HTTP_500
-    else if (response.statusCode >= 400) then v_codes.HTTP_400
-    else if (response.statusCode >= 300) then v_codes.HTTP_300
-    else                                      v_codes.HTTP_OTHER
-    cb err, rc, body
 
 #================================================================================
 

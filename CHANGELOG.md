@@ -1,3 +1,9 @@
+## 0.0.8 (2014-03-11)
+
+Features:
+
+  - Allow proxy'ing of scraper calls
+
 ## 0.0.7 (2014-03-10)
 
 Bugfixes:

@@ -5,7 +5,7 @@
 #==============================================================
 
 class BaseScraper
-  constructor : ({@libs, log_level}) ->
+  constructor : ({@libs, log_level, @proxy}) ->
     @log_level = log_level or "debug"
 
   hunt : (username, signature, cb) -> hunt2 { username, signature }, cb
@@ -43,6 +43,7 @@ class BaseScraper
       cb(err, body) only replies with body if status is 200
     ###
     body = null
+    opts.proxy = @proxy if @proxy?
     await @libs.request opts, defer err, response, body
     rc = if err? then v_codes.HOST_UNREACHABLE
     else if (response.statusCode is 200) then v_codes.OK

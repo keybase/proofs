@@ -134,6 +134,6 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
         else if not (p = div.find('p.tweet-text'))? or not p.length then v_codes.MISSING
         else @find_sig_in_tweet { tweet_p : p.first(), proof_text_check }
 
-    cb err, rc, username
+    cb err, rc
 
 #================================================================================

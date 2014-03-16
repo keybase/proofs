@@ -13,10 +13,6 @@ exports.WebSiteScraper = class WebSiteScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  make_display : ({protocol, hostname}) ->
-
-  # ---------------------------------------------------------------------------
-
   make_url : ({protocol, hostname}) ->
     urlmod.format {
       hostname, 
@@ -61,7 +57,7 @@ exports.WebSiteScraper = class WebSiteScraper extends BaseScraper
     rc = if rc isnt v_codes.OK                       then rc
     else if (raw.indexOf proof_text_check) >= 0 then v_codes.OK
     else                                             v_codes.NOT_FOUND
-    cb err, rc, make_display_url({hostname, protocol})
+    cb err, rc
 
 #================================================================================
 

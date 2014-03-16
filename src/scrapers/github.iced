@@ -95,7 +95,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
     rc = if rc isnt v_codes.OK                  then rc
     else if (raw.indexOf proof_text_check) >= 0 then v_codes.OK
     else                                             v_codes.NOT_FOUND
-    cb err, rc, username
+    cb err, rc
 
   # ---------------------------------------------------------------------------
 

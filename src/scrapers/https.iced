@@ -13,6 +13,10 @@ exports.WebSiteScraper = class WebSiteScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
+  make_display : ({protocol, hostname}) ->
+
+  # ---------------------------------------------------------------------------
+
   make_url : ({protocol, hostname}) ->
     urlmod.format {
       hostname, 
@@ -51,13 +55,13 @@ exports.WebSiteScraper = class WebSiteScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  check_status: ({api_url, proof_text_check}, cb) ->
+  check_status: ({protocol, hostname, api_url, proof_text_check}, cb) ->
     # calls back with a v_code or null if it was ok
     await @_get_url_body {url : api_url}, defer err, rc, raw
     rc = if rc isnt v_codes.OK                       then rc
     else if (raw.indexOf proof_text_check) >= 0 then v_codes.OK
     else                                             v_codes.NOT_FOUND
-    cb err, rc
+    cb err, rc, make_display_url({hostname, protocol})
 
 #================================================================================
 

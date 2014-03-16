@@ -15,6 +15,7 @@ exports.constants = constants =
     keybase : 1
     twitter : 2
     github : 3
+    generic_web_site : 1000
   expire_in : 60*60*24*365*5 # 5 years....
   short_id_bytes : 27
   

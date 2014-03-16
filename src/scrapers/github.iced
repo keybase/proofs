@@ -13,14 +13,14 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  hunt2 : ({username, signature, name}, cb) ->
+  hunt2 : ({username, proof_text_check, name}, cb) ->
 
     # calls back with rc, out
     rc       = v_codes.OK
     out      = {}
 
-    if not(username?) or not(signature?) or not(name?) or (name isnt 'github')
-      cb new Error "invalid arguments; expected a username and signature"
+    if not(username?) or not(name?) or (name isnt 'github')
+      cb new Error "invalid arguments; expected a username and proof_text_check"
       return
 
     url = "https://api.github.com/users/#{username}/gists"
@@ -29,7 +29,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
     if rc is v_codes.OK
       rc = v_codes.NOT_FOUND
       for gist in json 
-        await @_search_gist { gist, signature }, defer out
+        await @_search_gist { gist, proof_text_check }, defer out
         break if out.rc is v_codes.OK
     out.rc or= rc
     cb err, out
@@ -51,7 +51,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  _search_gist : ({gist, signature}, cb) ->
+  _search_gist : ({gist, proof_text_check}, cb) ->
     out = {}
     if not (u = gist.url)? 
       @log "| gist didn't have a URL"
@@ -63,7 +63,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
       else
         rc = v_codes.NOT_FOUND
         for filename, file of json.files when (content = file.content)?
-          if (id = content.indexOf(signature)) >= 0
+          if (id = content.indexOf(proof_text_check)) >= 0
             @log "| search #{filename} -> found"
             rc = v_codes.OK
             out = 
@@ -79,12 +79,14 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  check_status: ({username, api_url, signature, remote_id}, cb) ->
+  check_status: ({username, api_url, proof_text_check, remote_id}, cb) ->
+
     # calls back with a v_code or null if it was ok
     await @_get_body api_url, false, defer err, rc, raw
-    rc = if rc isnt v_codes.OK           then rc
-    else if (raw.indexOf signature) >= 0 then v_codes.OK
-    else                                      v_codes.NOT_FOUND
+
+    rc = if rc isnt v_codes.OK                  then rc
+    else if (raw.indexOf proof_text_check) >= 0 then v_codes.OK
+    else                                             v_codes.NOT_FOUND
     cb err, rc
 
   # ---------------------------------------------------------------------------

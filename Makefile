@@ -23,6 +23,7 @@ $(BUILD_STAMP): \
 	lib/revoke.js \
 	lib/scrapers/base.js \
 	lib/scrapers/github.js \
+        lib/scrapers/https.js \
 	lib/scrapers/twitter.js
 	date > $@
 

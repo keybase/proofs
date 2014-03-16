@@ -51,12 +51,12 @@ exports.WebSiteScraper = class WebSiteScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  check_status: ({api_url, signature}, cb) ->
+  check_status: ({api_url, proof_text_check}, cb) ->
     # calls back with a v_code or null if it was ok
     await @_get_url_body {url : api_url}, defer err, rc, raw
-    rc = if rc isnt v_codes.OK           then rc
-    else if (raw.indexOf signature) >= 0 then v_codes.OK
-    else                                      v_codes.NOT_FOUND
+    rc = if rc isnt v_codes.OK                       then rc
+    else if (raw.indexOf proof_text_check) >= 0 then v_codes.OK
+    else                                             v_codes.NOT_FOUND
     cb err, rc
 
 #================================================================================

@@ -13,15 +13,22 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
+  _check_args : (args) ->
+    if not(args.username?) 
+      new Error "Bad args to Twitter proof: no username given"
+    else if not (args.name?) or (args.name isnt 'twitter')
+      new Error "Bad args to Twitter proof: type is #{args.name}"
+    else
+      null
+
+  # ---------------------------------------------------------------------------
+
   hunt2 : ({username, name, proof_text_check}, cb) ->
     # calls back with err, out
     out      = {}
     rc       = v_codes.OK
 
-    if not(username?) or not(name?) or (name isnt 'twitter')
-      err = new Error "invalid arguments to TwitterScraper; need a username"
-      cb err
-      return
+    return cb(err) if (err = @_check_args { username, name })?
 
     u = "https://twitter.com/#{username}"
     await @_get_url_body { url : u }, defer err, rc, html
@@ -127,6 +134,6 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
         else if not (p = div.find('p.tweet-text'))? or not p.length then v_codes.MISSING
         else @find_sig_in_tweet { tweet_p : p.first(), proof_text_check }
 
-    cb err, rc
+    cb err, rc, username
 
 #================================================================================

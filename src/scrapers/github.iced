@@ -13,15 +13,23 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
+  _check_args : (args) ->
+    if not(args.username?) 
+      new Error "Bad args to Github proof: no username given"
+    else if not (args.name?) or (args.name isnt 'github')
+      new Error "Bad args to Github proof: type is #{args.name}"
+    else
+      null
+
+  # ---------------------------------------------------------------------------
+
   hunt2 : ({username, proof_text_check, name}, cb) ->
 
     # calls back with rc, out
     rc       = v_codes.OK
     out      = {}
 
-    if not(username?) or not(name?) or (name isnt 'github')
-      cb new Error "invalid arguments; expected a username and proof_text_check"
-      return
+    return cb(err) if (err = @_check_args { username, name })?
 
     url = "https://api.github.com/users/#{username}/gists"
     await @_get_body url, true, defer err, rc, json
@@ -87,7 +95,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
     rc = if rc isnt v_codes.OK                  then rc
     else if (raw.indexOf proof_text_check) >= 0 then v_codes.OK
     else                                             v_codes.NOT_FOUND
-    cb err, rc
+    cb err, rc, username
 
   # ---------------------------------------------------------------------------
 

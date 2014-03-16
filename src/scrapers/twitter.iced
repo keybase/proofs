@@ -12,6 +12,10 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
     super opts
 
   # ---------------------------------------------------------------------------
+  
+  field_name : -> "username"
+
+  # ---------------------------------------------------------------------------
 
   hunt2 : ({username, signature}, cb) ->
     # calls back with err, out

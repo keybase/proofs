@@ -2,43 +2,43 @@
 {constants} = require '../constants'
 {v_codes} = constants
 {decode} = require('pgp-utils').armor
+urlmod = require 'url'
 
 #================================================================================
 
-exports.GithubScraper = class GithubScraper extends BaseScraper
+exports.WebSiteScraper = class WebSiteScraper extends BaseScraper
 
   constructor: (opts) ->
-    @auth = opts.auth
     super opts
 
   # ---------------------------------------------------------------------------
 
-  field_name : -> "username"
+  field_name : () -> "host"
 
   # ---------------------------------------------------------------------------
 
-  hunt2 : ({username, signature}, cb) ->
-
-    # calls back with rc, out
-    rc       = v_codes.OK
-    out      = {}
-
-    url = "https://api.github.com/users/#{username}/gists"
-    await @_get_body url, true, defer err, rc, json
-    @log "| search index #{url} -> #{rc}"
-    if rc is v_codes.OK
-      rc = v_codes.NOT_FOUND
-      for gist in json 
-        await @_search_gist { gist, signature }, defer out
-        break if out.rc is v_codes.OK
-    out.rc or= rc
-    cb err, out
+  make_url : ({protocol, hostname}) ->
+    urlmod.format {
+      hostname, 
+      protocol,
+      pathname : ".well-known/keybase.txt"
+    }
 
   # ---------------------------------------------------------------------------
 
-  _check_api_url : ({api_url,username}) ->
-    rxx = new RegExp("^https://gist.github(usercontent)?\\.com/#{username}/", "i")
-    return (api_url? and api_url.match(rxx));
+  hunt2 : ({hostname, protocol, signature}, cb) ->
+    url = @make_url { host, protocol }
+    out =
+      api_url : url
+      human_url : url
+      remote_id : host
+      rc : v_codes.OK
+    cb null, out
+
+  # ---------------------------------------------------------------------------
+
+  _check_api_url : ({api_url,host}) ->
+    return (api_url.toLowerCase().find(host.toLowerCase()) is 0)
 
   # ---------------------------------------------------------------------------
 

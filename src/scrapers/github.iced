@@ -13,15 +13,15 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  field_name : -> "username"
-
-  # ---------------------------------------------------------------------------
-
-  hunt2 : ({username, signature}, cb) ->
+  hunt2 : ({username, signature, name}, cb) ->
 
     # calls back with rc, out
     rc       = v_codes.OK
     out      = {}
+
+    if not(username?) or not(signature?) or not(name?) or (name isnt 'github')
+      cb new Error "invalid arguments; expected a username and signature"
+      return
 
     url = "https://api.github.com/users/#{username}/gists"
     await @_get_body url, true, defer err, rc, json

@@ -6,7 +6,7 @@ urlmod = require 'url'
 
 #================================================================================
 
-exports.WebSiteScraper = class WebSiteScraper extends BaseScraper
+exports.GenericWebSiteScraper = class GenericWebSiteScraper extends BaseScraper
 
   constructor: (opts) ->
     super opts

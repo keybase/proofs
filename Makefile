@@ -22,8 +22,8 @@ $(BUILD_STAMP): \
 	lib/auth.js \
 	lib/revoke.js \
 	lib/scrapers/base.js \
+	lib/scrapers/generic_web_site.js \
 	lib/scrapers/github.js \
-        lib/scrapers/https.js \
 	lib/scrapers/twitter.js
 	date > $@
 

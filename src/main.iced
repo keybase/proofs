@@ -10,6 +10,7 @@ mods = [
   require('./revoke')
   require('./scrapers/twitter')
   require('./scrapers/github')
+  require('./scrapers/generic_web_site')
 ]
 
 for m in mods

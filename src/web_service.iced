@@ -65,7 +65,7 @@ class GenericWebSiteBinding extends WebServiceBinding
 
   _service_obj_check : (x) ->
     so = @service_obj()
-    return x? and and so? and cieq(so.procotol, x.protocol) and cieq(so.hostname, x.hostname)
+    return x? and so? and cieq(so.procotol, x.protocol) and cieq(so.hostname, x.hostname)
 
   service_obj     : () -> @remote_host
   is_remote_proof : () -> true

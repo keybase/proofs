@@ -16,6 +16,17 @@ exports.GenericWebSiteScraper = class GenericWebSiteScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
+  _check_args : (args) ->
+    if not (args.hostname?)
+      new Error "Bad args to generic website proof: no hostname given"
+    else if not (args.protocol?)
+      new Error "Not protocol given"
+    else if not(args.protocol in [ 'https:', 'http' ] )
+      new Error "Unknown protocol given: #{args.protocol}"
+    else
+      null
+  # ---------------------------------------------------------------------------
+
   make_url : ({protocol, hostname}) ->
     urlmod.format {
       hostname, 
@@ -41,7 +52,7 @@ exports.GenericWebSiteScraper = class GenericWebSiteScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   _check_api_url : ({api_url,hostname,protocol}) ->
-    return (api_url.toLowerCase().find(host.toLowerCase()) is 0)
+    return (api_url.toLowerCase().indexOf(@make_url {hostname, protocol}) >= 0)
 
   # ---------------------------------------------------------------------------
 

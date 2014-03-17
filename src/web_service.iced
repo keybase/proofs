@@ -48,9 +48,13 @@ class SocialNetworkBinding extends WebServiceBinding
   normalize_name : () ->
     SocialNetworkBinding.normalize @user.remote
 
+  check_inputs : () -> 
+    if (@check_name(@user.name)) then null
+    else new Error "Bad remote_username given"
+
 #==========================================================================
 
-cieq = (a,b) -> (a.toLowerCase() is b.toLowerCase())
+cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase()))
 
 class GenericWebSiteBinding extends WebServiceBinding
 
@@ -72,18 +76,23 @@ class GenericWebSiteBinding extends WebServiceBinding
     if (o = GenericWebSiteBinding.parse(s))? then GenericWebSiteBinding.to_string(o) else null
 
   @check_name : (h) -> GenericWebSiteBinding.parse(h)?
+  check_name : (n) -> @parse(n)?
 
   parse : (h) -> GenericWebSiteBinding.parse h
   to_string : () -> GenericWebSiteBinding.to_string @remote_host
 
   _service_obj_check : (x) ->
     so = @service_obj()
-    return x? and so? and cieq(so.procotol, x.protocol) and cieq(so.hostname, x.hostname)
+    return x? and so? and cieq(so.protocol, x.protocol) and cieq(so.hostname, x.hostname)
 
   service_obj     : () -> @remote_host
   is_remote_proof : () -> true
   proof_type      : () -> constants.proof_types.generic_web_site
   @name_hint       : () -> "a valid URL prefix, like https://foo.com"
+
+  check_inputs : () ->
+    if @remote_host? then null
+    else new Error "Bad remote_host given"
 
 #==========================================================================
 
@@ -97,6 +106,8 @@ class TwitterBinding extends SocialNetworkBinding
     else if n.match /^@?[a-z0-9_]{1,15}$/ then true
     else false
     return ret
+
+  check_name : (n) -> TwitterBinding.check_name(n)
 
   @name_hint : () -> "alphanumerics, between 1 and 15 characters long"
 
@@ -121,6 +132,7 @@ class GithubBinding extends SocialNetworkBinding
     else false
 
   @name_hint : () -> "alphanumerics, between 1 and 39 characters long"
+  check_name : (n) -> GithubBinding.check_name(n)
 
 #==========================================================================
 

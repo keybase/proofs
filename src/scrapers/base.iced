@@ -24,15 +24,14 @@ class BaseScraper
   validate : (args, cb) ->
     err = null
     rc = null
-    if not @_check_args args
-      err = new Error "bad arguments to proof"
+    if (err = @_check_args(args)) then # noop
     else if not @_check_api_url args
       err = new Error "check url failed for #{JSON.stringify args}"
     else
       err = @_validate_text_check args
     unless err?
-      await @check_status args, defer err, rc, display
-    cb err, rc, display
+      await @check_status args, defer err, rc
+    cb err, rc
 
   #-------------------------------------------------------------
 

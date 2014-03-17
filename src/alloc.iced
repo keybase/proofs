@@ -12,7 +12,7 @@ get_klass = (type) ->
     when "web_service_binding.twitter" then web_service.TwitterBinding
     when "web_service_binding.github"  then web_service.GithubBinding
     when "web_service_binding.keybase" then web_service.KeybaseBinding
-    when "web_service.generic"         then web_service.GenericWebSiteBinding
+    when "web_service_binding.generic" then web_service.GenericWebSiteBinding
     when "track"                       then Track
     when "untrack"                     then Untrack
     when "auth"                        then Auth

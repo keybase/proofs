@@ -8,6 +8,9 @@ urlmod = require 'url'
 
 exports.GenericWebSiteScraper = class GenericWebSiteScraper extends BaseScraper
 
+  @FILE : ".well-known/keybase.txt"
+  FILE : GenericWebSiteScraper.FILE
+
   constructor: (opts) ->
     super opts
 
@@ -17,7 +20,7 @@ exports.GenericWebSiteScraper = class GenericWebSiteScraper extends BaseScraper
     urlmod.format {
       hostname, 
       protocol,
-      pathname : ".well-known/keybase.txt"
+      pathname : @FILE
     }
 
   # ---------------------------------------------------------------------------

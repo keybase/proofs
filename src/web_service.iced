@@ -31,7 +31,7 @@ class WebServiceBinding extends Base
 
 #==========================================================================
 
-class RemoteBinding extends WebServiceBinding
+class SocialNetworkBinding extends WebServiceBinding
 
   _service_obj_check : (x) ->
     so = @service_obj()
@@ -42,7 +42,25 @@ class RemoteBinding extends WebServiceBinding
 
 #==========================================================================
 
-class TwitterBinding extends RemoteBinding
+cieq = (a,b) -> (a.toLowerCase() is b.toLowerCase())
+
+class GenericWebSiteBinding extends WebServiceBinding
+
+  constructor : (args) ->
+    @remote_host = args.remote_host
+    super args
+
+  _service_obj_check : (x) ->
+    so = @service_obj()
+    return x? and cieq(so.procotol, x.protocol) and cieq(so.hostname, x.hostname)
+
+  service_obj     : () -> @remote_host
+  is_remote_proof : () -> true
+  proof_type      : () -> constants.proof_types.generic_web_site
+
+#==========================================================================
+
+class TwitterBinding extends SocialNetworkBinding
 
   service_name : -> "twitter"
   proof_type   : -> constants.proof_types.twitter
@@ -58,7 +76,7 @@ class KeybaseBinding extends WebServiceBinding
 
 #==========================================================================
 
-class GithubBinding extends RemoteBinding
+class GithubBinding extends SocialNetworkBinding
   service_name : -> "github"
   proof_type   : -> constants.proof_types.github
 

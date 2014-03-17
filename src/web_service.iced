@@ -49,8 +49,8 @@ class SocialNetworkBinding extends WebServiceBinding
     SocialNetworkBinding.normalize @user.remote
 
   check_inputs : () -> 
-    if (@check_name(@user.name)) then null
-    else new Error "Bad remote_username given"
+    if (@check_name(@user.remote)) then null
+    else new Error "Bad remote_username given: #{@user.remote}"
 
 #==========================================================================
 
@@ -103,7 +103,7 @@ class TwitterBinding extends SocialNetworkBinding
 
   @check_name : (n) ->
     ret = if not n? or not (n = n.toLowerCase())? then false
-    else if n.match /^@?[a-z0-9_]{1,15}$/ then true
+    else if n.match /^[a-z0-9_]{1,15}$/ then true
     else false
     return ret
 
@@ -128,7 +128,7 @@ class GithubBinding extends SocialNetworkBinding
 
   @check_name : (n) ->
     if not n? or not (n = n.toLowerCase())? then false
-    else if n.match /^@?[a-z0-9][a-z0-9-]{0,38}$/ then true
+    else if n.match /^[a-z0-9][a-z0-9-]{0,38}$/ then true
     else false
 
   @name_hint : () -> "alphanumerics, between 1 and 39 characters long"

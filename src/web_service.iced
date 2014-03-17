@@ -60,7 +60,7 @@ class GenericWebSiteBinding extends WebServiceBinding
 
   @parse : (h) ->
     ret = null
-    if h? and (h = h.toLowerCase())? and (o = urlmod.parse(h))?
+    if h? and (h = h.toLowerCase())? and (o = urlmod.parse(h))? and o.protocol? and o.hostname?
       ret = { protocol : o.protocol, hostname : o.hostname }
     return ret
 
@@ -80,6 +80,7 @@ class GenericWebSiteBinding extends WebServiceBinding
   service_obj     : () -> @remote_host
   is_remote_proof : () -> true
   proof_type      : () -> constants.proof_types.generic_web_site
+  name_hint       : () -> "a valid URL prefix, like https://foo.com"
 
 #==========================================================================
 
@@ -90,8 +91,10 @@ class TwitterBinding extends SocialNetworkBinding
 
   check_name : (n) ->
     if not n? or not (n = n.toLowerCase())? then false
-    else if n.match /^[a-z0-9_]{1,15}$/ then true
+    else if n.match /^@?[a-z0-9_]{1,15}$/ then true
     else false
+
+  name_hint : () -> "alphanumerics, between 1 and 15 characters long"
 
 #==========================================================================
 
@@ -110,8 +113,10 @@ class GithubBinding extends SocialNetworkBinding
 
   check_name : (n) ->
     if not n? or not (n = n.toLowerCase())? then false
-    else if n.match /^[a-z0-9][a-z0-9-]{0,38}$/ then true
+    else if n.match /^@?[a-z0-9][a-z0-9-]{0,38}$/ then true
     else false
+
+  name_hint : () -> "alphanumerics, between 1 and 39 characters long"
 
 #==========================================================================
 

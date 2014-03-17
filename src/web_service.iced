@@ -1,5 +1,6 @@
 {Base} = require './base'
 {constants} = require './constants'
+urlmod = require 'url'
 
 #==========================================================================
 
@@ -47,12 +48,24 @@ cieq = (a,b) -> (a.toLowerCase() is b.toLowerCase())
 class GenericWebSiteBinding extends WebServiceBinding
 
   constructor : (args) ->
-    @remote_host = args.remote_host
+    @remote_host = @parse args.remote_host
     super args
+
+  @parse : (h) ->
+    ret = null
+    if h? and (h = h.toLowerCase())? and (o = urlmod.parse(h))?
+      ret = { protocol : o.protocol, hostname : o.hostname }
+    return ret
+
+  @to_string : (o) ->
+    [ o.protocol, o.hostname ].join '://'
+
+  parse : (h) -> GenericWebSiteBinding.parse h
+  to_string : () -> GenericWebSiteBinding.to_string @remote_host
 
   _service_obj_check : (x) ->
     so = @service_obj()
-    return x? and cieq(so.procotol, x.protocol) and cieq(so.hostname, x.hostname)
+    return x? and and so? and cieq(so.procotol, x.protocol) and cieq(so.hostname, x.hostname)
 
   service_obj     : () -> @remote_host
   is_remote_proof : () -> true
@@ -85,5 +98,6 @@ class GithubBinding extends SocialNetworkBinding
 exports.TwitterBinding = TwitterBinding
 exports.KeybaseBinding = KeybaseBinding
 exports.GithubBinding = GithubBinding
+exports.GenericWebSiteBinding = GenericWebSiteBinding
 
 #==========================================================================

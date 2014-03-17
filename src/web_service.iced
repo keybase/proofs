@@ -41,6 +41,13 @@ class SocialNetworkBinding extends WebServiceBinding
   service_obj  : -> { name : @service_name(), username : @user.remote }
   is_remote_proof : () -> true
 
+  @normalize_name : (n) ->
+    n = n.toLowerCase()
+    if n[0] is '@' then n[1...] else n
+
+  normalize_name : () ->
+    SocialNetworkBinding.normalize @user.remote
+
 #==========================================================================
 
 cieq = (a,b) -> (a.toLowerCase() is b.toLowerCase())
@@ -60,6 +67,9 @@ class GenericWebSiteBinding extends WebServiceBinding
   @to_string : (o) ->
     [ o.protocol, o.hostname ].join '://'
 
+  @normalize_name : (s) ->
+    if (o = GenericWebSiteBinding.parse(s))? then GenericWebSiteBinding.to_string(o) else null
+
   parse : (h) -> GenericWebSiteBinding.parse h
   to_string : () -> GenericWebSiteBinding.to_string @remote_host
 
@@ -78,6 +88,11 @@ class TwitterBinding extends SocialNetworkBinding
   service_name : -> "twitter"
   proof_type   : -> constants.proof_types.twitter
 
+  check_name : (n) ->
+    if not n? or not (n = n.toLowerCase())? then false
+    else if n.match /^[a-z0-9_]{1,15}$/ then true
+    else false
+
 #==========================================================================
 
 class KeybaseBinding extends WebServiceBinding
@@ -92,6 +107,11 @@ class KeybaseBinding extends WebServiceBinding
 class GithubBinding extends SocialNetworkBinding
   service_name : -> "github"
   proof_type   : -> constants.proof_types.github
+
+  check_name : (n) ->
+    if not n? or not (n = n.toLowerCase())? then false
+    else if n.match /^[a-z0-9][a-z0-9-]{0,38}$/ then true
+    else false
 
 #==========================================================================
 

@@ -60,17 +60,18 @@ class GenericWebSiteBinding extends WebServiceBinding
 
   @parse : (h) ->
     ret = null
-    if h? and (h = h.toLowerCase())? and (o = urlmod.parse(h))? and o.protocol? and o.hostname?
+    if h? and (h = h.toLowerCase())? and (o = urlmod.parse(h))? and 
+        o.protocol? and o.hostname? and (not(o.path?) or (o.path is '/'))
       ret = { protocol : o.protocol, hostname : o.hostname }
     return ret
 
   @to_string : (o) ->
-    [ o.protocol, o.hostname ].join '://'
+    [ o.protocol, o.hostname ].join '//'
 
   @normalize_name : (s) ->
     if (o = GenericWebSiteBinding.parse(s))? then GenericWebSiteBinding.to_string(o) else null
 
-  @check_name : (h) -> (@parse(h))?
+  @check_name : (h) -> GenericWebSiteBinding.parse(h)?
 
   parse : (h) -> GenericWebSiteBinding.parse h
   to_string : () -> GenericWebSiteBinding.to_string @remote_host

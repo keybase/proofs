@@ -21,7 +21,7 @@ exports.GenericWebSiteScraper = class GenericWebSiteScraper extends BaseScraper
       new Error "Bad args to generic website proof: no hostname given"
     else if not (args.protocol?)
       new Error "Not protocol given"
-    else if not(args.protocol in [ 'https:', 'http' ] )
+    else if not(args.protocol in [ 'https:', 'http:' ] )
       new Error "Unknown protocol given: #{args.protocol}"
     else
       null

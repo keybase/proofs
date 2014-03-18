@@ -68,7 +68,7 @@ class GenericWebSiteBinding extends WebServiceBinding
   @parse : (h) ->
     ret = null
     if h? and (h = h.toLowerCase())? and (o = urlmod.parse(h))? and 
-        o.protocol? and o.hostname? and (not(o.path?) or (o.path is '/'))
+        o.protocol? and o.hostname? and (not(o.path?) or (o.path is '/')) and not(o.port?)
       ret = { protocol : o.protocol, hostname : o.hostname }
     return ret
 

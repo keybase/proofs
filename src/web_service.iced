@@ -41,6 +41,9 @@ class SocialNetworkBinding extends WebServiceBinding
   service_obj  : -> { name : @service_name(), username : @user.remote }
   is_remote_proof : () -> true
 
+  @single_occupancy : () -> true
+  single_occupancy  : () -> SocialNetworkBinding.single_occupancy()
+
   @normalize_name : (n) ->
     n = n.toLowerCase()
     if n[0] is '@' then n[1...] else n
@@ -77,6 +80,9 @@ class GenericWebSiteBinding extends WebServiceBinding
 
   @check_name : (h) -> GenericWebSiteBinding.parse(h)?
   check_name : (n) -> @parse(n)?
+
+  @single_occupancy : () -> false
+  single_occupancy  : () -> GenericWebSiteBinding.single_occupancy()
 
   parse : (h) -> GenericWebSiteBinding.parse h
   to_string : () -> GenericWebSiteBinding.to_string @remote_host

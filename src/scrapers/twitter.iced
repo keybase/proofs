@@ -6,6 +6,15 @@
 
 #================================================================================
 
+sncmp = (a,b) ->
+  if not a? or not b? then false
+  else
+    a = ("" + a).toLowerCase()
+    b = ("" + b).toLowerCase()
+    (a is b)
+
+#================================================================================
+
 exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   constructor: (opts) ->
@@ -46,7 +55,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
         rc = v_codes.NOT_FOUND
         for stream_item,i in stream
           item = $(stream_item)
-          if (item.data('screenName')?.toLowerCase() is username.toLowerCase()) and item.data('tweetId')?
+          if sncmp(item.data('screenName'), username) and item.data('tweetId')?
             p = item.find 'p.tweet-text'
             if (@find_sig_in_tweet { tweet_p : p.first(), signature }) is v_codes.OK
               @log "| found valid tweet in stream @ #{i}"
@@ -117,7 +126,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
         # in case twitter printed other tweets into the page
         # inside this container
         #
-        rc = if (username.toLowerCase() isnt div.data('screenName')?.toLowerCase()) then v_codes.BAD_USERNAME
+        rc = if not(sncmp(username, div.data('screenName'))) then v_codes.BAD_USERNAME
         else if (("" + remote_id) isnt ("" + div.data('tweetId'))) then v_codes.BAD_REMOTE_ID
         else if not (p = div.find('p.tweet-text'))? or not p.length then v_codes.MISSING
         else @find_sig_in_tweet { tweet_p : p.first(), signature }

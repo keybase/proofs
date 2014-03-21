@@ -1,3 +1,9 @@
+## 0.0.9 (2014-03-21)
+
+Bugfixes:
+ 
+  - Handle twitter usernames that are numbers
+
 ## 0.0.8 (2014-03-11)
 
 Features:

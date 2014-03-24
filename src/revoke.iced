@@ -15,7 +15,6 @@ exports.Revoke = class Revoke extends Base
   _json : () -> 
     ret = super {}
     ret.body.revoke = @revoke
-    util = require 'util'
     ret
 
   _v_check : ({json}, cb) ->

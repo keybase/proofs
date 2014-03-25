@@ -94,7 +94,7 @@ class GenericWebSiteBinding extends WebServiceBinding
   service_obj     : () -> @remote_host
   is_remote_proof : () -> true
   proof_type      : () -> constants.proof_types.generic_web_site
-  @name_hint       : () -> "a valid URL prefix, like https://foo.com"
+  @name_hint       : () -> "a valid URL, without a path, like https://foo.com"
 
   check_inputs : () ->
     if @remote_host? then null

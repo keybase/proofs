@@ -85,15 +85,6 @@ class GenericWebSiteBinding extends WebServiceBinding
   @check_name : (h) -> GenericWebSiteBinding.parse(h)?
   check_name : (n) -> @parse(n)?
 
-  # When input is taken from the client or the Web site, we can assume a protocol
-  # if none was given...
-  @check_input : (i) -> 
-    i = "https://#{i}" if not i.match /[a-z0-9]+:\/\//
-    GenericWebSiteBinding.parse(i)?
-
-  check_input : (i) -> GenericWebSiteBinding.check_input(i)
-
-
   @single_occupancy : () -> false
   single_occupancy  : () -> GenericWebSiteBinding.single_occupancy()
 

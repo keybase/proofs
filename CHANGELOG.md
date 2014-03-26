@@ -1,3 +1,9 @@
+## 0.0.9 (2014-03-26)
+
+Features:
+
+  - Prove you own a website
+
 ## 0.0.8 (2014-03-11)
 
 Features:

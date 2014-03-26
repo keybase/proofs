@@ -104,6 +104,12 @@ class GenericWebSiteBinding extends WebServiceBinding
     if @remote_host? then null
     else new Error "Bad remote_host given"
 
+  check_existing : (proofs) ->
+    for {check_data_json} in proofs.generic_web_site
+      if cieq(GenericWebSiteBinding.to_string(check_data_json), @to_string())
+        return new Error "A live proof for #{@to_string()} already exists"
+    return null
+
 #==========================================================================
 
 class TwitterBinding extends SocialNetworkBinding

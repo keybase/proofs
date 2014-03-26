@@ -1,7 +1,13 @@
-## 0.0.9 (2014-03-21)
+## 0.0.10 (2014-03-26)
+
+Features:
+ 
+  - Prove you own a website
+
+## 0.0.9 (2014-03-26)
 
 Bugfixes:
- 
+
   - Handle twitter usernames that are numbers
 
 ## 0.0.8 (2014-03-11)

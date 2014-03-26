@@ -8,10 +8,11 @@ class BaseScraper
   constructor : ({@libs, log_level, @proxy, @ca}) ->
     @log_level = log_level or "debug"
 
-  hunt : (username, signature, cb) -> hunt2 { username, signature }, cb
+  hunt : (username, proof_check_text, cb) -> hunt2 { username, proof_check_text }, cb
   hunt2 : (args, cb) -> cb new Error "unimplemented"
   id_to_url : (username, status_id) ->
   check_status : ({username, url, signature, status_id}, cb) -> 
+  _check_args : () -> new Error "unimplemented"
 
   #-------------------------------------------------------------
 
@@ -20,20 +21,16 @@ class BaseScraper
 
   #-------------------------------------------------------------
 
-  validate : ({api_url, username, signature, proof_text_check, remote_id} , cb) -> 
+  validate : (args, cb) ->
     err = null
     rc = null
-    if not @_check_api_url { api_url, username }
-      err = new Error "check url failed for #{api_url}, #{username}"
+    if (err = @_check_args(args)) then # noop
+    else if not @_check_api_url args
+      err = new Error "check url failed for #{JSON.stringify args}"
     else
-      err = @_validate_text_check  { signature, proof_text_check }
+      err = @_validate_text_check args
     unless err?
-      await @check_status { 
-        signature : proof_text_check,
-        username,
-        api_url,
-        remote_id
-      }, defer err, rc
+      await @check_status args, defer err, rc
     cb err, rc
 
   #-------------------------------------------------------------

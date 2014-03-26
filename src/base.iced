@@ -207,6 +207,15 @@ class Base
   
   km : () -> @sig_eng.get_km()
 
+  #-------
+
+  check_inputs : () -> null
+  
+  #-------
+  
+  # Check this proof against the existing proofs
+  check_existing : () -> null
+
 #==========================================================================
 
 exports.Base = Base

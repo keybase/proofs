@@ -48,8 +48,10 @@ class SocialNetworkBinding extends WebServiceBinding
     n = n.toLowerCase()
     if n[0] is '@' then n[1...] else n
 
-  normalize_name : () ->
-    SocialNetworkBinding.normalize @user.remote
+  normalize_name : (n) ->
+    n or= @user.remote
+    if @check_name(n) then SocialNetworkBinding.normalize_name n
+    else null
 
   check_inputs : () -> 
     if (@check_name(@user.remote)) then null
@@ -65,11 +67,13 @@ class GenericWebSiteBinding extends WebServiceBinding
     @remote_host = @parse args.remote_host
     super args
 
-  @parse : (h) ->
+  @parse : (h, opts = {}) ->
     ret = null
     if h? and (h = h.toLowerCase())? and (o = urlmod.parse(h))? and 
-        o.protocol? and o.hostname? and (not(o.path?) or (o.path is '/')) and not(o.port?)
-      ret = { protocol : o.protocol, hostname : o.hostname }
+        o.hostname? and (not(o.path?) or (o.path is '/')) and not(o.port?)
+      protocol = o.protocol or opts.protocol
+      if protocol?
+        ret = { protocol, hostname : o.hostname }
     return ret
 
   @to_string : (o) ->
@@ -80,6 +84,15 @@ class GenericWebSiteBinding extends WebServiceBinding
 
   @check_name : (h) -> GenericWebSiteBinding.parse(h)?
   check_name : (n) -> @parse(n)?
+
+  # When input is taken from the client or the Web site, we can assume a protocol
+  # if none was given...
+  @check_input : (i) -> 
+    i = "https://#{i}" if not i.match /[a-z0-9]+:\/\//
+    GenericWebSiteBinding.parse(i)?
+
+  check_input : (i) -> GenericWebSiteBinding.check_input(i)
+
 
   @single_occupancy : () -> false
   single_occupancy  : () -> GenericWebSiteBinding.single_occupancy()
@@ -94,7 +107,7 @@ class GenericWebSiteBinding extends WebServiceBinding
   service_obj     : () -> @remote_host
   is_remote_proof : () -> true
   proof_type      : () -> constants.proof_types.generic_web_site
-  @name_hint       : () -> "a valid URL, without a path, like https://foo.com"
+  @name_hint       : () -> "a valid hostname, like `my.site.com`"
 
   check_inputs : () ->
     if @remote_host? then null

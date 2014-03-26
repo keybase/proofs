@@ -105,9 +105,10 @@ class GenericWebSiteBinding extends WebServiceBinding
     else new Error "Bad remote_host given"
 
   check_existing : (proofs) ->
-    for {check_data_json} in proofs.generic_web_site
-      if cieq(GenericWebSiteBinding.to_string(check_data_json), @to_string())
-        return new Error "A live proof for #{@to_string()} already exists"
+    if (v = proofs.generic_web_site?.length)
+      for {check_data_json} in v
+        if cieq(GenericWebSiteBinding.to_string(check_data_json), @to_string())
+          return new Error "A live proof for #{@to_string()} already exists"
     return null
 
 #==========================================================================

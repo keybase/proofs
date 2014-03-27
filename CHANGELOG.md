@@ -1,3 +1,10 @@
+## 0.0.11 (2014-03-27)
+
+Features:
+
+  - Extra safety check for IDNs; if node's url module breaks, we'll throw an error
+  - New 'resource_id()' for remote key proof objects.
+
 ## 0.0.10 (2014-03-26)
 
 Features:

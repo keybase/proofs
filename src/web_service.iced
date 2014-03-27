@@ -19,6 +19,13 @@ class WebServiceBinding extends Base
 
   #---------------
 
+  # For Twitter, Github, etc, this will be empty.  For non-signle-occupants,
+  # it will be the unique id for the resource, like https://keybase.io/ for 
+  # Web services.
+  resource_id : () -> ""
+
+  #---------------
+
   _type : () -> constants.sig_types.web_service_binding
 
   #---------------
@@ -61,6 +68,18 @@ class SocialNetworkBinding extends WebServiceBinding
 
 cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase()))
 
+#----------
+
+# A last-minute sanity check of the URL module
+has_non_ascii = (s) ->
+  buf = new Buffer s, 'utf8'
+  for i in [0...buf.length]
+    if buf.readUint8(i) >= 128
+      return true
+  return false
+
+#----------
+
 class GenericWebSiteBinding extends WebServiceBinding
 
   constructor : (args) ->
@@ -74,10 +93,14 @@ class GenericWebSiteBinding extends WebServiceBinding
       protocol = o.protocol or opts.protocol
       if protocol?
         ret = { protocol, hostname : o.hostname }
+        n = GenericWebSiteBinding.to_string(ret)
+        if has_non_ascii(ret)
+          console.error "Bug in urlmod found: found non-ascii in URL: #{ret}"
+          ret = null
     return ret
 
   @to_string : (o) ->
-    [ o.protocol, o.hostname ].join '//'
+    ([ o.protocol, o.hostname ].join '//').toLowerCase()
 
   @normalize_name : (s) ->
     if (o = GenericWebSiteBinding.parse(s))? then GenericWebSiteBinding.to_string(o) else null
@@ -87,6 +110,8 @@ class GenericWebSiteBinding extends WebServiceBinding
 
   @single_occupancy : () -> false
   single_occupancy  : () -> GenericWebSiteBinding.single_occupancy()
+
+  resource_id : () -> @to_string()
 
   parse : (h) -> GenericWebSiteBinding.parse h
   to_string : () -> GenericWebSiteBinding.to_string @remote_host

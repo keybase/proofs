@@ -34,6 +34,10 @@ make_ids = (sig_body) ->
 sig_id_to_short_id = (sig_id) ->
   base64u.encode sig_id[0...constants.short_id_bytes]
 
+#------
+
+exports.cieq = cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase()))
+
 #==========================================================================
 
 class Verifier 
@@ -120,7 +124,7 @@ class Base
   #------
 
   _v_check : ({json}, cb) -> 
-    err = if (a = json?.body?.key?.username) isnt (b = @user.local.username)
+    err = if not cieq (a = json?.body?.key?.username), (b = @user.local.username)
       new Error "Wrong local user: got '#{a}' but wanted '#{b}'"
     else if (a = json?.body?.key?.uid) isnt (b = @user.local.uid)
       new Error "Wrong local uid: got '#{a}' but wanted '#{b}'"
@@ -132,7 +136,7 @@ class Base
       new Error "Needed a body.key.fingerprint but none given"
     else if not bufeq_secure @km().get_pgp_fingerprint(), (new Buffer fp, "hex")
       new Error "Verifiation key doesn't match packet (via fingerprint)"
-    else if (a = json?.body?.key?.host) isnt (b = @host)
+    else if not cieq (a = json?.body?.key?.host), (b = @host)
       new Error "Wrong host: got '#{a}' but wanted '#{b}'"
     else if (a = json?.body?.type) isnt (b = @_type())
       new Error "Wrong signature type; got '#{a}' but wanted '#{b}'"

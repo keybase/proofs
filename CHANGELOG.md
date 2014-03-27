@@ -1,3 +1,9 @@
+## 0.0.13 (2014-03-27)
+
+Bugfixes:
+
+  - more case insensitivity
+
 ## 0.0.12 (2014-03-27)
 
 Bugfixes:

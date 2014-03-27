@@ -1,10 +1,9 @@
-{Base} = require './base'
+{cieq,Base} = require './base'
 {constants} = require './constants'
 urlmod = require 'url'
 
 #==========================================================================
 
-cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase()))
 
 #==========================================================================
 

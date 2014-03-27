@@ -4,6 +4,10 @@ urlmod = require 'url'
 
 #==========================================================================
 
+cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase()))
+
+#==========================================================================
+
 class WebServiceBinding extends Base
 
   #------
@@ -43,7 +47,7 @@ class SocialNetworkBinding extends WebServiceBinding
 
   _service_obj_check : (x) ->
     so = @service_obj()
-    return (x? and (so.username is x.username) and (so.name is x.name))
+    return (x? and cieq(so.username, x.username) and cieq(so.name, x.name))
 
   service_obj  : -> { name : @service_name(), username : @user.remote }
   is_remote_proof : () -> true
@@ -66,7 +70,6 @@ class SocialNetworkBinding extends WebServiceBinding
 
 #==========================================================================
 
-cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase()))
 
 #----------
 

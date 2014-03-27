@@ -1,3 +1,9 @@
+## 0.0.12 (2014-03-27)
+
+Bugfixes:
+
+  - Case-insensitive username checks
+
 ## 0.0.11 (2014-03-27)
 
 Features:

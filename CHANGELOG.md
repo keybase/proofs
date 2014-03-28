@@ -1,3 +1,10 @@
+## 0.0.14 (2014-03-28)
+
+Bugfixes:
+
+  - Ignore DOS "\r"s in Website and Github proofs
+  - Do a better "existing" check for Websites, which was broken.
+
 ## 0.0.13 (2014-03-27)
 
 Bugfixes:

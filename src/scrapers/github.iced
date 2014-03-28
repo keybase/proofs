@@ -71,7 +71,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
       else
         rc = v_codes.NOT_FOUND
         for filename, file of json.files when (content = file.content)?
-          if (id = content.indexOf(proof_text_check)) >= 0
+          if (id = @_stripr(content).indexOf(proof_text_check)) >= 0
             @log "| search #{filename} -> found"
             rc = v_codes.OK
             out = 

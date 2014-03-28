@@ -35,6 +35,11 @@ class BaseScraper
 
   #-------------------------------------------------------------
 
+  # Convert away from MS-dos style encoding...
+  _stripr : (m) -> m.split('\r').join('')
+
+  #-------------------------------------------------------------
+
   _get_url_body: (opts, cb) ->
     ###
       cb(err, body) only replies with body if status is 200

@@ -1,3 +1,9 @@
+## 0.0.15 (2014-03-29)
+
+*SECURITY BUGFIXES*
+
+  - Regression in last night's bugfix that let any proof go through in website proofs.
+
 ## 0.0.14 (2014-03-28)
 
 Bugfixes:

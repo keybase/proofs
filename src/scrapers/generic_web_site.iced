@@ -71,9 +71,9 @@ exports.GenericWebSiteScraper = class GenericWebSiteScraper extends BaseScraper
   check_status: ({protocol, hostname, api_url, proof_text_check}, cb) ->
     # calls back with a v_code or null if it was ok
     await @_get_url_body {url : api_url}, defer err, rc, raw
-    if rc isnt v_codes.OK                                  then rc
+    rc = if rc isnt v_codes.OK                             then rc
     else if (@_stripr(raw).indexOf(proof_text_check)) >= 0 then v_codes.OK
-    else                                                      v_codes.NOT_FOUND
+    else                                                        v_codes.NOT_FOUND
     cb err, rc
 
 #================================================================================

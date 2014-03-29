@@ -1,3 +1,11 @@
+## 0.0.16 (2014-03-29)
+
+Features:
+
+  - Add a new "generic_binding" type of proof/signature checker, which will happily
+    check username/key against any proof signed by that user, which contains the user's
+    username and UID.
+
 ## 0.0.15 (2014-03-29)
 
 *SECURITY BUGFIXES*

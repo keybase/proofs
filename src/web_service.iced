@@ -169,7 +169,7 @@ class DnsBinding extends WebServiceBinding
   @name_hint : () -> "A DNS domain name, like maxk.org"
 
   check_existing : (proofs) ->
-    if (v = proofs.dns?.length)
+    if (v = proofs.dns?)
       for {check_data_json} in v
         if cieq(GenericWebSiteBinding.to_string(check_data_json), @to_string())
           return new Error "A live proof for #{@to_string()} already exists"

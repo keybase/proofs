@@ -9,10 +9,6 @@ dns = require 'dns'
 
 #================================================================================
 
-exports.make_TXT_record = (z) -> "keybase-validate=#{z}"
-
-#================================================================================
-
 exports.DnsScraper = class DnsScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
@@ -58,21 +54,21 @@ exports.DnsScraper = class DnsScraper extends BaseScraper
     [err, msg] = decode signature
     if not err?
       {med_id} = make_ids msg.body
-      if proof_text_check isnt make_TXT_record(med_id)
+      if proof_text_check.indexOf(med_id) < 0
         err = new Error "Bad payload text_check"
     return err
 
   # ---------------------------------------------------------------------------
 
-  check_status: ({protocol, hostname, api_url, proof_text_check}, cb) ->
+  check_status: ({api_url, proof_text_check}, cb) ->
     # calls back with a v_code or null if it was ok
     d = url_to_domain(api_url)
     if d? then new Error "no domain found in URL #{api_url}"
     else
-      await dns.resolveTxt domain, defer err, records
-      if err?              then # noop
-      else if d in records then v_codes.OK
-      else                      v_codes.NOT_FOUND
+      await dns.resolveTxt d, defer err, records
+      if err?                               then # noop
+      else if (proof_text_check in records) then v_codes.OK
+      else                                       v_codes.NOT_FOUND
     cb err, rc
 
 #================================================================================

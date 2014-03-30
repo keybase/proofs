@@ -149,7 +149,7 @@ class DnsBinding extends WebServiceBinding
       if has_no_ascii(ret)
         console.error "Bug in urlmod found: non-ASCII in done name: #{ret}"
         ret = null
-    return read
+    return ret
 
   parse : (h) -> DnsBinding.parse(h)
   @to_string : (o) -> o.domain

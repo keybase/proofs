@@ -222,5 +222,6 @@ exports.TwitterBinding = TwitterBinding
 exports.KeybaseBinding = KeybaseBinding
 exports.GithubBinding = GithubBinding
 exports.GenericWebSiteBinding = GenericWebSiteBinding
+exports.DnsBinding = DnsBinding
 
 #==========================================================================

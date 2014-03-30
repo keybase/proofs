@@ -69,13 +69,13 @@ class SocialNetworkBinding extends WebServiceBinding
 has_non_ascii = (s) ->
   buf = new Buffer s, 'utf8'
   for i in [0...buf.length]
-    if buf.readUint8(i) >= 128
+    if buf.readUInt8(i) >= 128
       return true
   return false
 
 #----------
 
-class GenericWebSiteBinding extends NetServiceBinding
+class GenericWebSiteBinding extends WebServiceBinding
 
   constructor : (args) ->
     @remote_host = @parse args.remote_host
@@ -89,8 +89,8 @@ class GenericWebSiteBinding extends NetServiceBinding
       if protocol?
         ret = { protocol, hostname : o.hostname }
         n = GenericWebSiteBinding.to_string(ret)
-        if has_non_ascii(ret)
-          console.error "Bug in urlmod found: found non-ascii in URL: #{ret}"
+        if has_non_ascii(n)
+          console.error "Bug in urlmod found: found non-ascii in URL: #{n}"
           ret = null
     return ret
 
@@ -146,7 +146,7 @@ class DnsBinding extends WebServiceBinding
     if h? and (h = h.toLowerCase())? and (o = urlmod.parse(h))? and
         o.hostname? and (not(o.path?) or (o.path is '/')) and not(o.port?)
       ret = o.hostname
-      if has_no_ascii(ret)
+      if has_non_ascii(ret)
         console.error "Bug in urlmod found: non-ASCII in done name: #{ret}"
         ret = null
     return ret
@@ -158,12 +158,12 @@ class DnsBinding extends WebServiceBinding
   @single_occupancy : () -> false
   single_occupancy : () -> DnsBinding.single_occupancy()
   resource_id : () -> @to_string()
-  _service_obj_check : (x) -> cieq(x, @domain)
+  _service_obj_check : (x) -> x? and (so = @service_obj())? and cieq(x.domain, so.domain)
   service_name : -> "dns"
   proof_type : -> constants.proof_types.dns
   @check_name : (n) -> DnsBinding.parse(n)?
   check_name : (n) -> DnsBinding.check_name(n)
-  service_obj : () -> @domain
+  service_obj : () -> { @domain }
   is_remote_proof : () -> true
   check_inputs : () -> if @domain then null else new Error "Bad domain given"
   @name_hint : () -> "A DNS domain name, like maxk.org"

@@ -36,6 +36,7 @@ exports.constants = constants =
     FAILED_PARSE:      106
     HTTP_500:          150
     TIMEOUT:           160
+    DNS_ERROR :        170
 
     # Likely will result in a hard error, if repeated enough
     BASE_HARD_ERROR:   200

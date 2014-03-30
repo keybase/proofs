@@ -31,6 +31,7 @@ exports.DnsScraper = class DnsScraper extends BaseScraper
 
   hunt2 : ({domain}, cb) ->
     err = null
+    out = {}
     if not domain?
       err = new Error "invalid arguments: expected a domain"
     else 
@@ -45,7 +46,7 @@ exports.DnsScraper = class DnsScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   _check_api_url : ({api_url,domain}) ->
-    return (api_url.toLowerCase().indexOf(@make_domain {domain}) >= 0)
+    return (api_url.toLowerCase().indexOf(@make_url {domain}) >= 0)
 
   # ---------------------------------------------------------------------------
 
@@ -62,13 +63,18 @@ exports.DnsScraper = class DnsScraper extends BaseScraper
 
   check_status: ({api_url, proof_text_check}, cb) ->
     # calls back with a v_code or null if it was ok
-    d = url_to_domain(api_url)
-    if d? then new Error "no domain found in URL #{api_url}"
+    if not (d = @url_to_domain(api_url))?
+      err = new Error "no domain found in URL #{api_url}"
+      rc = v_codes.CONTENT_FAILURE
     else
       await dns.resolveTxt d, defer err, records
-      if err?                               then # noop
+      rc = if err?
+        @log "| DNS error: #{err}"
+        v_codes.DNS_ERROR
       else if (proof_text_check in records) then v_codes.OK
-      else                                       v_codes.NOT_FOUND
+      else
+        @log "| DNS failed; found TXT entries: #{JSON.stringify records}"
+        v_codes.NOT_FOUND
     cb err, rc
 
 #================================================================================

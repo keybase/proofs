@@ -158,8 +158,6 @@ class Base
   #------
 
   _json : ({expire_in}) ->
-    console.log "shit ass!"
-    console.log @client
     ret = { 
       seqno : @seqno
       prev : @prev

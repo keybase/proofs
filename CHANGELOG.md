@@ -1,3 +1,9 @@
+## 0.0.18 (2014-03-31)
+
+Bugfixes:
+
+  - Strip out debugging output
+
 ## 0.0.17 (2014-03-31)
 
 Features:

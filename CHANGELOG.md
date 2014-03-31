@@ -1,3 +1,9 @@
+## 0.0.17 (2014-03-31)
+
+Features:
+
+  - Include some client information in proofs
+
 ## 0.0.16 (2014-03-29)
 
 Features:

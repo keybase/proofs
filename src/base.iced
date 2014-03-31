@@ -119,7 +119,7 @@ class Base
 
   #------
 
-  constructor : ({@sig_eng, @seqno, @user, @host, @prev}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client}) ->
 
   #------
 
@@ -158,6 +158,8 @@ class Base
   #------
 
   _json : ({expire_in}) ->
+    console.log "shit ass!"
+    console.log @client
     ret = { 
       seqno : @seqno
       prev : @prev
@@ -174,6 +176,7 @@ class Base
           key_id : @km().get_pgp_key_id().toString('hex')
           fingerprint : @km().get_pgp_fingerprint().toString('hex')
     }
+    ret.body.client = @client if @client?
     return ret
 
   #------

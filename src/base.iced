@@ -1,4 +1,4 @@
-{constants} = require './constants'
+{proof_type_to_string,constants} = require './constants'
 pgp_utils = require('pgp-utils')
 {katch,akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u,streq_secure} = pgp_utils.util
 triplesec = require('triplesec')
@@ -120,6 +120,12 @@ class Base
   #------
 
   constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client}) ->
+
+  #------
+
+  proof_type_str : () ->
+    if (t = @proof_type())? then proof_type_to_string[t]
+    else null
 
   #------
 

@@ -1,3 +1,9 @@
+## 0.0.20 (2014-04-02)
+
+Features:
+
+  - Add the ability to sanity check the server's proof text
+
 ## 0.0.19 (2014-03-31)
 
 Features:

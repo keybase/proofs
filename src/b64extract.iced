@@ -1,11 +1,12 @@
+
 #-----------------------------------------------------------------
 #
 # Given a block of unstructure text, extra the longest base64 blocks we can find.
 # Return a list of them
 #
-exports.base64_extract = base64_extract = ({text, web}) -> 
+exports.base64_extract = base64_extract= (text) -> 
   # for either web64 or standard 64, here is our total alphabet
-  b64x = if web then /^[a-zA-Z0-9_-]+(=*)$/
+  b64x = /^[a-zA-Z0-9/+_-]+(=*)$/
   tokens = text.split /\s+/
   state = 0
   out = []

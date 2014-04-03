@@ -18,6 +18,7 @@ exports.constants = constants =
     github : 3
     generic_web_site : 1000
   expire_in : 60*60*24*365*5 # 5 years....
+  http_timeout : 15*1000 # give up after 15 seconds....
   short_id_bytes : 27
   shortest_pgp_signature : 100 # can't have a PGP signature shorter than this...
   
@@ -33,6 +34,7 @@ exports.constants = constants =
     PERMISSION_DENIED: 103 # Since the user might fix it
     FAILED_PARSE:      106
     HTTP_500:          150
+    TIMEOUT:           160
 
     # Likely will result in a hard error, if repeated enough
     BASE_HARD_ERROR:   200

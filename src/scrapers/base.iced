@@ -47,8 +47,11 @@ class BaseScraper
     body = null
     opts.proxy = @proxy if @proxy?
     opts.ca = @ca if @ca?
+    opts.timeout = constants.http_timeout unless opts.timeout?
     await @libs.request opts, defer err, response, body
-    rc = if err? then v_codes.HOST_UNREACHABLE
+    rc = if err? 
+      if err.code is 'ETIMEDOUT' then         v_codes.TIMEOUT
+      else                                    v_codes.HOST_UNREACHABLE
     else if (response.statusCode is 200) then v_codes.OK
     else if (response.statusCode >= 500) then v_codes.HTTP_500
     else if (response.statusCode >= 400) then v_codes.HTTP_400

@@ -1,3 +1,9 @@
+## 0.0.22 (2014-04-02)
+
+Bugfix:
+
+  - Be more careful about timeouts
+
 ## 0.0.21 (2014-04-02)
 
 Bugfix:

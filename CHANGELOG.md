@@ -1,3 +1,9 @@
+## 0.0.23
+
+Bugfix:
+
+  - Ensure that ctime and expire_in both exist.
+
 ## 0.0.22 (2014-04-02)
 
 Bugfix:

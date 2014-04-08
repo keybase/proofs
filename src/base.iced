@@ -33,6 +33,10 @@ make_ids = (sig_body) ->
 
 #------
 
+sig_id_to_med_id = (sig_id) -> base64u.encode sig_id
+
+#------
+
 sig_id_to_short_id = (sig_id) ->
   base64u.encode sig_id[0...constants.short_id_bytes]
 
@@ -277,6 +281,7 @@ class GenericBinding extends Base
 exports.Base = Base
 exports.GenericBinding = GenericBinding
 exports.sig_id_to_short_id = sig_id_to_short_id
+exports.sig_id_to_med_id = sig_id_to_med_id
 exports.make_ids = make_ids
 exports.add_ids = add_ids
 

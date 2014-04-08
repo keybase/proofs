@@ -21,7 +21,7 @@ add_ids = (sig_body, out) ->
   id = hash.toString('hex')
   short_id = sig_id_to_short_id hash
   out.id = id
-  out.med_id = base64u.encode hash
+  out.med_id = sig_id_to_med_id hash
   out.short_id = short_id
 
 #------

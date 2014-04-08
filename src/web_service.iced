@@ -158,12 +158,14 @@ class DnsBinding extends WebServiceBinding
   @single_occupancy : () -> false
   single_occupancy : () -> DnsBinding.single_occupancy()
   resource_id : () -> @to_string()
-  _service_obj_check : (x) -> x? and (so = @service_obj())? and cieq(x.domain, so.domain)
+  _service_obj_check : (x) ->
+    so = @service_obj()
+    return x? and so? and cieq(so.protocol, x.protocol) and cieq(so.domain, x.domain)
   service_name : -> "dns"
   proof_type : -> constants.proof_types.dns
   @check_name : (n) -> DnsBinding.parse(n)?
   check_name : (n) -> DnsBinding.check_name(n)
-  service_obj : () -> { @domain }
+  service_obj : () -> { protocol : "dns", @domain }
   is_remote_proof : () -> true
   check_inputs : () -> if @domain then null else new Error "Bad domain given"
   @name_hint : () -> "A DNS domain name, like maxk.org"

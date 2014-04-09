@@ -35,6 +35,7 @@ exports.constants = constants =
     FAILED_PARSE:      106
     HTTP_500:          150
     TIMEOUT:           160
+    AUTH_FAILED:       170
 
     # Likely will result in a hard error, if repeated enough
     BASE_HARD_ERROR:   200
@@ -45,6 +46,7 @@ exports.constants = constants =
     HTTP_300:          230
     HTTP_400:          240
     HTTP_OTHER:        260
+    EMPTY_JSON:        270
 
     # Hard final errors
     DELETED:           301

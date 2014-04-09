@@ -16,6 +16,11 @@ class BaseScraper
 
   #-------------------------------------------------------------
 
+  logl : (level, msg) ->
+    if (k = @libs.log)? then k[level](msg)
+
+  #-------------------------------------------------------------
+
   log : (msg) ->
     if (k = @libs.log)? and @log_level? then k[@log_level](msg)
 
@@ -48,6 +53,8 @@ class BaseScraper
     opts.proxy = @proxy if @proxy?
     opts.ca = @ca if @ca?
     opts.timeout = constants.http_timeout unless opts.timeout?
+    opts.headers or= {}
+    opts.headers["User-Agent"] = constants.user_agent
     await @libs.request opts, defer err, response, body
     rc = if err? 
       if err.code is 'ETIMEDOUT' then         v_codes.TIMEOUT

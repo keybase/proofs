@@ -3,6 +3,7 @@
 {constants} = require '../constants'
 {v_codes} = constants
 {decode} = require('pgp-utils').armor
+{Lock} = require('iced-utils').lock
 
 #================================================================================
 
@@ -15,9 +16,48 @@ sncmp = (a,b) ->
 
 #================================================================================
 
+class BearerToken
+  constructor : ({@lib, @auth}) ->
+    @_tok = null
+    @_created = 0
+    @_lock = new Lock()
+
+  get : (cb) ->
+    await @_lock.acquire defer()
+    err = null
+    now = Math.floor(Date.now() / 1000)
+    if (res = @_tok) is null or now - @_created > @auth.lifespan
+
+      # Very crypto!  Not sure why this is done, but it's done
+      cred = (new Buffer [ @auth.key, @auth.secret].join(":")).toString('base64')
+
+      opts = 
+        url : "https://api.twitter.com/oauth2/token"
+        headers : 
+          Authentication : "Basic: #{cred}"
+        body :
+        method : "POST"
+        constants : constants.http_timeout
+      await @lib.request
+
+    @_lock.release()
+    cb err, res
+
+#================================================================================
+
+_bearer_token = null
+
+bearer_token = ({lib, auth}) ->
+  unless _bearer_token
+    _bearer_token = new BearerToken { lib, auth }
+  return _bearer_token
+
+#================================================================================
+
 exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   constructor: (opts) ->
+    @auth = opts.auth
     super opts
 
   # ---------------------------------------------------------------------------
@@ -144,5 +184,21 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
         else @find_sig_in_tweet { tweet_p : p.first(), proof_text_check }
 
     cb err, rc
+
+  # ---------------------------------------------------------------------------
+
+  # Only the hunter needs this 
+  _get_body_api : (url, json, cb) ->
+    rc = body = err = null
+    await @_get_bearer_token esc defer err, tok
+    unless err?
+      @log "| HTTP API request for URL '#{url}'"
+      args =
+        url : url
+        headers : 
+          "User-Agent" : constants.user_agent
+          "Authentication" : "Bearer #{tok}"
+      await @_get_url_body args, defer err, rc, body
+    cb err, rc, body
 
 #================================================================================

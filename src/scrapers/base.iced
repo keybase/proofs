@@ -1,6 +1,7 @@
 
 {constants} = require '../constants'
 {v_codes} = constants
+pkg = require '../../package.json'
 
 #==============================================================
 
@@ -54,7 +55,7 @@ class BaseScraper
     opts.ca = @ca if @ca?
     opts.timeout = constants.http_timeout unless opts.timeout?
     opts.headers or= {}
-    opts.headers["User-Agent"] = constants.user_agent
+    opts.headers["User-Agent"] = constants.user_agent + " v" + pkg.version
     await @libs.request opts, defer err, response, body
     rc = if err? 
       if err.code is 'ETIMEDOUT' then         v_codes.TIMEOUT

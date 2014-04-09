@@ -53,7 +53,7 @@ exports.constants = constants =
     SERVICE_DEAD:      302
     BAD_SIGNATURE:     303
 
-  user_agent : "keybase.io UserAgent v0.0.22"
+  user_agent : "keybase.io UserAgent"
 
 d = {}
 (d[v] = k for k,v of constants.proof_types)

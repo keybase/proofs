@@ -36,7 +36,7 @@ class BearerToken
     err = null
     now = Math.floor(Date.now() / 1000)
 
-    if ((res = @_tok) is null) or (now - @_created > @auth.lifespan)
+    if not (res = @_tok)? or (now - @_created > @auth.lifespan)
 
       @base.log "+ Request for bearer token"
 
@@ -50,7 +50,9 @@ class BearerToken
         form :
           grant_type : "client_credentials"
         method : "POST"
+
       await @base._get_url_body opts, defer err, rc, body
+
       if err?
         @base.logl 'error', "In getting bearer_token: #{err.message}"
       else if (rc isnt v_codes.OK)
@@ -80,7 +82,6 @@ class BearerToken
 #================================================================================
 
 _bearer_token = null
-
 bearer_token = ({base}) ->
   unless _bearer_token
     _bearer_token = new BearerToken { base }

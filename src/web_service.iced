@@ -141,14 +141,15 @@ class DnsBinding extends WebServiceBinding
     super args
 
   @parse : (h, opts = {}) ->
-    h = "dns://#{h}" if h.indexOf("dns://") isnt 0
     ret = null
-    if h? and (h = h.toLowerCase())? and (o = urlmod.parse(h))? and
-        o.hostname? and (not(o.path?) or (o.path is '/')) and not(o.port?)
-      ret = o.hostname
-      if has_non_ascii(ret)
-        console.error "Bug in urlmod found: non-ASCII in done name: #{ret}"
-        ret = null
+    if h?
+      h = "dns://#{h}" if h.indexOf("dns://") isnt 0
+      if h? and (h = h.toLowerCase())? and (o = urlmod.parse(h))? and
+          o.hostname? and (not(o.path?) or (o.path is '/')) and not(o.port?)
+        ret = o.hostname
+        if has_non_ascii(ret)
+          console.error "Bug in urlmod found: non-ASCII in done name: #{ret}"
+          ret = null
     return ret
 
   parse : (h) -> DnsBinding.parse(h)

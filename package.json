@@ -26,7 +26,7 @@
     "triplesec": ">=3.0.1",
     "iced-error": ">=0.0.8",
     "pgp-utils": ">=0.0.12",
-    "iced-utils": "^0.1.9"
+    "iced-utils": ">=0.1.9"
   },
   "devDependencies": {
     "iced-coffee-script": "*",

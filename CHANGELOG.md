@@ -1,3 +1,9 @@
+## 0.0.26 (2014-04-29)
+
+Bugfixes:
+
+  - Interpet HTTP 401 and 403 as permission denied errors
+
 ## 0.0.26 (2014-04-28)
 
 Features:

@@ -1,3 +1,9 @@
+## 0.0.28 (2014-05-08)
+
+Bufixes:
+
+  - Address keybase/keybase-issues#695, don't hard-fail if .well-known is 403.
+
 ## 0.0.27 (2014-04-29)
 
 Bugfixes:

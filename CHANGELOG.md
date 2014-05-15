@@ -1,3 +1,9 @@
+## 0.0.29 (2014-05-15)
+
+Bugfixes:
+
+  - Better debug for keybase/keybase-issues#689
+
 ## 0.0.28 (2014-05-08)
 
 Bufixes:

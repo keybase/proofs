@@ -23,12 +23,12 @@
     "url": "https://github.com/keybase/proofs/issues"
   },
   "dependencies": {
-    "triplesec": ">=3.0.1",
-    "iced-error": ">=0.0.8",
-    "pgp-utils": ">=0.0.12"
+    "iced-error": ">=0.0.9",
+    "iced-runtime": ">=0.0.2",
+    "pgp-utils": ">=0.0.22",
+    "triplesec": ">=3.0.16"
   },
   "devDependencies": {
-    "iced-coffee-script": "*",
-    "iced-test": "*"
+    "iced-coffee-script": ">=1.7.1-e"
   }
 }

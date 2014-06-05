@@ -67,10 +67,10 @@ exports.DnsScraper = class DnsScraper extends BaseScraper
       err = new Error "no domain found in URL #{api_url}"
       rc = v_codes.CONTENT_FAILURE
     else
-      await @_check_status { domain, proof_text_check }, defer err, rc
-      unless (rc is v_codes.OK)
-        domain = [ "_keybase", domain ].join(".")
-        await @_check_status { domain, proof_text_check }, defer err, rc
+      search_domains = [ domain, [ "_keybase", domain].join(".") ]
+      for d in search_domains
+        await @_check_status { domain : d, proof_text_check }, defer err, rc
+        break if (rc is v_codes.OK)
     cb err, rc
 
   # ---------------------------------------------------------------------------

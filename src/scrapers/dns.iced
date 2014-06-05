@@ -68,7 +68,7 @@ exports.DnsScraper = class DnsScraper extends BaseScraper
       rc = v_codes.CONTENT_FAILURE
     else
       await @_check_status { domain, proof_text_check }, defer err, rc
-      unless rc is v_codes.OK
+      unless (rc is v_codes.OK)
         domain = [ "_keybase", domain ].join(".")
         await @_check_status { domain, proof_text_check }, defer err, rc
     cb err, rc
@@ -77,14 +77,16 @@ exports.DnsScraper = class DnsScraper extends BaseScraper
 
   # calls back with a v_code or null if it was ok
   _check_status: ({domain, proof_text_check}, cb) ->
-      await dns.resolveTxt d, defer err, records
-      rc = if err?
-        @log "| DNS error: #{err}"
-        v_codes.DNS_ERROR
-      else if (proof_text_check in records) then v_codes.OK
-      else
-        @log "| DNS failed; found TXT entries: #{JSON.stringify records}"
-        v_codes.NOT_FOUND
+    @log "+ DNS check for #{domain}"
+    await dns.resolveTxt domain, defer err, records
+    rc = if err?
+      @log "| DNS error: #{err}"
+      v_codes.DNS_ERROR
+    else if (proof_text_check in records) then v_codes.OK
+    else
+      @log "| DNS failed; found TXT entries: #{JSON.stringify records}"
+      v_codes.NOT_FOUND
+    @log "- DNS check for #{domain} -> #{rc}"
     cb err, rc
 
 #================================================================================

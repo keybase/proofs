@@ -1,6 +1,6 @@
 {
   "name": "keybase-proofs",
-  "version": "0.0.29",
+  "version": "0.0.31",
   "description": "Publicly-verifiable proofs of identity",
   "main": "lib/main.js",
   "scripts": {
@@ -23,13 +23,12 @@
     "url": "https://github.com/keybase/proofs/issues"
   },
   "dependencies": {
-    "iced-error": ">=0.0.8",
-    "iced-runtime": "0.0.1",
-    "pgp-utils": ">=0.0.12",
-    "triplesec": ">=3.0.1"
+    "iced-error": ">=0.0.9",
+    "iced-runtime": ">=0.0.1",
+    "pgp-utils": ">=0.0.22",
+    "triplesec": ">=3.0.16"
   },
   "devDependencies": {
-    "iced-coffee-script": "*",
-    "iced-test": "*"
+    "iced-coffee-script": ">=1.7.1-e"
   }
 }

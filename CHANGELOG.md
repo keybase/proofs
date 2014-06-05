@@ -1,8 +1,12 @@
-## 0.0.30 (2014-06-04)
+## 0.0.32 (2014-06-05)
 
 Features:
 
-  - Upgrade to ICS v1.7.1-c
+  - foo.com OR _keybase.foo.com are valid DNS TXT entries now...
+
+## 0.0.30 and 0.0.31 (2014-06-04)
+
+  - Recompile for ICS v1.7.1-c
 
 ## 0.0.29 (2014-05-15)
 

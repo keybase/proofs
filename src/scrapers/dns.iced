@@ -61,12 +61,22 @@ exports.DnsScraper = class DnsScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  check_status: ({api_url, proof_text_check}, cb) ->
-    # calls back with a v_code or null if it was ok
-    if not (d = @url_to_domain(api_url))?
+  check_status : ({api_url, proof_text_check}, cb) ->
+    rc = err = null
+    if not (domain = @url_to_domain(api_url))?
       err = new Error "no domain found in URL #{api_url}"
       rc = v_codes.CONTENT_FAILURE
     else
+      await @_check_status { domain, proof_text_check }, defer err, rc
+      unless rc is v_codes.OK
+        domain = [ "_keybase", domain ].join(".")
+        await @_check_status { domain, proof_text_check }, defer err, rc
+    cb err, rc
+
+  # ---------------------------------------------------------------------------
+
+  # calls back with a v_code or null if it was ok
+  _check_status: ({domain, proof_text_check}, cb) ->
       await dns.resolveTxt d, defer err, records
       rc = if err?
         @log "| DNS error: #{err}"

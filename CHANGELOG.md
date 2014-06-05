@@ -1,3 +1,9 @@
+## 0.0.30 (2014-06-04)
+
+Features:
+
+  - Upgrade to ICS v1.7.1-c
+
 ## 0.0.29 (2014-05-15)
 
 Bugfixes:

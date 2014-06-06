@@ -1,3 +1,9 @@
+## 0.0.33
+
+Features:
+
+  - Add support for cryptocurrencies
+
 ## 0.0.32 (2014-06-05)
 
 Features:

@@ -3,6 +3,7 @@
 Features:
 
   - Add support for cryptocurrencies
+  - Allow any signature to revoke previous signatures
 
 ## 0.0.32 (2014-06-05)
 

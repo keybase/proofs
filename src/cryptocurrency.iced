@@ -7,7 +7,7 @@
 exports.Cryptocurrency = class Cryptocurrency extends Base
 
   constructor : (obj) ->
-    @track = obj.cryptocurrency
+    @cryptocurrency = obj.cryptocurrency
     super obj
 
   _type : () -> constants.sig_types.cryptocurrency

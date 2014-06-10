@@ -1,15 +1,16 @@
 ##### Signed by https://keybase.io/max
 ```
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG/MacGPG2 v2.0.22 (Darwin)
+Comment: GPGTools - https://gpgtools.org
 
-iQEcBAABAgAGBQJTlj3SAAoJEJgKPw0B/gTfMIoH/3GPHNsPSA1fMBJjfboLsw1j
-T79t5PuPPSRP7rv1caqgSH76520a0xSlIdvHcyOfuGY8E23Klm2enct46OtDzK/p
-7pYkUUtgD0cwdvxOd5OsEft8kDomux5gj3QtC0ULp+eJGxUBCfr8iB1aZgle6dXf
-keIWkW8PneNdmvcXGhw1f1mTXhZy51e6PSVorVcXCUBXonzldvz2zHZYwYTL17k3
-roT25Anzbj07aaljZXoBUS8ntqGwWY/HdECQuJedUyYnaYnzmywlq6KD14GvoUEt
-E4TOzjMFqk7gITufhDEsMS3IM6NPxxKaESywl4yyWXp8XgrEk+3S4GZGDRlsCT4=
-=isim
+iQEcBAABCgAGBQJTl0/eAAoJEJgKPw0B/gTfv9kIAJZFoN2tHanSpSPQY+LNdEML
+cP4tY5LIwsYn4tMLwPUrggnukglOa6iiObOrRVRhjjS8TOhCYssXQSxDPqh2GqWr
++ykKIXYBoAkUltaz+3sp8BT7SNJ61vVFc5OYO+LK79AaotT6+oHOmsNBpbB8HhXk
+OK26I2u39iyUf3X6R7jFUL/Hts6DWpDL1t258NQlTBiGZ03lHZTuwjWaOkbr0d0I
+TsW63XMSExdJc34832EWIlWhlPQ6M3JI9oprQP3SSXCwIo8nS84zFx2IHa9o3jzT
+2GANVvqj+z2Og6a6PFD1Y76rc3NvH6JzAGAjats/mr+4AveA75CySZEiPnzBHH8=
+=ue7l
 -----END PGP SIGNATURE-----
 
 ```
@@ -24,7 +25,7 @@ E4TOzjMFqk7gITufhDEsMS3IM6NPxxKaESywl4yyWXp8XgrEk+3S4GZGDRlsCT4=
 size   exec  file                         contents                                                        
              ./                                                                                           
 109            .gitignore                 ec278daeb8f83cac2579d262b92ee6d7d872c4d1544e881ba515d8bcc05361ab
-2992           CHANGELOG.md               2009e6d85c59810a174d997f97bec1665640489bb0d3565b86b0a8d1904967d5
+3164           CHANGELOG.md               4f062dcbaae1a46e684b937d6d6a382fea106346673bc78466bd95ad23fd7fb1
 1483           LICENSE                    333be7050513d91d9e77ca9acb4a91261721f0050209636076ed58676bfc643d
 1135           Makefile                   b07055ca1fa0cb740c83abb1ace647d3d5f070f6654303e585a419432312c863
 43             README.md                  b2db580fc880756ae739bb148570f6afb1c250e5c0d2c5fa56ce41491753ca6c
@@ -32,7 +33,7 @@ size   exec  file                         contents
 1771             alloc.js                 f30f40daf50d1109cad74b945cf4564b3442404c7fd8d3fa9366134f75ed3ee2
 1055             auth.js                  fafe19c38a406e762aa6e0e4152faa8f5b70b659fb421257a068b87ef2cee2c6
 766              b64extract.js            1b1db6b90c52385e2d8a65ffa901dc03fab0b25c719ee01f560869afbd6234a7
-19216            base.js                  03add6377b3e98d0ce89bbaed2a7514c91868d6b8758c9c9c5411044a4fc595b
+19218            base.js                  4b0890d27b369d469d5ee21c93f78cc08a4e04a747fe1b5663d4563c6e5987a1
 1473             constants.js             6beae99f448dd168b314ad798951458f5f6c8c790350c0136b79c79fa88ff123
 1126             cryptocurrency.js        6a3e672fab710892c014d6483f4332183e3b356826647ddba86792770f7fb20a
 579              main.js                  44caa71277812bfa2070eac979f0a12f6d3b80cd2d0bd00ee39dd8e59e9e7040
@@ -51,7 +52,7 @@ size   exec  file                         contents
 1438             alloc.iced               dce378eef737713d0564b8dc1e912f5006ef6ee0494025dd026634b25410706d
 498              auth.iced                eff40ea0b3642c3829d6bbc87ca5ffb1b9f98fb137693917847633e041c9c38c
 704              b64extract.iced          47b06460fd61d8eb788878566c62086b1fd1f792a1712b3e8736766401bc8fee
-9147             base.iced                169a0738c728965933dc7d4e399bcaf7df031081683a4f261b47262154739e37
+9148             base.iced                f3413da4f83520b8669932d71012a3756f3d7626c4a21e9b8748ea06f9b89b2a
 1662             constants.iced           99973b1944dae50d8709052c58306361254960a35f9c479ae79719deb03d766c
 508              cryptocurrency.iced      2b7908e35666ad912bc2306d71e1b217a93d04b29075f23ac5049ee94eae74d5
 399              main.iced                bc3d6cfaecb672f0a2a773f83dd5e5688ff47e1728ada93676325d930ca88d26

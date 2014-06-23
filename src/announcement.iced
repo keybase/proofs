@@ -7,7 +7,7 @@
 exports.Announcement = class Announcement extends Base
 
   constructor : (obj) ->
-    @cryptocurrency = obj.announcement
+    @announcement = obj.announcement
     super obj
 
   _type : () -> constants.sig_types.announcement

@@ -23,7 +23,7 @@ get_klass = (type) ->
     when "auth"                        then Auth
     when "revoke"                      then Revoke
     when "cryptocurrency"              then Cryptocurrency
-    when "Announcement"                then Announcement
+    when "announcement"                then Announcement
     else  
       err = new Error "Unknown proof class: #{type}"
       null

@@ -1,8 +1,8 @@
-## 0.0.37
+## 0.0.37 (2014-06-24)
 
 Features:
 
-  - ws_normalize in Twitter proofs.  See keybase/keybase-issues#822
+  - ws_normalize in Twitter proofs.  Address keybase/keybase-issues#822
 
 ## 0.0.36 (2014-06-23)
 

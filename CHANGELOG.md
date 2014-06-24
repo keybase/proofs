@@ -1,3 +1,9 @@
+## 0.0.37
+
+Features:
+
+  - ws_normalize in Twitter proofs.  See keybase/keybase-issues#822
+
 ## 0.0.36 (2014-06-23)
 
 Features:

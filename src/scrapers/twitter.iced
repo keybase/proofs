@@ -147,6 +147,46 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
+  get_follower_ids: ({username, cursor_wait}, cb) ->
+    # calls back with err, twitter_id_list
+    done        = false
+    cursor      = -1
+    err         = null
+    res         = []
+    cursor_wait = if cursor_wait? then cursor_wait else 1000 # ms
+    while not done
+      u = urlmod.format {
+        host:       "api.twitter.com"
+        protocol:   "https:"
+        pathname:   "/1.1/followers/ids.json"
+        query:
+          stringify_ids: true
+          cursor:        cursor
+          screen_name:   username
+          count:         5000 # max
+      }
+      await @_get_body_api {url: u}, defer err, rc, json
+      @log "| get_followers #{username} (#{cursor})"
+      if err?
+        done = true
+      else if rc isnt v_codes.OK
+        err  = rc
+        done = true
+      else if not json?.ids?.length
+        err = v_codes.EMPTY_JSON
+        done = true
+      else
+        res.push x for x in json.ids
+        if json.next_cursor
+          cursor = json.next_cursor_str
+          await setTimeout defer(), cursor_wait
+        else
+          done = true
+        @log "| got #{json.ids.length} more; total=#{res.length}"
+    cb err, res
+
+  # ---------------------------------------------------------------------------
+
   _id_to_url : (username, status_id) ->
     "https://twitter.com/#{username}/status/#{status_id}"
 

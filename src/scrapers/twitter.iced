@@ -147,6 +147,60 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
+  ids_to_info: ({ids, cursor_wait, include_entities}, cb) ->
+    # calls back with err, user_infos given some numerical twitter ids
+    # includes null results for any missing users, so the output array matches
+    # input
+
+    err               = null
+    responses         = []
+    cursor_wait       = if cursor_wait? then cursor_wait else 100 # ms
+    i                 = 0
+    include_entities  = if include_entities? then include_entities else false
+    batch_size        = 100 # it's the twitter maximum
+    done              = false
+
+    while not done
+      j = Math.min(i+batch_size, ids.length)
+      u = urlmod.format {
+        host:       "api.twitter.com"
+        protocol:   "https:"
+        pathname:   "/1.1/users/lookup.json"
+        query:
+          user_id:          ids[i...j].join ','
+          include_entities: include_entities
+      }
+      await @_get_body_api {url: u}, defer err, rc, json
+      @log "| ids_to_info #{i}...#{j}"
+      if err?
+        done = true
+      else if rc isnt v_codes.OK
+        err  = rc
+        done = true
+      else if not json?.length
+        err = v_codes.EMPTY_JSON
+        done = true
+      else
+        responses.push u for u in json
+        if j isnt ids.length
+          i = j
+          await setTimeout defer(), cursor_wait
+        else
+          done = true
+        @log "| got #{json.length} more; total=#{responses.length}"    
+ 
+    # twitter may not obey our matching request order
+    if responses?.length
+      dict = {}
+      dict[r.id] = r for r in responses
+      res = []
+      for id, i in ids
+        res[i] = dict[id] or null
+
+    cb err, res
+
+  # ---------------------------------------------------------------------------
+
   get_follower_ids: ({username, cursor_wait}, cb) ->
     # calls back with err, twitter_id_list
     done        = false

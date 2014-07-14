@@ -118,7 +118,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
     out      = {}
     rc       = v_codes.OK
 
-    return cb(err) if (err = @_check_args { username, name })?
+    return cb(err,out) if (err = @_check_args { username, name })?
 
     u = urlmod.format {
       host : "api.twitter.com"

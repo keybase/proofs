@@ -29,7 +29,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
     rc       = v_codes.OK
     out      = {}
 
-    return cb(err) if (err = @_check_args { username, name })?
+    return cb(err,out) if (err = @_check_args { username, name })?
 
     url = "https://api.github.com/users/#{username}/gists"
     await @_get_body url, true, defer err, rc, json

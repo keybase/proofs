@@ -24,7 +24,6 @@ exports.CoinbaseScraper = class CoinbaseScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   hunt2 : ({username, proof_text_check, name}, cb) ->
-    cb null, 
 
     # calls back with rc, out
     rc       = v_codes.OK

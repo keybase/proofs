@@ -223,11 +223,11 @@ class GithubBinding extends SocialNetworkBinding
 
 class CoinbaseBinding extends SocialNetworkBinding
   service_name : -> "coinbase"
-  proof_type   : -> constants.proof_types.github
+  proof_type   : -> constants.proof_types.coinbase
 
   @check_name : (n) ->
     if not n? or not (n = n.toLowerCase())? then false
-    else if n.match /^[a-z0-9][a-z0-9-]{0,20}$/ then true
+    else if n.match /^[a-z1-9_]{0,20}$/ then true
     else false
 
   @name_hint : () -> "alphanumerics, between 1 and 20 characters long"

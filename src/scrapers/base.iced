@@ -40,6 +40,15 @@ class BaseScraper
     cb err, rc
 
   #-------------------------------------------------------------
+ 
+  # Given a validated signature, check that the payload_text_check matches the sig.
+  _validate_text_check : ({signature, proof_text_check }) ->
+    [err, msg] = decode signature
+    if not err? and ("\n\n" + msg.payload + "\n") isnt proof_text_check
+      err = new Error "Bad payload text_check"
+    return err 
+
+  #-------------------------------------------------------------
 
   # Convert away from MS-dos style encoding...
   _stripr : (m) -> m.split('\r').join('')

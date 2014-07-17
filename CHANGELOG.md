@@ -1,3 +1,9 @@
+## 0.0.38 (2014-07-17)
+
+Features:
+
+  - twitter API calls to get follower_ids friend_ids
+
 ## 0.0.37 (2014-06-24)
 
 Features:

@@ -147,11 +147,15 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  ids_to_info: ({ids, cursor_wait, include_entities}, cb) ->
+  users_lookup: ({ids, screen_names, cursor_wait, include_entities}, cb) ->
+    # accepts ids or screen_names (not both), and returns
+    # with an array in the same order
+    #
     # calls back with err, user_infos given some numerical twitter ids
     # includes null results for any missing users, so the output array matches
     # input
-
+    if ids and screen_names then throw new Error 'users_lookup cannot take ids and screen_names'
+    input_list        = ids or screen_names
     err               = null
     responses         = []
     cursor_wait       = if cursor_wait? then cursor_wait else 100 # ms
@@ -161,28 +165,31 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
     done              = false
 
     while not done
-      j = Math.min(i+batch_size, ids.length)
+      j = Math.min(i+batch_size, input_list.length)
+      query = {include_entities}
+      if ids?
+        query.user_id = ids[i...j].join ','
+      else 
+        query.screen_name = screen_names[i...j].join ','
       u = urlmod.format {
         host:       "api.twitter.com"
         protocol:   "https:"
         pathname:   "/1.1/users/lookup.json"
-        query:
-          user_id:          ids[i...j].join ','
-          include_entities: include_entities
+        query:      query
       }
       await @_get_body_api {url: u}, defer err, rc, json
-      @log "| ids_to_info #{i}...#{j}"
+      @log "| users_lookup #{i}...#{j}"
       if err?
         done = true
       else if rc isnt v_codes.OK
-        err  = rc
+        err  = new Error("failed to scrape; not ok #{rc}")
         done = true
       else if not json?.length
-        err = v_codes.EMPTY_JSON
+        err = new Error("failed to scrape; empty json #{v_codes.EMPTY_JSON}")
         done = true
       else
         responses.push u for u in json
-        if j isnt ids.length
+        if j isnt input_list.length
           i = j
           await setTimeout defer(), cursor_wait
         else
@@ -192,27 +199,30 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
     # twitter may not obey our matching request order
     if responses?.length
       dict = {}
-      dict[r.id] = r for r in responses
+      key  = if ids? then "id_str" else "screen_name"
+      dict[r[key]] = r for r in responses
       res = []
-      for id, i in ids
-        res[i] = dict[id] or null
+      for identifier, i in input_list
+        res[i] = dict[identifier] or null
 
     cb err, res
 
   # ---------------------------------------------------------------------------
 
-  get_follower_ids: ({username, cursor_wait}, cb) ->
+  get_follower_ids: ({username, cursor_wait, stop_at, friends}, cb) ->
+    # if friends is true, then looks up people they follow instead
     # calls back with err, twitter_id_list
     done        = false
     cursor      = -1
     err         = null
     res         = []
     cursor_wait = if cursor_wait? then cursor_wait else 1000 # ms
+    stop_at     = stop_at or Infinity
     while not done
       u = urlmod.format {
         host:       "api.twitter.com"
         protocol:   "https:"
-        pathname:   "/1.1/followers/ids.json"
+        pathname:   "/1.1/#{if friends then 'friends' else 'followers'}/ids.json"
         query:
           stringify_ids: true
           cursor:        cursor
@@ -224,19 +234,22 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       if err?
         done = true
       else if rc isnt v_codes.OK
-        err  = rc
+        err  = new Error("got bad code from get_body_api #{rc}")
+        err.code = rc
         done = true
-      else if not json?.ids?.length
-        err = v_codes.EMPTY_JSON
+      else if not json?.ids?
+        err  = new Error("got empty_json from get_body_api")
+        err.code = v_codes.EMPTY_JSON
         done = true
       else
         res.push x for x in json.ids
-        if json.next_cursor
+        if json.next_cursor and (res.length < stop_at)
           cursor = json.next_cursor_str
           await setTimeout defer(), cursor_wait
         else
           done = true
         @log "| got #{json.ids.length} more; total=#{res.length}"
+
     cb err, res
 
   # ---------------------------------------------------------------------------

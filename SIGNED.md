@@ -1,15 +1,22 @@
-##### Signed by https://keybase.io/max
+##### Signed by https://keybase.io/chris
 ```
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG/MacGPG2 v2.0.22 (Darwin)
+Comment: GPGTools - https://gpgtools.org
 
-iQEcBAABAgAGBQJTqXq4AAoJEJgKPw0B/gTf+9kIAIK408x8P5kPVX1xmKTYdYbT
-Eed2mHxUZhsh9Wu/Qv2sAbfw0OMgulYfq/PSDlbDJX1U/mGAlH9y+DxCMIwaj9z+
-+gkUx7NEqFCE92tp5J2T0Hj3jSPvN3PHZslWE/Rkrec1K159FlLkvUwGJ3gHCEvO
-EszzU23S1ylIMppwjLQWW12eYNGrp7bHaKrn5OPctklXQniQIIPVYZXGOg8lXIZd
-zeuUyeKuJD5MX/IEHTmH+bPMGVXoiPetAWjAnWD/OR2Gs+oTVDHtzVw0Yu2iDpmp
-Mlb2WJQWFu/P99MSNGLPRQ+8LUFs+IosvXu+2XQ6aIIqA0HKLLUKh+zBP6/DAXw=
-=GylP
+iQIcBAABCgAGBQJTyDwjAAoJENIkQTsc+mSQDl4P/jtjqZs4HnrWuApM+1sBqVLH
+pMrJfU2zQ2OowpSxiNTCwOZTzjkKM7InxUekNRQ6b8H32pFSgVbG8SIw/Beb+ZOZ
+C2YgZeTjHzgUBOeBM9GXOFYxv1MG74SV4iWST8Mg3eub+1tWZLA4nxYS6++4ENJz
+lS1L2heUEJQkmO8um4wL8FQhJSgz5/8HgubSP5ic4EryRsIQEQU+8WlpDmnBYrIQ
+DZcs69GXupMb4tlSAhHkPpf9madvc2IVgTlEr9oqYSaUGQUM6QrNiJlv63pHmFPJ
+ZR/M5fcUQw5O9i/ZQmmQgi5h/tricd1ay/905Yt4Z7Iu84kzFTvyKTySSd3jKlE+
+xixtJuuiL1eo1fv9xE0Gb9P6kpbn8IzpDCUUG8NbvNtPZdAVfw2eQzOwcQpTOSXd
+PiqXJxcOMtU81M7XNS1TEKFoTUIUWevxn2P95gQfknB+8A7AO/9v7iRMiGlyqiW3
+7Q8qj97rW5UYAa/SvevI/Y959YInMBJNN2pUwlHk9d/mOUu8GLVCxnz9Xr7/UADF
+wbqIVdOCR9FvWC67HAuYCt5dLDB5NMAVgi0Ei43JEYz+IzGa39Cm+rb1ziJFUnhN
+5LkmSpttyymo/h5CbJWBEArt/cXhnY09oiyQpK5wZxsPrwSKVo6ViJs90dkqBWQS
+V+xWNPu5SWM2xLru+DWO
+=E9CH
 -----END PGP SIGNATURE-----
 
 ```
@@ -24,7 +31,7 @@ Mlb2WJQWFu/P99MSNGLPRQ+8LUFs+IosvXu+2XQ6aIIqA0HKLLUKh+zBP6/DAXw=
 size   exec  file                         contents                                                        
              ./                                                                                           
 109            .gitignore                 ec278daeb8f83cac2579d262b92ee6d7d872c4d1544e881ba515d8bcc05361ab
-3447           CHANGELOG.md               d882ef3276b572b484cf3af609c97ec69a780222abc25fae1dde491889e06dc4
+3536           CHANGELOG.md               e19000ef1697bbcd40a9b22d5ad8287143575b533598b125e6dbc3b21bbbf4d2
 1483           LICENSE                    333be7050513d91d9e77ca9acb4a91261721f0050209636076ed58676bfc643d
 1151           Makefile                   0cee6d64f3701a3e6f9d9d5015bec2f527008322ba2d9ac3f7b8b39d68be9bb4
 43             README.md                  b2db580fc880756ae739bb148570f6afb1c250e5c0d2c5fa56ce41491753ca6c
@@ -43,11 +50,11 @@ size   exec  file                         contents
 7599               dns.js                 985ca8f5ccee611c7308124ef03dccaaf930b93cc5e8a8bcbf2d864d9d351028
 9605               generic_web_site.js    4fc1db58c00481c9f1989fcd03ac0fe45a45a803b8b2017a2f335be3e8bf36e8
 10453              github.js              2255aa768b6a90458835ec346f3649e58d5ab42cf88c8d441bf3f1322ea26dd9
-16139              twitter.js             0195fcaf2737969f55abd9481c212c6d16eb11545c781338e386521ace617e2f
+27580              twitter.js             d94ebeff2b1272b961d75cafdd0aecadb1bf07c96c44ef85b7fe8216082e9892
 1507             track.js                 3b1552409b374f87a4c498a7f4cd3da7fad88c31a904cfbb033db05c78a61648
 1452             util.js                  9fa6d9d731f6ec99349e5875cbe4f0102c6a1b2590f16daf48168c99d95ba4ac
 14261            web_service.js           e19eba1659276944fa54d1446dee1587d963a0f88bd8515bd74b079780efcf03
-693            package.json               afcc27ae4b8a47291a01a1c8cb86c406f7cd07be1687885ca6a498ecb311698e
+693            package.json               34c5ed273b41baaccf75daa62a587a2c9db064cbf10133c6d349e114c3af908d
                src/                                                                                       
 1537             alloc.iced               1158407236ed6327aa98466c71426afd08402735969e46f04be1df7beabdb08e
 494              announcement.iced        2dba8539acbc9de3f92340b7700aa89077108ee4e816347e4e52cd294185c982
@@ -63,7 +70,7 @@ size   exec  file                         contents
 3078               dns.iced               631c2053e1cf069eafba398fb86038ed45bbb2616fc495ccc8b8531862cab69b
 3425               generic_web_site.iced  f3bb441bda16b6ed5019b0ac6efc2447023a87d8f1818a32fbf8d4dc9a1bb608
 3795               github.iced            87a744bd57e4eb1c37ff0b3a51aded52405d0e062ae399c10cbe60d1886e2590
-7863               twitter.iced           7b4556af690026dad83380c244535f0aed8b8e328f5e65d3c0579a9d222e6064
+11626              twitter.iced           e667a9b9fc57ef6ff5b09627404515a16bb117265522fcb186b9cffafb2e52ab
 764              track.iced               e31ae07947e8c7e55ef37aaaedde7dd01acda6939cf938eb156c8bf4c0c0f3d7
 912              util.iced                c179c01177ff245c74fe747e365a4ae50ca2275219d66379c034f1b9d3e13e45
 7217             web_service.iced         a497cc2b0988b9797ced8bd42f509136e792671564156eb00ee18eededadf320

@@ -141,10 +141,8 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
   # Given a validated signature, check that the payload_text_check matches the sig.
   _validate_text_check : ({signature, proof_text_check }) ->
     [err, msg] = decode signature
-    if not err?
-      {med_id} = make_ids msg.body
-      if proof_text_check.indexOf(med_id) < 0
-        err = new Error "Bad payload text_check"
+    if not err? and ("\n\n" + msg.payload + "\n") isnt proof_text_check
+      err = new Error "Bad payload text_check"
     return err
 
   # ---------------------------------------------------------------------------
@@ -163,7 +161,7 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
     else if (json.subreddit.toLowerCase() isnt 'keybaseproofs') 
       v_codes.CONTENT_FAILURE
     else if (json.author.toLowerCase() isnt username.toLowerCase()) then v_codes.BAD_USERNAME
-    else if false and (json.title.indexOf(med_id) < 0) 
+    else if (json.title.indexOf(med_id) < 0) 
       v_codes.TEXT_NOT_FOUND
     else 
 

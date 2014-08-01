@@ -31,7 +31,7 @@ class GlobalHunter
       author = data.author.toLowerCase()
       existing = @_cache[author]
       if not existing? or existing.data.name isnt data.name
-        @_scraper.log "| Indexing #{author}: #{data.name} / #{data.permalink} @ #{data.created_utc}"
+        @_scraper.log "| Indexing #{author}: #{data.name} @ #{data.created_utc} (#{PREFIX}#{data.permalink})"
       @_cache[author] = el
 
   #---------------------------
@@ -91,6 +91,10 @@ class GlobalHunter
 
 #================================================================================
 
+_global_hunter = new GlobalHunter()
+
+#================================================================================
+
 exports.RedditScraper = class RedditScraper extends BaseScraper
 
   constructor: (opts) ->
@@ -112,11 +116,11 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
     rc  = v_codes.OK
     out = {}
     if not (err = @_check_args { username, name })?
-      await @_global_hunter.find { scarper : @, username}, defer err, rc, out
+      await _global_hunter.find { scraper : @, username}, defer err, rc, json
       if rc is v_codes.OK
         out =
-          api_url : PREFIX + out.data.permalink + ".json"
-          human_url : PREFIX + out.data.permalink
+          api_url : PREFIX + json.data.permalink + ".json"
+          human_url : PREFIX + json.data.permalink
           remote_id : out.data.name
     else
       rc = v_codes.BAD_USERNAME

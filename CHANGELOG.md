@@ -3,6 +3,7 @@
   - Arbitrarily cut a 1.0.0 release
   - Use the correct UserAgent format
     - closes keybase/keybase-proofs#899 
+  - Reddit proofs
 
 ## 0.0.39  (2014-07-17)
 

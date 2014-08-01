@@ -4,6 +4,7 @@
 {decode} = require('pgp-utils').armor
 {Lock} = require 'iced-lock'
 {make_esc} = require 'iced-error'
+{make_ids} = require '../base'
 
 #================================================================================
 
@@ -41,6 +42,9 @@ class GlobalHunter
     go = true
     esc = make_esc cb, "go_back"
     lst = []
+    console.log "go back!"
+    console.log "Stoppage - >"
+    console.log stop
     while go
       args =
         url : SUBREDDIT + "/.json"
@@ -48,11 +52,17 @@ class GlobalHunter
         qs: 
           count : 25
       args.qs.after = after if after?
+      console.log "after"
+      console.log after
       await @_scraper._get_url_body args, defer err, @_last_rc, body
       after = body.data.after
       lst = lst.concat body.data.children
       go = false if not after? or body.data.children[-1...][0].created_utc < stop
+      console.log "again?"
+      console.log go
+    console.log "done."
     lst.reverse()
+    console.log lst
     @_list = @_list.concat lst
     @index @_list
     cb null
@@ -121,7 +131,7 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
         out =
           api_url : PREFIX + json.data.permalink + ".json"
           human_url : PREFIX + json.data.permalink
-          remote_id : out.data.name
+          remote_id : json.data.name
     else
       rc = v_codes.BAD_USERNAME
     out.rc = rc
@@ -155,12 +165,19 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   check_data : ({json, username, proof_text_check, med_id }) ->
-    if not (json.subreddit? and json.author? and json.selftext?) then v_codes.CONTENT_FAILURE
-    else if (json.subreddit.toLowerCase() isnt 'keybaseproofs') then v_codes.CONTENT_FAILURE
+    if not (json.subreddit? and json.author? and json.selftext? and json.title) 
+      v_codes.CONTENT_FAILURE
+    else if (json.subreddit.toLowerCase() isnt 'keybaseproofs') 
+      v_codes.CONTENT_FAILURE
     else if (json.author.toLowerCase() isnt username.toLowerCase()) then v_codes.BAD_USERNAME
-    else if (json.author.title.indexOf(med_id) < 0) then v_codes.MISSING
-    else if (json.selftext.indexOf(proof_text_check) < 0) then v_codes.MISSING
-    else v_codes.OK
+    else if false and (json.title.indexOf(med_id) < 0) 
+      v_codes.TEXT_NOT_FOUND
+    else 
+      lstrip = (line) -> if (m = line.match(/^\s+(.*?)$/))? then m[1] else line
+      body = ( lstrip(line) for line in json.selftext.split("\n")).join("\n")
+      if body.indexOf(proof_text_check) < 0
+        v_codes.TEXT_NOT_FOUND
+      else v_codes.OK
 
   # ---------------------------------------------------------------------------
 
@@ -173,7 +190,7 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
 
     rc = if rc isnt v_codes.OK then rc
     else if not (dat = @unpack_data(json)) then v_codes.CONTENT_FAILURE
-    else @check_data {json, username, proof_text_check, med_id }
+    else @check_data {json : dat, username, proof_text_check, med_id }
     cb err, rc
 
 #================================================================================

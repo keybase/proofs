@@ -103,8 +103,6 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
     @log "| HTTP request for URL '#{url}'"
     args =
       url : url
-      headers : 
-        "User-Agent" : constants.user_agent
       auth : @auth
     args.json = 1 if json
     @_get_url_body args, cb

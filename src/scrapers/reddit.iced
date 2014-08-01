@@ -21,30 +21,28 @@ class GlobalHunter
     @_running = false
     @_lock = new Lock
     @_cache = {}
-    @_list = []
     @_last_rc = null
+    @_most_recent = null
 
   #---------------------------
 
   index : (lst) ->
-    for el in lst
+    for el in lst by -1
       data = el.data
       author = data.author.toLowerCase()
       existing = @_cache[author]
       if not existing? or existing.data.name isnt data.name
-        @_scraper.log "| Indexing #{author}: #{data.name} @ #{data.created_utc} (#{PREFIX}#{data.permalink})"
+        @_scraper.log "| [Reddit] Indexing #{author}: #{data.name} @ #{data.created_utc} (#{PREFIX}#{data.permalink})"
       @_cache[author] = el
 
   #---------------------------
 
   go_back : (stop, cb) ->
+    @_scraper.log "+ [Reddit] rescraping to #{stop}"
     after = null
     go = true
     esc = make_esc cb, "go_back"
     lst = []
-    console.log "go back!"
-    console.log "Stoppage - >"
-    console.log stop
     while go
       args =
         url : SUBREDDIT + "/.json"
@@ -52,25 +50,20 @@ class GlobalHunter
         qs: 
           count : 25
       args.qs.after = after if after?
-      console.log "after"
-      console.log after
       await @_scraper._get_url_body args, defer err, @_last_rc, body
       after = body.data.after
-      lst = lst.concat body.data.children
-      go = false if not after? or body.data.children[-1...][0].created_utc < stop
-      console.log "again?"
-      console.log go
-    console.log "done."
-    lst.reverse()
-    console.log lst
-    @_list = @_list.concat lst
-    @index @_list
+      posts = body.data.children
+      lst = lst.concat posts
+      go = false if not after? or not posts.length? or posts[-1...][0].data.created_utc < stop
+    @index lst
+    @_most_recent = lst[0].data.created_utc if lst.length > 0
+    @_scraper.log "- [Reddit] rescraped; most_recent is now #{@_most_recent}"
     cb null
 
   #---------------------------
 
   scrape : (cb) ->
-    stop = if @_list.length then @_list[-1...][0].created_utc 
+    stop = if @_most_recent? then @_most_recent
     else (Math.ceil(Date.now() / 1000) - @_startup_window)
     await @go_back stop, defer err
     cb err
@@ -173,8 +166,12 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
     else if false and (json.title.indexOf(med_id) < 0) 
       v_codes.TEXT_NOT_FOUND
     else 
+
+      # strip leading spaces on the input document, so we can look for the target
+      # sig on the first column.
       lstrip = (line) -> if (m = line.match(/^\s+(.*?)$/))? then m[1] else line
       body = ( lstrip(line) for line in json.selftext.split("\n")).join("\n")
+
       if body.indexOf(proof_text_check) < 0
         v_codes.TEXT_NOT_FOUND
       else v_codes.OK

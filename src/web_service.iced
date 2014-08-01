@@ -221,7 +221,22 @@ class GithubBinding extends SocialNetworkBinding
 
 #==========================================================================
 
+class RedditBinding extends SocialNetworkBinding
+  service_name : -> "reddit"
+  proof_type   : -> constants.proof_types.reddit
+
+  @check_name : (n) ->
+    if not n? or not (n = n.toLowerCase())? then false
+    else if n.match /^[a-z0-9_-]{3,20}$/ then true
+    else false
+
+  @name_hint : () -> "alphanumerics, between 3 and 20 characters long"
+  check_name : (n) -> RedditBinding.check_name(n)
+
+#==========================================================================
+
 exports.TwitterBinding = TwitterBinding
+exports.RedditBinding = RedditBinding
 exports.KeybaseBinding = KeybaseBinding
 exports.GithubBinding = GithubBinding
 exports.GenericWebSiteBinding = GenericWebSiteBinding

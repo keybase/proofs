@@ -48,7 +48,7 @@ class GlobalHunter
       lst = lst.concat body.data.children
       go = false if not after? or body.data.children[-1...][0].created_utc < stop
     lst.reverse()
-    @_list = lst
+    @_list = @_list.concat lst
     @index @_list
     cb null
 
@@ -56,7 +56,7 @@ class GlobalHunter
 
   scrape : (cb) ->
     stop = if @_list.length then @_list[-1...][0].created_utc 
-    else (Math.ceil(Date.now() / 1000) - @_startup_window
+    else (Math.ceil(Date.now() / 1000) - @_startup_window)
     await @go_back stop, defer err
     cb err
 
@@ -76,8 +76,8 @@ class GlobalHunter
   find : ( {scraper, username}, cb) ->
     err = out = null
     await @_lock.acquire defer()
-      if not @_running
-        await @start_scraper_loop {scraper}, defer err
+    if not @_running
+      await @start_scraper_loop {scraper}, defer err
     @_lock.release()
     rc = if err? then @_last_rc 
     else if (out = @_cache[username])? then v_codes.OK

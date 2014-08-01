@@ -25,6 +25,7 @@ $(BUILD_STAMP): \
 	lib/scrapers/dns.js \
 	lib/scrapers/generic_web_site.js \
 	lib/scrapers/github.js \
+	lib/scrapers/reddit.js \
 	lib/scrapers/twitter.js \
 	lib/track.js \
 	lib/web_service.js \

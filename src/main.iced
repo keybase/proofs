@@ -12,6 +12,7 @@ mods = [
   require('./announcement')
   require('./scrapers/twitter')
   require('./scrapers/github')
+  require('./scrapers/reddit')
   require('./scrapers/generic_web_site')
   require('./scrapers/dns')
 ]

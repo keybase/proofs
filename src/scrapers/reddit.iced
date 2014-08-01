@@ -150,23 +150,26 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  check_data : ({json, username, proof_text_check }) ->
+  check_data : ({json, username, proof_text_check, med_id }) ->
     if not (json.subreddit? and json.author? and json.selftext?) then v_codes.CONTENT_FAILURE
     else if (json.subreddit.toLowerCase() isnt 'keybaseproofs') then v_codes.CONTENT_FAILURE
     else if (json.author.toLowerCase() isnt username.toLowerCase()) then v_codes.BAD_USERNAME
-    else if (json.selftext.indexOf(proof_text_check) < 0) then v_codes.TEXT_NOT_FOUND
+    else if (json.author.title.indexOf(med_id) < 0) then v_codes.MISSING
+    else if (json.selftext.indexOf(proof_text_check) < 0) then v_codes.MISSING
     else v_codes.OK
 
   # ---------------------------------------------------------------------------
 
   check_status: ({username, api_url, proof_text_check, remote_id}, cb) ->
 
+    {med_id} = make_ids(new Buffer proof_text_check, 'base64')
+
     # calls back with a v_code or null if it was ok
     await @_get_url_body { url : api_url , json : true }, defer err, rc, json
 
     rc = if rc isnt v_codes.OK then rc
     else if not (dat = @unpack_data(json)) then v_codes.CONTENT_FAILURE
-    else @check_data {json, username, proof_text_check }
+    else @check_data {json, username, proof_text_check, med_id }
     cb err, rc
 
 #================================================================================

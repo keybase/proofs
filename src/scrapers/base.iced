@@ -80,3 +80,11 @@ exports.BaseScraper = BaseScraper
 
 #==============================================================
 
+exports.sncmp = sncmp = (a,b) ->
+  if not a? or not b? then false
+  else
+    a = ("" + a).toLowerCase()
+    b = ("" + b).toLowerCase()
+    (a is b)
+
+#================================================================================

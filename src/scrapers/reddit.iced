@@ -1,4 +1,4 @@
-{BaseScraper} = require './base'
+{sncmp,BaseScraper} = require './base'
 {constants} = require '../constants'
 {v_codes} = constants
 {decode} = require('pgp-utils').armor
@@ -10,6 +10,12 @@
 
 PREFIX = "https://www.reddit.com"
 SUBREDDIT = PREFIX + "/r/keybaseproofs"
+
+#================================================================================
+
+proof_text_check_to_med_id = (proof_text_check) ->
+  {med_id} = make_ids(new Buffer proof_text_check, 'base64')
+  med_id
 
 #================================================================================
 
@@ -27,13 +33,14 @@ class GlobalHunter
   #---------------------------
 
   index : (lst) ->
-    for el in lst by -1
+    for el in lst
       data = el.data
       author = data.author.toLowerCase()
-      existing = @_cache[author]
-      if not existing? or existing.data.name isnt data.name
-        @_scraper.log "| [Reddit] Indexing #{author}: #{data.name} @ #{data.created_utc} (#{PREFIX}#{data.permalink})"
-      @_cache[author] = el
+      if not (m = data.title.match /\(([a-zA-Z0-9_-]{43})\)/)? or not (id = m[1])?
+        @_scraper.log "| [Reddit] Unindexable: #{data.title}"
+      else if not @_cache[id]?
+        @_scraper.log "| [Reddit] Indexing #{author}/#{id}: #{data.name} @ #{data.created_utc} (#{PREFIX}#{data.permalink})"
+        @_cache[id] = el
 
   #---------------------------
 
@@ -41,22 +48,25 @@ class GlobalHunter
     @_scraper.log "+ [Reddit] rescraping to #{stop}"
     after = null
     go = true
+    first = null
     esc = make_esc cb, "go_back"
-    lst = []
     while go
       args =
         url : SUBREDDIT + "/.json"
         json : true
         qs: 
           count : 25
+          cachebust : Math.random()
       args.qs.after = after if after?
       await @_scraper._get_url_body args, defer err, @_last_rc, body
       after = body.data.after
       posts = body.data.children
-      lst = lst.concat posts
+      @_scraper.log "| [Reddit] Got back #{posts.length} posts"
+      if posts.length
+        @index posts
+        first = posts[0] unless first?
       go = false if not after? or not posts.length? or posts[-1...][0].data.created_utc < stop
-    @index lst
-    @_most_recent = lst[0].data.created_utc if lst.length > 0
+    @_most_recent = first.data.created_utc if first?
     @_scraper.log "- [Reddit] rescraped; most_recent is now #{@_most_recent}"
     cb null
 
@@ -81,14 +91,14 @@ class GlobalHunter
 
   #---------------------------
 
-  find : ( {scraper, username}, cb) ->
+  find : ( {scraper, med_id}, cb) ->
     err = out = null
     await @_lock.acquire defer()
     if not @_running
       await @start_scraper_loop {scraper}, defer err
     @_lock.release()
     rc = if err? then @_last_rc 
-    else if (out = @_cache[username])? then v_codes.OK
+    else if (out = @_cache[med_id])? then v_codes.OK
     else v_codes.NOT_FOUND
     cb err, rc, out
 
@@ -118,15 +128,19 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
   hunt2 : ({username, proof_text_check, name}, cb) ->
     rc  = v_codes.OK
     out = {}
-    if not (err = @_check_args { username, name })?
-      await _global_hunter.find { scraper : @, username}, defer err, rc, json
-      if rc is v_codes.OK
+    if (err = @_check_args { username, name })?
+      rc = v_codes.BAD_ARGS
+    else
+      med_id = proof_text_check_to_med_id proof_text_check
+      await _global_hunter.find { scraper : @, med_id}, defer err, rc, json
+      if rc isnt v_codes.OK then # noop
+      else if not sncmp(json.data.author,username)
+        rc = v_codes.BAD_USERNAME
+      else
         out =
           api_url : PREFIX + json.data.permalink + ".json"
           human_url : PREFIX + json.data.permalink
           remote_id : json.data.name
-    else
-      rc = v_codes.BAD_USERNAME
     out.rc = rc
     cb err, out
 
@@ -155,14 +169,15 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  check_data : ({json, username, proof_text_check, med_id }) ->
+  check_data : ({json, username, proof_text_check}) ->
+    med_id = proof_text_check_to_med_id proof_text_check
     if not (json.subreddit? and json.author? and json.selftext? and json.title) 
-      v_codes.CONTENT_FAILURE
+      v_codes.CONTENT_MISSING
     else if (json.subreddit.toLowerCase() isnt 'keybaseproofs') 
-      v_codes.CONTENT_FAILURE
-    else if (json.author.toLowerCase() isnt username.toLowerCase()) then v_codes.BAD_USERNAME
+      v_codes.SERVICE_ERROR
+    else if not sncmp(json.author, username) then v_codes.BAD_USERNAME
     else if (json.title.indexOf(med_id) < 0) 
-      v_codes.TEXT_NOT_FOUND
+      v_codes.TITLE_NOT_FOUND
     else 
 
       # strip leading spaces on the input document, so we can look for the target
@@ -178,14 +193,12 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
 
   check_status: ({username, api_url, proof_text_check, remote_id}, cb) ->
 
-    {med_id} = make_ids(new Buffer proof_text_check, 'base64')
-
     # calls back with a v_code or null if it was ok
     await @_get_url_body { url : api_url , json : true }, defer err, rc, json
 
     rc = if rc isnt v_codes.OK then rc
     else if not (dat = @unpack_data(json)) then v_codes.CONTENT_FAILURE
-    else @check_data {json : dat, username, proof_text_check, med_id }
+    else @check_data {json : dat, username, proof_text_check }
     cb err, rc
 
 #================================================================================

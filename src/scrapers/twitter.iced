@@ -1,19 +1,10 @@
-{BaseScraper} = require './base'
+{sncmp,BaseScraper} = require './base'
 {make_ids} = require '../base'
 {constants} = require '../constants'
 {Lock} = require '../util'
 {v_codes} = constants
 {decode} = require('pgp-utils').armor
 urlmod = require 'url'
-
-#================================================================================
-
-sncmp = (a,b) ->
-  if not a? or not b? then false
-  else
-    a = ("" + a).toLowerCase()
-    b = ("" + b).toLowerCase()
-    (a is b)
 
 #================================================================================
 

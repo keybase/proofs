@@ -47,6 +47,7 @@ exports.constants = constants =
     CONTENT_FAILURE:   202
     BAD_USERNAME:      203
     BAD_REMOTE_ID:     204
+    PROOF_NOT_FOUND :  205
     HTTP_300:          230
     HTTP_400:          240
     HTTP_OTHER:        260

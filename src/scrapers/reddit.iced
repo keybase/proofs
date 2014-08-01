@@ -2,6 +2,87 @@
 {constants} = require '../constants'
 {v_codes} = constants
 {decode} = require('pgp-utils').armor
+{Lock} = require 'iced-lock'
+{make_esc} = require 'iced-error'
+
+#================================================================================
+
+PREFIX = "https://www.reddit.com"
+SUBREDDIT = PREFIX + "/r/keybaseproofs"
+
+#================================================================================
+
+class GlobalHunter
+
+  constructor : () ->
+    @_startup_window = 20*60 # on startup, go back 20 minutes
+    @_delay = 5000 # always wait 5s = 5000msec
+    @_running = false
+    @_lock = new Lock
+    @_cache = {}
+    @_list = []
+    @_last_rc = null
+
+  #---------------------------
+
+  index : (lst) ->
+    for el in lst
+      @_cache[el.data.author.toLowerCase()] = el
+
+  #---------------------------
+
+  go_back : (stop, cb) ->
+    after = null
+    go = true
+    esc = make_esc cb, "go_back"
+    lst = []
+    while go
+      args =
+        url : SUBREDDIT + "/.json"
+        json : true
+        qs: 
+          count : 25
+      args.qs.after = after if after?
+      await @_scraper._get_url_body args, defer err, @_last_rc, body
+      after = body.data.after
+      lst = lst.concat body.data.children
+      go = false if not after? or body.data.children[-1...][0].created_utc < stop
+    lst.reverse()
+    @_list = lst
+    @index @_list
+    cb null
+
+  #---------------------------
+
+  scrape : (cb) ->
+    stop = if @_list.length then @_list[-1...][0].created_utc 
+    else (Math.ceil(Date.now() / 1000) - @_startup_window
+    await @go_back stop, defer err
+    cb err
+
+  #---------------------------
+
+  start_scraper_loop : ({scraper}, cb) ->
+    @_scraper = scraper
+    await @scrape defer err
+    @_running = true
+    cb err
+    loop
+      await setTimeout defer(), @_delay
+      await @scrape defer()
+
+  #---------------------------
+
+  find : ( {scraper, username}, cb) ->
+    err = out = null
+    await @_lock.acquire defer()
+      if not @_running
+        await @start_scraper_loop {scraper}, defer err
+    @_lock.release()
+    rc = if err? then @_last_rc 
+    else if (out = @_cache[username])? then v_codes.OK
+    else v_codes.NOT_FOUND
+    cb err, rc, out
 
 #================================================================================
 
@@ -23,15 +104,24 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   hunt2 : ({username, proof_text_check, name}, cb) ->
-    out =  null
-    unless (err = @_check_args { username, name })?
-      await @_global_hunter.find username, defer err, out
+    rc  = v_codes.OK
+    out = {}
+    if not (err = @_check_args { username, name })?
+      await @_global_hunter.find { scarper : @, username}, defer err, rc, out
+      if rc is v_codes.OK
+        out =
+          api_url : PREFIX + out.data.permalink + ".json"
+          human_url : PREFIX + out.data.permalink
+          remote_id : out.data.name
+    else
+      rc = v_codes.BAD_USERNAME
+    out.rc = rc
     cb err, out
 
   # ---------------------------------------------------------------------------
 
   _check_api_url : ({api_url,username}) ->
-    rxx = new RegExp("^https://www.reddit.com/r/keybase", "i")
+    rxx = new RegExp("^#{SUBREDDIT}", "i")
     return (api_url? and api_url.match(rxx));
 
   # ---------------------------------------------------------------------------
@@ -47,34 +137,6 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  _search_gist : ({gist, proof_text_check}, cb) ->
-    out = {}
-    if not (u = gist.url)? 
-      @log "| gist didn't have a URL"
-      rc = v_codes.FAILED_PARSE
-    else
-      await @_get_body u, true, defer err, rc, json
-      if rc isnt v_codes.OK then # noop
-      else if not json.files? then rc = v_codes.FAILED_PARSE
-      else
-        rc = v_codes.NOT_FOUND
-        for filename, file of json.files when (content = file.content)?
-          if (id = @_stripr(content).indexOf(proof_text_check)) >= 0
-            @log "| search #{filename} -> found"
-            rc = v_codes.OK
-            out = 
-              api_url : file.raw_url
-              remote_id : gist.id
-              human_url : gist.html_url
-            break
-          else
-            @log "| search #{filename} -> miss"
-      @log "| search gist #{u} -> #{rc}"
-    out.rc = rc
-    cb out
-
-  # ---------------------------------------------------------------------------
-
   unpack_data : (json) ->
     if (json[0]?.kind is 'Listing') and ((parent = json[0]?.data?.children?[0])?.kind is 't3')
       parent.data
@@ -84,10 +146,10 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   check_data : ({json, username, proof_text_check }) ->
-    if not (json.subreddit? and json.author? and json.title?) then v_codes.CONTENT_FAILURE
-    else if (json.subreddit.toLowerCase() isnt 'keybase') then v_codes.CONTENT_FAILURE
+    if not (json.subreddit? and json.author? and json.selftext?) then v_codes.CONTENT_FAILURE
+    else if (json.subreddit.toLowerCase() isnt 'keybaseproofs') then v_codes.CONTENT_FAILURE
     else if (json.author.toLowerCase() isnt username.toLowerCase()) then v_codes.BAD_USERNAME
-    else if (json.title.indexOf(proof_text_check) < 0) then v_codes.PROOF_NOT_FOUND
+    else if (json.selftext.indexOf(proof_text_check) < 0) then v_codes.TEXT_NOT_FOUND
     else v_codes.OK
 
   # ---------------------------------------------------------------------------

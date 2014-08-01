@@ -5,6 +5,10 @@ pkg = require '../../package.json'
 
 #==============================================================
 
+exports.user_agent = user_agent = constants.user_agent + pkg.version
+
+#==============================================================
+
 class BaseScraper
   constructor : ({@libs, log_level, @proxy, @ca}) ->
     @log_level = log_level or "debug"
@@ -48,14 +52,14 @@ class BaseScraper
 
   _get_url_body: (opts, cb) ->
     ###
-      cb(err, body) only replies with body if status is 200
+      cb(err, status, body) only replies with body if status is 200
     ###
     body = null
     opts.proxy = @proxy if @proxy?
     opts.ca = @ca if @ca?
     opts.timeout = constants.http_timeout unless opts.timeout?
     opts.headers or= {}
-    opts.headers["User-Agent"] = constants.user_agent + pkg.version
+    opts.headers["User-Agent"] = user_agent
     await @libs.request opts, defer err, response, body
     rc = if err? 
       if err.code is 'ETIMEDOUT' then               v_codes.TIMEOUT

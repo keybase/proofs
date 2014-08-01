@@ -27,7 +27,12 @@ class GlobalHunter
 
   index : (lst) ->
     for el in lst
-      @_cache[el.data.author.toLowerCase()] = el
+      data = el.data
+      author = data.author.toLowerCase()
+      existing = @_cache[author]
+      if not existing? or existing.data.name isnt data.name
+        @_scraper.log "| Indexing #{author}: #{data.name} / #{data.permalink} @ #{data.created_utc}"
+      @_cache[author] = el
 
   #---------------------------
 

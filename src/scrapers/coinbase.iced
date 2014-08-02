@@ -30,7 +30,7 @@ exports.CoinbaseScraper = class CoinbaseScraper extends BaseScraper
     out      = {}
 
     unless (err = @_check_args { username, name })?
-      url = @profile_url()
+      url = @profile_url username
       out = 
         rc : rc
         api_url : url
@@ -51,10 +51,14 @@ exports.CoinbaseScraper = class CoinbaseScraper extends BaseScraper
 
     if (rc is v_codes.OK)
       $ = @libs.cheerio.load html
-      divs = $('div .keybase-proof')
+      divs = $('div#public_key_content pre.statement')
       rc = if not divs.length then v_codes.FAILED_PARSE
-      else if (divs.first()).indexOf(proof_text_check) >= 0 then v_codes.OK
-      else  v_codes.NOT_FOUND
+      else if not (txt = divs.first()?.html())? then v_codes.CONTENT_MISSING
+      else
+        # strip all \r's out, which coinbase seems to insert....
+        txt = txt.replace(/\r/g, '')
+        if txt.indexOf(proof_text_check) >= 0 then v_codes.OK
+        else  v_codes.NOT_FOUND
 
     cb err, rc
     

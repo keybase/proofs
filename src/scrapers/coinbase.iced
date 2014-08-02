@@ -19,7 +19,7 @@ exports.CoinbaseScraper = class CoinbaseScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  profile_url : (username) -> "https://coinbase.com/#{username}/keybase"
+  profile_url : (username) -> "https://coinbase.com/#{username}/public-key"
 
   # ---------------------------------------------------------------------------
 

@@ -22,6 +22,7 @@ $(BUILD_STAMP): \
 	lib/main.js \
 	lib/revoke.js \
 	lib/scrapers/base.js \
+        lib/scrapers/coinbase.js \
 	lib/scrapers/dns.js \
 	lib/scrapers/generic_web_site.js \
 	lib/scrapers/github.js \

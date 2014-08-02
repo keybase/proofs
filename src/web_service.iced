@@ -235,11 +235,26 @@ class RedditBinding extends SocialNetworkBinding
 
 #==========================================================================
 
+class CoinbaseBinding extends SocialNetworkBinding
+  service_name : -> "coinbase"
+  proof_type   : -> constants.proof_types.coinbase
+
+  @check_name : (n) ->
+    if not n? or not (n = n.toLowerCase())? then false
+    else if n.match /^[a-z1-9_]{2,16}$/ then true
+    else false
+
+  @name_hint : () -> "alphanumerics, between 1 and 20 characters long"
+  check_name : (n) -> CoinbaseBinding.check_name(n)
+
+#==========================================================================
+
 exports.TwitterBinding = TwitterBinding
 exports.RedditBinding = RedditBinding
 exports.KeybaseBinding = KeybaseBinding
 exports.GithubBinding = GithubBinding
 exports.GenericWebSiteBinding = GenericWebSiteBinding
+exports.CoinbaseBinding = CoinbaseBinding
 exports.DnsBinding = DnsBinding
 
 #==========================================================================

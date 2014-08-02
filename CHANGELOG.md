@@ -4,6 +4,8 @@
   - Use the correct UserAgent format
     - closes keybase/keybase-proofs#899 
   - Reddit proofs
+  - Coinbase proofs
+  - Factor out some common code, but more work to go on this.
 
 ## 0.0.39  (2014-07-17)
 

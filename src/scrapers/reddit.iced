@@ -1,7 +1,6 @@
 {sncmp,BaseScraper} = require './base'
 {constants} = require '../constants'
 {v_codes} = constants
-{decode} = require('pgp-utils').armor
 {Lock} = require 'iced-lock'
 {make_esc} = require 'iced-error'
 {make_ids} = require '../base'
@@ -150,15 +149,6 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
   _check_api_url : ({api_url,username}) ->
     rxx = new RegExp("^#{SUBREDDIT}", "i")
     return (api_url? and api_url.match(rxx));
-
-  # ---------------------------------------------------------------------------
-
-  # Given a validated signature, check that the payload_text_check matches the sig.
-  _validate_text_check : ({signature, proof_text_check }) ->
-    [err, msg] = decode signature
-    if not err? and ("\n\n" + msg.payload + "\n") isnt proof_text_check
-      err = new Error "Bad payload text_check"
-    return err
 
   # ---------------------------------------------------------------------------
 

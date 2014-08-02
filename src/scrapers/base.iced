@@ -1,7 +1,7 @@
-
 {constants} = require '../constants'
 {v_codes} = constants
 pkg = require '../../package.json'
+{decode} = require('pgp-utils').armor
 
 #==============================================================
 

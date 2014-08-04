@@ -1,4 +1,4 @@
-## 1.0.0
+## 1.0.0 (2014-08-04)
 
   - Arbitrarily cut a 1.0.0 release
   - Use the correct UserAgent format

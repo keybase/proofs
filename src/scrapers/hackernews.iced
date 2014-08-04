@@ -1,33 +1,36 @@
 {BaseScraper} = require './base'
 {constants} = require '../constants'
 {v_codes} = constants
-{decode} = require('pgp-utils').armor
+{proof_text_check_to_med_id} = require '../base'
 
 #================================================================================
 
-exports.CoinbaseScraper = class CoinbaseScraper extends BaseScraper
+exports.HackerNewsScraper = class HackerNewsScraper extends BaseScraper
+
+  constructor: (opts) ->
+    super opts
 
   # ---------------------------------------------------------------------------
 
   _check_args : (args) ->
     if not(args.username?)
-      new Error "Bad args to Coinbase proof: no username given"
-    else if not (args.name?) or (args.name isnt 'coinbase')
-      new Error "Bad args to Coinbase proof: type is #{args.name}"
+      new Error "Bad args to HackerNews proof: no username given"
+    else if not (args.name?) or (args.name isnt 'hackernews')
+      new Error "Bad args to HackerNews proof: type is #{args.name}"
     else
       null
 
   # ---------------------------------------------------------------------------
 
-  profile_url : (username) -> "https://coinbase.com/#{username}/public-key"
+  profile_url : (username) -> "https://news.ycombinator.com/user?id=#{username.toLowerCase()}"
 
   # ---------------------------------------------------------------------------
 
-  hunt2 : ({username, proof_text_check, name}, cb) ->
+  hunt2 : ({username, name, proof_text_check}, cb) ->
+    # calls back with err, out
 
-    # calls back with rc, out
-    rc       = v_codes.OK
     out      = {}
+    rc       = v_codes.OK
 
     unless (err = @_check_args { username, name })?
       url = @profile_url username
@@ -47,20 +50,12 @@ exports.CoinbaseScraper = class CoinbaseScraper extends BaseScraper
   check_status: ({username, api_url, proof_text_check, remote_id}, cb) ->
 
     # calls back with a v_code or null if it was ok
-    await @_get_url_body { url : api_url}, defer err, rc, html
+    await @_get_url_body {url : api_url }, defer err, rc, html
 
-    if (rc is v_codes.OK)
-      $ = @libs.cheerio.load html
-      divs = $('div#public_key_content pre.statement')
-      rc = if not divs.length then v_codes.FAILED_PARSE
-      else if not (txt = divs.first()?.html())? then v_codes.CONTENT_MISSING
-      else
-        # strip all \r's out, which coinbase seems to insert....
-        txt = txt.replace(/\r/g, '')
-        if txt.indexOf(proof_text_check) >= 0 then v_codes.OK
-        else  v_codes.NOT_FOUND
+    if rc is v_codes.OK
+      search_for = proof_text_check
+      if html.indexOf(search_for) < 0 then rc = v_codes.NOT_FOUND
 
     cb err, rc
 
 #================================================================================
-

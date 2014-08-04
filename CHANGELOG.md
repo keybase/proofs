@@ -1,3 +1,7 @@
+## 1.0.1 (2014-08-04)
+
+  - HackerNews
+
 ## 1.0.0 (2014-08-04)
 
   - Arbitrarily cut a 1.0.0 release

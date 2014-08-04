@@ -1,7 +1,8 @@
 {BaseScraper} = require './base'
 {constants} = require '../constants'
 {v_codes} = constants
-{proof_text_check_to_med_id} = require '../base'
+{make_ids,proof_text_check_to_med_id} = require '../base'
+{decode} = require('pgp-utils').armor
 
 #================================================================================
 
@@ -44,6 +45,20 @@ exports.HackerNewsScraper = class HackerNewsScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   _check_api_url : ({api_url,username}) -> api_url is @profile_url(username)
+
+  # ---------------------------------------------------------------------------
+
+  # Given a validated signature, check that the payload_text_check matches the sig.
+  _validate_text_check : ({signature, proof_text_check }) ->
+    [err, msg] = decode signature
+    if not err?
+      {med_id} = make_ids msg.body
+      if med_id isnt proof_text_check
+        console.log "Fuck"
+        console.log med_id
+        console.log proof_text_check
+        err = new Error "Bad payload text_check"
+    return err
 
   # ---------------------------------------------------------------------------
 

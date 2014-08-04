@@ -1,3 +1,7 @@
+## 1.0.2 (2014-08-04)
+
+  - Bugfix for an HN failure with the command-line
+
 ## 1.0.1 (2014-08-04)
 
   - HackerNews

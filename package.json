@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "iced-error": ">=0.0.9",
-    "iced-lock": "^1.0.0",
+    "iced-lock": "^1.0.1",
     "iced-runtime": ">=0.0.1",
     "pgp-utils": ">=0.0.22",
     "triplesec": ">=3.0.16"

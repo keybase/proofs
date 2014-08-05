@@ -23,7 +23,7 @@ exports.HackerNewsScraper = class HackerNewsScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  profile_url : (username) -> "https://news.ycombinator.com/user?id=#{username.toLowerCase()}"
+  profile_url : (username) -> "https://news.ycombinator.com/user?id=#{username}"
 
   # ---------------------------------------------------------------------------
 
@@ -54,9 +54,6 @@ exports.HackerNewsScraper = class HackerNewsScraper extends BaseScraper
     if not err?
       {med_id} = make_ids msg.body
       if med_id isnt proof_text_check
-        console.log "Fuck"
-        console.log med_id
-        console.log proof_text_check
         err = new Error "Bad payload text_check"
     return err
 

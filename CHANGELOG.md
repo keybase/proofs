@@ -1,3 +1,7 @@
+## 1.0.4
+
+  - Attempts to avoid the HN rate-limit, but not working since the firebaseio API doesn't seem to update
+
 ## 1.0.3 (2014-08-05)
 
   - Hackernews logins are case-sensitive?

@@ -1,6 +1,6 @@
-## 1.0.4
+## 1.0.4 (2014-08-11)
 
-  - Attempts to avoid the HN rate-limit, but not working since the firebaseio API doesn't seem to update
+  - Use the FireBase.io API for hackernews
 
 ## 1.0.3 (2014-08-05)
 

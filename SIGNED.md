@@ -1,15 +1,16 @@
 ##### Signed by https://keybase.io/max
 ```
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Version: GnuPG/MacGPG2 v2.0.22 (Darwin)
+Comment: GPGTools - http://gpgtools.org
 
-iQEcBAABAgAGBQJT4Cx8AAoJEJgKPw0B/gTflr0IAIc0QEaWTJqkYR/WtPfEos86
-QBYrvBqgWssGOQxzJ8twsLqilHxKP9PXowClJvxHyKQkMDjMpzRQLWmh/bONEqjB
-wYCMHxd7gn6HFU0UkN54ZJyim7PixoSDg6E0bs+uTZ32pDsIHA9trBNNS24LEjuz
-QyYG5pmrWo38KsOKxYwbOD2+o/S/9K3ZhuVPDIR3WVpOzUQkFt9wbHmMNr/3aH2B
-QikCZ+dfIW56nuU5VC1PFWzICiKjih431go5lD3vqxxg2I9gYa+5KzfppfKQx4sF
-9DxzG3H2etkacfdpE/ydsuYbXh7SyNvfMrHmP21jx8Jqt96+XzQ9ceLkMye3wGI=
-=uodp
+iQEcBAABAgAGBQJT6M6zAAoJEJgKPw0B/gTfsvsH/3iEcUTyktubgO6XaNJwY7Yu
+0uUUmWHcJ0lI2sfYELjO6M02rGuCuThasnn6NnFlKigcLFumRiMl6uV5TpiffQRX
+ttNhCb7+57Yu2OPUR31A4juavymFXaca3HZ+2uXp4fVp9G1FjOTfUqnGEZ5fQ0tr
+imVsxDmZCfpZOO8LZ3m0ojNz1zbKT1wTyk2fPMZABdUL9OZLMbMulpOuvskiCfzL
+WjN6zWlGz5Qb3TStEDF9xl/+5KpXA8Zd5rX0GPA5Z+KlS7JjKtgbwE15eACBrYrZ
+8oryJlxoaFKKHah8c3wI1Zjt+CErtUN4xJBcEVcOAqGbGt74vnZCLfK4pfbInzQ=
+=TVFk
 -----END PGP SIGNATURE-----
 
 ```
@@ -24,7 +25,7 @@ QikCZ+dfIW56nuU5VC1PFWzICiKjih431go5lD3vqxxg2I9gYa+5KzfppfKQx4sF
 size   exec  file                         contents                                                        
              ./                                                                                           
 109            .gitignore                 ec278daeb8f83cac2579d262b92ee6d7d872c4d1544e881ba515d8bcc05361ab
-4129           CHANGELOG.md               0429ae423422dd8c59842e2ee388174abdf8c27c2bfda1ef24e025773ab6ede9
+4196           CHANGELOG.md               7060cb09cbf03892e637a9d4746aae8e1d13838014bd94f20281d4dbf79bca84
 1483           LICENSE                    333be7050513d91d9e77ca9acb4a91261721f0050209636076ed58676bfc643d
 1232           Makefile                   eb813e716fdeb97f0020fb360a522c64f30a6b56bf8a739e19ebbe6e6e09eaff
 43             README.md                  b2db580fc880756ae739bb148570f6afb1c250e5c0d2c5fa56ce41491753ca6c
@@ -44,13 +45,13 @@ size   exec  file                         contents
 7599               dns.js                 985ca8f5ccee611c7308124ef03dccaaf930b93cc5e8a8bcbf2d864d9d351028
 9170               generic_web_site.js    40244e23529c15b4118f9b4975bab7be459a42a71804a604bc143cd9b315c498
 9897               github.js              89890ad3cb4c96795774c8a24753a12a614e0dd051882d6614c1401e08866bb1
-4446               hackernews.js          802ea205f233922ab112a32f1abf17842971f6bbc23d849bd1d6daa1d0275c7f
+4592               hackernews.js          928f6c675f775954c3f7a97c86af9e92661d818c6a1adc062fa2a77a3a69f685
 17525              reddit.js              0b9266c2ab16fec1b941225bc9dc9931b78269316d4216b4a75d87ff39308131
 27410              twitter.js             df87a8879ed7d658de3e4db101c6f46e252e95640242a2d7e878420218485ac5
 1507             track.js                 3b1552409b374f87a4c498a7f4cd3da7fad88c31a904cfbb033db05c78a61648
 1452             util.js                  9fa6d9d731f6ec99349e5875cbe4f0102c6a1b2590f16daf48168c99d95ba4ac
 17248            web_service.js           71b89910557e169459de8a4c6ea21185bd2da96e322663e18fc84a08438e7ffd
-719            package.json               6d346afef203aadc9094399cf80a3d6938f812038e7da9c68ae61d7d28f3da12
+719            package.json               dd5854bfffd27b806e233ecfba4a3b7b3b4c38aa4ff7a9750773cb2ee82289f2
                src/                                                                                       
 1796             alloc.iced               8ced14c262cc2564923e4083635c3c5fa24ef1347343a5dd6f28f503075ffe71
 494              announcement.iced        2dba8539acbc9de3f92340b7700aa89077108ee4e816347e4e52cd294185c982
@@ -67,7 +68,7 @@ size   exec  file                         contents
 3078               dns.iced               631c2053e1cf069eafba398fb86038ed45bbb2616fc495ccc8b8531862cab69b
 3030               generic_web_site.iced  bfbe49a79f0a434bfb2e59a8d2c47fb75c1f670ffa63e10d6a86ffd090120364
 3305               github.iced            f10410ccca3bb3fc5045024dada97a4974984ee433476bea30c1ab47f870da90
-2389               hackernews.iced        a9e5a630c59f222a52f1234744170d36646b06a9d546a99116503085006bf7ad
+2475               hackernews.iced        8de7e9d8c25c9f926294451549bf3dda5b6392dc4bdd9f39f32d2fb5962071d0
 6220               reddit.iced            73cd0dc8cce96fc90538c9291aad84e682a4c709fcbe6a6be69e7f1e7e25d5ac
 11420              twitter.iced           ed924d2f5e07a8259b392fb3aef9ba0d411cdd1f2cb6af478a9f62c597e89373
 764              track.iced               e31ae07947e8c7e55ef37aaaedde7dd01acda6939cf938eb156c8bf4c0c0f3d7

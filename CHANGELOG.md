@@ -1,4 +1,4 @@
-## 1.0.5
+## 1.0.5 (2014-08-14)
 
   - More HN fixes --- don't normalize usernames with toLowerCase();
     also warn that it's slow.

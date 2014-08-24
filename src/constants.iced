@@ -13,6 +13,7 @@ exports.constants = constants =
     revoke : "revoke"
     cryptocurrency : "cryptocurrency"
     announcement : "announcement"
+    subkey : "subkey"
   proof_types :
     none : 0
     keybase : 1

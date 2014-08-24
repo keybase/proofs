@@ -1,3 +1,9 @@
+## 1.1.0
+
+Features:
+
+  - New proof types for subkeys (think delegated app keys).
+
 ## 1.0.7 (2014-08-21)
 
 Bugfixes:

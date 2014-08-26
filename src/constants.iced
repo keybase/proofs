@@ -29,6 +29,13 @@ exports.constants = constants =
   short_id_bytes : 27
   shortest_pgp_signature : 100 # can't have a PGP signature shorter than this...
 
+  # Copy-pasted from Keybase for now, but they should live here...
+  seq_types :
+    NONE : 0
+    PUBLIC : 1
+    PRIVATE : 2
+    SEMIPRIVATE : 3
+
   v_codes : # verification codes for hosted proofs
     NONE:              0
     OK:                1

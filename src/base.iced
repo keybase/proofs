@@ -144,6 +144,10 @@ class Base
   #------
 
   _v_check : ({json}, cb) ->
+
+    # The default seq_type is PUBLIC
+    seq_type = (v) -> if v? then v else constants.seq_types.PUBLIC
+
     err = if not cieq (a = json?.body?.key?.username), (b = @user.local.username)
       new Error "Wrong local user: got '#{a}' but wanted '#{b}'"
     else if (a = json?.body?.key?.uid) isnt (b = @user.local.uid)
@@ -167,7 +171,7 @@ class Base
       new Error "Wrong previous hash; wanted '#{a}' but got '#{b}'"
     else if (a = @seqno) and (a isnt (b = json?.seqno))
       new Error "Wrong seqno; wanted '#{a}' but got '#{b}"
-    else if (b = json?.seq_type)? and (not (a = @seq_type)? or (a isnt b))
+    else if (a = seq_type(json?.seq_type)) isnt (b = seq_type(@seq_type))
       new Error "Wrong seq_type: wanted '#{a}' but got '#{b}'"
     else
       null

@@ -3,6 +3,7 @@
 Features:
 
   - New proof types for subkeys (think delegated app keys).
+  - Begin to work in private sequences (need a separate type for those)
 
 ## 1.0.7 (2014-08-21)
 

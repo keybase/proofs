@@ -133,7 +133,7 @@ class Base
 
   #------
 
-  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type}) ->
 
   #------
 
@@ -167,6 +167,8 @@ class Base
       new Error "Wrong previous hash; wanted '#{a}' but got '#{b}'"
     else if (a = @seqno) and (a isnt (b = json?.seqno))
       new Error "Wrong seqno; wanted '#{a}' but got '#{b}"
+    else if (b = json?.seq_type)? and (not (a = @seq_type)? or (a isnt b))
+      new Error "Wrong seq_type: wanted '#{a}' but got '#{b}'"
     else
       null
     cb err
@@ -194,6 +196,16 @@ class Base
           key_id : @km().get_pgp_key_id().toString('hex')
           fingerprint : @km().get_pgp_fingerprint().toString('hex')
     }
+
+    # Can be:
+    #
+    #   NONE : 0
+    #   PUBLIC : 1  # this is the default!
+    #   PRIVATE : 2
+    #   SEMIPRIVATE : 3
+    #
+    ret.seq_type = @seq_type if @seq_type?
+
     ret.body.client = @client if @client?
     ret.body.merkle_root = @merkle_root if @merkle_root?
     ret.body.revoke = @revoke if (@revoke?.sig_id? or @revoke?.sig_ids?.length > 0)

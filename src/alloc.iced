@@ -33,7 +33,7 @@ lookup_tab = {
 
 get_klass = (type) ->
   err = klass = null
-  unless (klass = lookup_tab[typ])?
+  unless (klass = lookup_tab[type])?
     err = new Error "Unknown proof class: #{type}"
   [err, klass]
 

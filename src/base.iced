@@ -73,9 +73,9 @@ class Verifier
 
   _check_ids : (body, cb) ->
     {short_id, id} = make_ids body
-    err = if not streq_secure id, @id
+    err = if not (@id? and streq_secure id, @id)
       new Error "Long IDs aren't equal; wanted #{id} but got #{@id}"
-    else if not streq_secure short_id, @short_id
+    else if not (@short_id? and streq_secure short_id, @short_id)
       new Error "Short IDs aren't equal: wanted #{short_id} but got #{@short_id}"
     else null
     cb err
@@ -213,6 +213,7 @@ class Base
     ret.body.client = @client if @client?
     ret.body.merkle_root = @merkle_root if @merkle_root?
     ret.body.revoke = @revoke if (@revoke?.sig_id? or @revoke?.sig_ids?.length > 0)
+
     return ret
 
   #------

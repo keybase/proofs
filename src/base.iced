@@ -171,7 +171,7 @@ class Base
       new Error "Wrong previous hash; wanted '#{a}' but got '#{b}'"
     else if (a = @seqno) and (a isnt (b = json?.seqno))
       new Error "Wrong seqno; wanted '#{a}' but got '#{b}"
-    else if (a = seq_type(json?.seq_type)) isnt (b = seq_type(@seq_type))
+    else if @seqno and (a = seq_type(json?.seq_type)) isnt (b = seq_type(@seq_type))
       new Error "Wrong seq_type: wanted '#{a}' but got '#{b}'"
     else
       null

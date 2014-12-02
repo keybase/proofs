@@ -1,3 +1,9 @@
+## 1.1.4
+
+Bugfix:
+ 
+  - All @veganstraightedge to use his twitter handle (>15 chars)
+
 ## 1.1.3 (2014-09-21)
 
 Nits:

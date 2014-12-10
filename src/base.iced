@@ -141,14 +141,14 @@ class Base
     if not err? and key?.fingerprint?
       checks++
       err = @_v_check_fingerprint key
-    if not err? and checks is 0
+    if not err?  and checks is 0
       err = new Error "need either a 'body.key.kid' or a 'body.key.fingerprint'"
     err
 
   #------
 
   _v_check_kid : (kid) ->
-    if not bufeq_secure (a = @km.get_ekid()), (new Buffer key, "hex")
+    if not bufeq_secure (a = @km().get_ekid()), (new Buffer kid, "hex")
       err = new Error "Verification key doesn't match packet (via kid): #{a.toString('hex')} != #{kid}"
     else
       null
@@ -217,9 +217,13 @@ class Base
           host : @host
           username : @user.local.username
           uid : @user.local.uid
-          key_id : @km().get_pgp_key_id().toString('hex')
-          fingerprint : @km().get_pgp_fingerprint().toString('hex')
+          kid : @km().get_ekid().toString('hex')
     }
+
+    fp = @km().get_pgp_fingerprint()
+    if fp?
+      ret.body.key.fingerprint = fp.toString('hex')
+      ret.body.key.key_id = @km().get_pgp_key_id().toString('hex')
 
     # Can be:
     #

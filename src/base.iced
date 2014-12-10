@@ -133,6 +133,38 @@ class Base
 
   #------
 
+  _v_check_key : (key) ->
+    if key?.kid?
+      @_v_check_kid key.kid
+    else if key?.fingerprint?
+      @_v_check_fingerprint key
+    else
+      new Error "need either a 'body.key.kid' or a 'body.key.fingerprint'"
+
+  #------
+
+  _v_check_kid : (kid) ->
+    if not bufeq_secure (a = @km.get_ekid()), (new Buffer key, "hex")
+      err = new Error "Verification key doesn't match packet (via kid): #{a.toString('hex')} != #{kid}"
+    else
+      null
+
+  #------
+
+  _v_check_fingerprint : (key) ->
+    if not (key_id = key?.key_id)?
+      new Error "Needed a body.key.key_id but none given"
+    else if not bufeq_secure (a = @km().get_pgp_key_id()), (new Buffer key_id, "hex")
+      new Error "Verification key doesn't match packet (via key ID): #{a.toString('hex')} != #{key_id}"
+    else if not (fp = key?.fingerprint)?
+      new Error "Needed a body.key.fingerprint but none given"
+    else if not bufeq_secure @km().get_pgp_fingerprint(), (new Buffer fp, "hex")
+      new Error "Verifiation key doesn't match packet (via fingerprint)"
+    else
+      null
+
+  #------
+
   _v_check : ({json}, cb) ->
 
     # The default seq_type is PUBLIC
@@ -142,14 +174,6 @@ class Base
       new Error "Wrong local user: got '#{a}' but wanted '#{b}'"
     else if (a = json?.body?.key?.uid) isnt (b = @user.local.uid)
       new Error "Wrong local uid: got '#{a}' but wanted '#{b}'"
-    else if not (kid = json?.body?.key?.key_id)?
-      new Error "Needed a body.key.key_id but none given"
-    else if not bufeq_secure (a = @km().get_pgp_key_id()), (new Buffer kid, "hex")
-      new Error "Verification key doesn't match packet (via key ID): #{a.toString('hex')} != #{kid}"
-    else if not (fp = json?.body?.key?.fingerprint)?
-      new Error "Needed a body.key.fingerprint but none given"
-    else if not bufeq_secure @km().get_pgp_fingerprint(), (new Buffer fp, "hex")
-      new Error "Verifiation key doesn't match packet (via fingerprint)"
     else if not cieq (a = json?.body?.key?.host), (b = @host)
       new Error "Wrong host: got '#{a}' but wanted '#{b}'"
     else if (a = @_type())? and ((b = json?.body?.type) isnt a)
@@ -163,8 +187,10 @@ class Base
       new Error "Wrong seqno; wanted '#{a}' but got '#{b}"
     else if @seqno and (a = seq_type(json?.seq_type)) isnt (b = seq_type(@seq_type))
       new Error "Wrong seq_type: wanted '#{a}' but got '#{b}'"
+    else if not (key = json?.body?.key)?
+      new Error "no 'body.key' block in signature"
     else
-      null
+      err = @_v_check_key key
     cb err
 
   #------

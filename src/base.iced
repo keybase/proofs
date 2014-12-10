@@ -103,28 +103,18 @@ class Verifier
     if not err? and @make_ids
       {@short_id, @id} = make_ids msg.body
     if not err?
-      await @sig_eng.unbox msg, defer err, @literals
+      await @sig_eng.unbox msg, defer err, @payload
     cb err
 
   #---------------
 
   _check_json : (cb) ->
-    err = @json = jsons = null
-    if (n = @literals.length) isnt 1
-      err = new Error "Expected only one pgp literal; got #{n}"
-    else
-      l = @literals[0]
-      jsons = l.data
-      [e, @json] = katch (() -> JSON.parse jsons)
-      err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?
+    jsons = @payload
+    [e, @json] = katch (() -> JSON.parse jsons)
+    err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?
     if not err?
       jsons = jsons.toString('utf8')
       await @base._v_check {@json}, defer err
-      if err? then #noop
-      else if not (sw = l.get_data_signer()?.sig)?
-        err = new Error "Expected a signature on the payload message"
-      else if not (@km().find_pgp_key (b = sw.get_key_id()))?
-        err = new Error "Failed sanity check; didn't have a key for '#{b.toString('hex')}'"
     cb err, @json, jsons
 
 #==========================================================================

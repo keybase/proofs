@@ -246,14 +246,19 @@ class Base
 
   #------
 
+  _v_generate : (opts, cb) -> cb null
+
+  #------
+
   generate : (cb) ->
+    esc = make_esc cb, "generate"
     out = null
+    await @_v_generate {}, esc defer()
     json = @json()
-    await @sig_eng.box json, defer err, {pgp, raw}
-    unless err?
-      {short_id, id} = make_ids raw
-      out = { pgp, json, id, short_id, raw }
-    cb err, out
+    await @sig_eng.box json, esc defer {pgp, raw, armored}
+    {short_id, id} = make_ids raw
+    out = { pgp, json, id, short_id, raw, armored }
+    cb null, out
 
   #------
 

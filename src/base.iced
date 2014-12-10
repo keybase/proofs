@@ -134,12 +134,16 @@ class Base
   #------
 
   _v_check_key : (key) ->
+    checks = 0
     if key?.kid?
-      @_v_check_kid key.kid
-    else if key?.fingerprint?
-      @_v_check_fingerprint key
-    else
-      new Error "need either a 'body.key.kid' or a 'body.key.fingerprint'"
+      checks++
+      err = @_v_check_kid key.kid
+    if not err? and key?.fingerprint?
+      checks++
+      err = @_v_check_fingerprint key
+    if not err? and checks is 0
+      err = new Error "need either a 'body.key.kid' or a 'body.key.fingerprint'"
+    err
 
   #------
 

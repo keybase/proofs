@@ -40,7 +40,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
     esc = make_esc cb, "SubkeyBase::_v_check"
     err = null
     await super { json }, esc defer()
-    if (sig = json?.body?[@get_field()]?.reverse_sig.sig)? and (skm = @get_subkm())?
+    if (sig = json?.body?[@get_field()]?.reverse_sig?.sig)? and (skm = @get_subkm())?
       eng = skm.make_sig_eng()
       await eng.unbox sig, esc defer payload
       unless bufeq_secure (a = @km().get_ekid()), (b = payload)

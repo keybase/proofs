@@ -2,6 +2,8 @@
 {Base} = require './base'
 {constants} = require './constants'
 {make_esc} = require 'iced-error'
+pgp_utils = require('pgp-utils')
+{bufeq_secure} = pgp_utils.util
 
 #==========================================================================
 
@@ -33,6 +35,17 @@ exports.SubkeyBase = class SubkeyBase extends Base
     ret = super {}
     ret.body[@get_field()] = @get_subkey()
     return ret
+
+  _v_check : ({json}, cb) ->
+    esc = make_esc cb, "SubkeyBase::_v_check"
+    err = null
+    await super { json }, esc defer()
+    if (sig = json?.body?[@get_field()]?.reverse_sig.sig)? and (skm = @get_subkm())?
+      eng = skm.make_sig_eng()
+      await eng.unbox sig, esc defer payload
+      unless bufeq_secure (a = @km().get_ekid()), (b = payload)
+        err = new Error "Bad reverse sig payload: #{a.toString('hex')} != #{b.toString('hex')}"
+    cb err
 
 #==========================================================================
 

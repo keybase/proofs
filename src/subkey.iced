@@ -14,15 +14,18 @@ exports.SubkeyBase = class SubkeyBase extends Base
 
   _v_generate : (opts, cb) ->
     esc = make_esc cb, "_v_generate"
-    if not @get_subkey()? and @get_subkey()?
-      eng = @get_subkm().make_sig_eng()
-      msg = @km.get_ekid().toString('hex')
-      await eng.box msg, esc defer { armored, type }
-      obj =
-        kid : @get_subkm().get_ekid().toString('hex')
-        reverse_sig:
+    if not @get_subkey()? and @get_subkm()?
+      reverse_sig = null
+      if @get_subkm().get_keypair().can_sign()
+        eng = @get_subkm().make_sig_eng()
+        msg = @km().get_ekid()
+        await eng.box msg, esc defer { armored, type }
+        reverse_sig =
           sig : armored
           type : type
+      obj =
+        kid : @get_subkm().get_ekid().toString('hex')
+        reverse_sig: reverse_sig
       @set_subkey obj
     cb null
 

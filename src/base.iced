@@ -62,6 +62,12 @@ class Verifier
 
   #---------------
 
+  get_etime : () ->
+    if @json.ctime? and @json.expire_in? then (@json.ctime + @json.expire_in)
+    else null
+
+  #---------------
+
   verify : (cb) ->
     esc = make_esc cb, "Verifier::verfiy"
     await @_parse_and_process esc defer()
@@ -89,6 +95,8 @@ class Verifier
     else if not @json.expire_in? then err = new Error "No `expire_in` in signature"
     else if (expired = (now - @json.ctime - @json.expire_in)) > 0
       err = new Error "Expired #{expired}s ago"
+    else
+      @etime = @json.ctime + @json.expire_in
     cb err
 
   #---------------
@@ -276,7 +284,7 @@ class Base
       id = obj.id = verifier.id
       short_id = obj.short_id = verifier.short_id
     out = if err? then {}
-    else { json_obj, json_str, id, short_id }
+    else { json_obj, json_str, id, short_id, etime : verifier.get_etime() }
     cb err, out
 
   #-------

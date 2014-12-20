@@ -29,6 +29,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
         kid : @get_subkm().get_ekid().toString('hex')
         reverse_sig: reverse_sig
       @set_subkey obj
+      obj.notes = @notes if @notes?
     cb null
 
   _json : () ->
@@ -46,6 +47,10 @@ exports.SubkeyBase = class SubkeyBase extends Base
       unless bufeq_secure (a = @km().get_ekid()), (b = payload)
         err = new Error "Bad reverse sig payload: #{a.toString('hex')} != #{b.toString('hex')}"
     cb err
+
+  constructor : (obj) ->
+    @notes = obj.notes
+    super obj
 
 #==========================================================================
 

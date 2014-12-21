@@ -54,7 +54,7 @@ exports.cieq = cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase(
 
 class Verifier
 
-  constructor : ({@pgp, @id, @short_id, @skip_ids, @make_ids}, @sig_eng, @base) ->
+  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids}, @sig_eng, @base) ->
 
   #---------------
 
@@ -103,15 +103,11 @@ class Verifier
 
   _parse_and_process : (cb) ->
     err = null
-    [ err, msg] = decode @pgp
-    if not err? and (msg.type isnt "MESSAGE")
-      err = new Error "wrong message type; expected a generic message; got #{msg.type}"
+    await @sig_eng.unbox @armored, defer err, @payload, body
     if not err? and not @skip_ids
-      await @_check_ids msg.body, defer err
+      await @_check_ids body, defer err
     if not err? and @make_ids
-      {@short_id, @id} = make_ids msg.body
-    if not err?
-      await @sig_eng.unbox msg, defer err, @payload
+      {@short_id, @id} = make_ids body
     cb err
 
   #---------------

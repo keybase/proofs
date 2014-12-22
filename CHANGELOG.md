@@ -1,8 +1,17 @@
-## 1.1.4
+
+## 2.0.1 (2014-12-22)
+
+Bufixes
+  - Various
+
+## 2.0.0 (2014-12-10)
 
 Bugfix:
- 
   - All @veganstraightedge to use his twitter handle (>15 chars)
+
+New features:
+  - lots of architectural improvements for keybase/keybase#204
+    - Use either PGP or KB-style packets, sigs, and keys in all places.
 
 ## 1.1.3 (2014-09-21)
 

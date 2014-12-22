@@ -4,13 +4,13 @@
 Version: GnuPG/MacGPG2 v2
 Comment: GPGTools - https://gpgtools.org
 
-iQEcBAABCgAGBQJUiI3SAAoJEJgKPw0B/gTfMioH/RbtlsXVQQG6ihAl5JHTcG1E
-YpLYpOMdU4Do/LdZCi+zwUWoXD2cO3Ff/jpUCB8fuFTzQRoZ8xV9pB/qXKZ0zJOH
-UryTA0BlRLKihba0WOCxild442mVyZBUqXYoigWwzsVP54FjzX/x7s+7EmcFnjmE
-EDYK0HMMsDpqK3GCETEddoaJyeMNnCwvcYIHhoYBpzcB39a+Uv0nXrt756+13Q/A
-gkYXzGuvaBkCccyucl/uDs+ZhbU7tnJSEui1inkXIWAJnt6DwW5MqGSsZGyn9IKE
-4VMM+QbP04jZdDMZAKrIevzmLiCqW3Ka1pywowEdvDhFwJrVO2WNFK+x1o1bXGc=
-=Ri4+
+iQEcBAABCgAGBQJUmEctAAoJEJgKPw0B/gTfBesIAIuv09vYB6/9asecel4caGLP
+BE6GmdOEMypYhNen92LABz50NrOw/QtUZxG3ByHjOxSU+1EgWrlUaMmNf2m0Eoxx
+2wQATAL97MJnpfahbQfQj4F3K+dRNYmmTzFLyRneN0Rlb/yOK8QNMLPn+goCMpxT
+w05F2VOb+dR2+S116EfVtDFfOgir/lV0QyCImqG57CJDYwkHAps25FO2l2VTksyj
+77GNOrfofwUrEAoQQYHUbDLAmo67ayf5Gd+64e26db9Z81raaWvK3hnyuy0kZTQX
+5jKZ5gERO1lPj7ABPsDNp+c6iYgf+s1WMBUgVXrQqUuapaFNNFA0GuGttKV0TWk=
+=eARL
 -----END PGP SIGNATURE-----
 
 ```
@@ -25,19 +25,19 @@ gkYXzGuvaBkCccyucl/uDs+ZhbU7tnJSEui1inkXIWAJnt6DwW5MqGSsZGyn9IKE
 size   exec  file                         contents                                                        
              ./                                                                                           
 109            .gitignore                 ec278daeb8f83cac2579d262b92ee6d7d872c4d1544e881ba515d8bcc05361ab
-5216           CHANGELOG.md               7d0368f925e34fefc7f0c03f065b9551c546a6c081ef9cd4f39e4fdfe1be9da7
+5422           CHANGELOG.md               1ebebe9086f0994c65750d13ff861d0b836a1cf181432715e9f85e00d220e995
 1483           LICENSE                    333be7050513d91d9e77ca9acb4a91261721f0050209636076ed58676bfc643d
-1249           Makefile                   5d1a8ae00abc749629ff0218a4a1e760024c33974c28878372c68af112a9708d
+1266           Makefile                   3b30092e4c5c336bb8c252dd4f0123111717ee99239f239fc442241682551c17
 43             README.md                  b2db580fc880756ae739bb148570f6afb1c250e5c0d2c5fa56ce41491753ca6c
                lib/                                                                                       
-1832             alloc.js                 20b4684c0fc9aa4f9092c34571ab3f9337fca8224bc66e12d304617c729c1934
+1902             alloc.js                 b3c2658f665c3467889c7155c78704d1d6f9a06587a40a125b7062df0fdb6b8e
 1096             announcement.js          268bbb256b6e6c0a02722bf2f9bf762a56c376787168c77fba1a3f4d681c33c8
 1055             auth.js                  fafe19c38a406e762aa6e0e4152faa8f5b70b659fb421257a068b87ef2cee2c6
 766              b64extract.js            1b1db6b90c52385e2d8a65ffa901dc03fab0b25c719ee01f560869afbd6234a7
-19539            base.js                  6c33ba8c2a4360599df4d03561641f5bade0c058aa0b2cb6c145fc2933e894e4
-1863             constants.js             0843be15c7b4ebd18437d6d595caa58295cabdfe9fc975c5fa4e5d4656f67ec9
+21294            base.js                  2d385b65fd7c15be3df7b220931ddad9ee383db43a9118d37fe9cea94de8b2e6
+1887             constants.js             95cf5da879f9735f2204b074fcfbd9cd0ab985dbcca9d20c2c333563fffc1c44
 1126             cryptocurrency.js        6a3e672fab710892c014d6483f4332183e3b356826647ddba86792770f7fb20a
-723              main.js                  1b9a15fcb72965b7fd7fa39b6c1420ac30fce57c10c04a063f43c665fb783cd9
+744              main.js                  346f9ffb574315aba1bab0e6ad8141d70a8b2acf683a354c3d0bd1533cc41e03
 2342             revoke.js                3145022e644b382ca4170d80c2d6af4f75d201e4ead5fa65374c8c4f4700dc5e
                  scrapers/                                                                                
 6079               base.js                b9fc0c8fea9c428d35f151fce0bee2e088442375b4e32a9e0f0176646276a764
@@ -48,20 +48,21 @@ size   exec  file                         contents
 5964               hackernews.js          4655fac408bef770caf8faf3fdb8c82f0fcd96402c6c2c8b005f3c45348da879
 17525              reddit.js              0b9266c2ab16fec1b941225bc9dc9931b78269316d4216b4a75d87ff39308131
 27414              twitter.js             41655ce1808c2c8cc88d2f594e4e946c9808cfea9180a201dce917915d3dc062
-1006             subkey.js                4782555755c60aa6294cd1f8e64acf0fe7fd6bf8b989034bca780978ccb5831d
+1254             sibkey.js                4e78f00499c499c9821866b999baf05b3aa9281aaf2d46e99176d5e7fde449ff
+6733             subkey.js                f1a8602f3bc7c11baa20979e334b84a0c0ecd9da48d317e97ab42c51b47e7e5b
 1507             track.js                 3b1552409b374f87a4c498a7f4cd3da7fad88c31a904cfbb033db05c78a61648
 1452             util.js                  9fa6d9d731f6ec99349e5875cbe4f0102c6a1b2590f16daf48168c99d95ba4ac
 18343            web_service.js           0722afe86aa72381846adb54c8ac7296a6cdf47115afcb199e3af419a535c633
-719            package.json               894e87902e1a0e1af0a465c2f294cda7de9686553f3dd6c921569e1fd944cddf
+719            package.json               8a8f1a1e54331c64dee20b88293be175b68892fdced808ac7b3cf76224d9ea91
                src/                                                                                       
-1793             alloc.iced               58ef4a9120d125f379b852c1ae094ddfe03a005f2df3630fdd00c9a246750e7e
+1868             alloc.iced               49ee8495ba0308145e3c7fe9558fb96d4693752b784e82edb11b3af953a0b22e
 494              announcement.iced        2dba8539acbc9de3f92340b7700aa89077108ee4e816347e4e52cd294185c982
 498              auth.iced                eff40ea0b3642c3829d6bbc87ca5ffb1b9f98fb137693917847633e041c9c38c
 704              b64extract.iced          47b06460fd61d8eb788878566c62086b1fd1f792a1712b3e8736766401bc8fee
-9518             base.iced                0ce2147a74a141abf68c5dd7a194ece1f79efd473b135dbdde690c82e95e11e5
-2096             constants.iced           03bba215b8af3b98add6f4c68e0e8087b9a07bf188857d2af60f9de717d3b2d2
+10495            base.iced                f82349f0442a9e067ddf9752cf1c4dedfa8b486cfcef50cc17bf4a57a54c067f
+2118             constants.iced           74e311eadb3d431180e51db617aa127c968b9334eb274707e9de530fee56459a
 508              cryptocurrency.iced      2b7908e35666ad912bc2306d71e1b217a93d04b29075f23ac5049ee94eae74d5
-548              main.iced                e9bb681b62b9096d714383667e7791d4dd6baa3077a5e814300086e4ca53bf60
+570              main.iced                aabd312b96f567e972a844125507dc97d7f0575d4221b1687c03068006e953dd
 538              revoke.iced              023a15aafd455e3da039524780865eae8a8ff424e173f0d300b5d12b656820da
                  scrapers/                                                                                
 3669               base.iced              5ac2218994a992cdd57b09280e4a27be103aa5e05855b57692bdf94d0c2847a7
@@ -72,7 +73,8 @@ size   exec  file                         contents
 2894               hackernews.iced        c770cacebbdd24a8415fec5a771c46fe9a0039ef477d2bbb52ee13ef19568c50
 6220               reddit.iced            73cd0dc8cce96fc90538c9291aad84e682a4c709fcbe6a6be69e7f1e7e25d5ac
 11403              twitter.iced           451ad85d141834396e995c54d46db1e8bb577de88b1f1cdc940b6be7c6b6f3aa
-452              subkey.iced              9a70e26f36931c5597543f5928dcece342330e2121345126edbb880a240dc7bc
+552              sibkey.iced              f4abd48101707a6bb5e948ce86afd7106bc818e13da2c32495e4b82ad54f0abe
+2013             subkey.iced              4e8f337cd2a0be1d3fd722ac2044177f872ec9e491e1ba5809cbfc549806eaad
 764              track.iced               e31ae07947e8c7e55ef37aaaedde7dd01acda6939cf938eb156c8bf4c0c0f3d7
 912              util.iced                c179c01177ff245c74fe747e365a4ae50ca2275219d66379c034f1b9d3e13e45
 9386             web_service.iced         e0fc65c8746e6df3166b15168ff8016a0b2651530048401d6e94a52a1816c1b6

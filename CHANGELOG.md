@@ -1,3 +1,7 @@
+## 2.0.2 (2015-01-13)
+
+Features:
+  - Sign `eldest_kid` into key blocks (Issue #15)
 
 ## 2.0.1 (2014-12-22)
 

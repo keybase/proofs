@@ -127,7 +127,7 @@ class Base
 
   #------
 
-  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @eldest_kid}) ->
 
   #------
 
@@ -228,6 +228,9 @@ class Base
     if fp?
       ret.body.key.fingerprint = fp.toString('hex')
       ret.body.key.key_id = @km().get_pgp_key_id().toString('hex')
+
+    if @eldest_kid?
+      ret.body.key.eldest_kid = @eldest_kid
 
     # Can be:
     #

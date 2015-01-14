@@ -221,11 +221,13 @@ class Base
           host : @host
           username : @user.local.username
           uid : @user.local.uid
-          kid : @km().get_ekid().toString('hex')
     }
 
-    fp = @km().get_pgp_fingerprint()
-    if fp?
+    # Can't access ekids from GnuPG. We'd have to parse the keys (possible).
+    if (ekid = @km().get_ekid())?
+      ret.key.kid = ekid.toString('hex')
+
+    if (fp = @km().get_pgp_fingerprint())?
       ret.body.key.fingerprint = fp.toString('hex')
       ret.body.key.key_id = @km().get_pgp_key_id().toString('hex')
 

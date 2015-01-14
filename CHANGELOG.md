@@ -1,3 +1,8 @@
+## 2.0.3 (2015-01-14)
+
+Bugfixes:
+  - Sometimes kids() can't be computed
+
 ## 2.0.2 (2015-01-13)
 
 Features:

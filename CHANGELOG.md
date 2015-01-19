@@ -1,3 +1,9 @@
+## 2.0.5 (2015-01-18)
+
+Tweaks:
+   - Sibkey and subkey signatures have a "desc" field for description,
+     not a "notes field"
+
 ## 2.0.4 (2015-01-14)
 
 Bugfix with the previous fix

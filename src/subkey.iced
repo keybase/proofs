@@ -29,7 +29,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
         kid : @get_subkm().get_ekid().toString('hex')
         reverse_sig: reverse_sig
       @set_subkey obj
-      obj.desc = @desc if @desc?
+      obj.device = @device if @device?
     cb null
 
   _json : () ->
@@ -49,7 +49,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
     cb err
 
   constructor : (obj) ->
-    @desc = obj.desc
+    @device = obj.device
     super obj
 
 #==========================================================================

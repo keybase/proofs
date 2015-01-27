@@ -1,3 +1,8 @@
+## 2.0.6 (2015-01-27)
+
+Tweaks:
+  - rename desc to device
+
 ## 2.0.5 (2015-01-18)
 
 Tweaks:

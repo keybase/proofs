@@ -1,3 +1,8 @@
+## 2.0.7
+
+Additions:
+  - The 'device' signature
+
 ## 2.0.6 (2015-01-27)
 
 Tweaks:

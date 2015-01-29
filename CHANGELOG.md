@@ -1,4 +1,10 @@
-## 2.0.8
+## 2.0.10 (2015-01-29)
+
+Scraper tweak
+  - Be more liberal about generic web sites; allow raw '\r's
+    as line-ends
+
+## 2.0.8 (2015-01-29)
 
 Change:
  - move device up one level in the JSON structure

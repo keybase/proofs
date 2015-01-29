@@ -1,4 +1,9 @@
-## 2.0.7
+## 2.0.8
+
+Change:
+ - move device up one level in the JSON structure
+
+## 2.0.7 (2015-01-28)
 
 Additions:
   - The 'device' signature

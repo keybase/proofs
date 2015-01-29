@@ -29,12 +29,12 @@ exports.SubkeyBase = class SubkeyBase extends Base
         kid : @get_subkm().get_ekid().toString('hex')
         reverse_sig: reverse_sig
       @set_subkey obj
-      obj.device = @device if @device?
     cb null
 
   _json : () ->
     ret = super {}
     ret.body[@get_field()] = @get_subkey()
+    ret.body.device = @device if @device?
     return ret
 
   _v_check : ({json}, cb) ->

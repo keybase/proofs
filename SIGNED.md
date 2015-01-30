@@ -3,13 +3,13 @@
 -----BEGIN PGP SIGNATURE-----
 Comment: GPGTools - https://gpgtools.org
 
-iQEcBAABCgAGBQJUypy7AAoJEJgKPw0B/gTf+l0H/25Qphey2MqfPNRx1Bot8ux9
-Jb7P/TRe47FlHiR99R+bXy+yp7pfx9/CKdHgfTCxv6jnsF4w9wxbEvO71jBBt5hR
-7j0jeEbGfp4T9g7b3Kg6tGJpm9Jq4VcjcGiV0Cmb79qtF+YbZSqH/C8mLKgAnkcs
-x5Rq6rJIEZmmOvSKHJcLM3IcUn8LnxtDdrSsuKKsSWUoXgyxNt5zkLDekuD292Bs
-pvG8aXIXm67HcjYzOujMpgC2cr4CNGe7Ot8SzojtbYglaSVyOmk4WYnXu2Dr4r8S
-w6YhPC9WS9+vYpOYBUtrwvgDbS3QDTWU3yDfRlFlw6QTt1Z+j350ZQwhpKU/Dy8=
-=vyYo
+iQEcBAABCgAGBQJUyulGAAoJEJgKPw0B/gTfN5UH/3HPAYyw/N4S22wsgGaXjne+
+hS+HXPLpZ/LEpIWpjc8kZ+h8f6AyMQzLDnlsfN6yb7/Qo/H1F6R0zMOupL1FHXEc
+I+K27Uw5VfeGxFiRrVkciD5TG/ZZrFKi94UQBQtYk7Tk5AgVejorCKv1tp/NvHcw
+6EAYhHKueo5Kn21IQGSWAGo+w7yDtkBmy8LuidsqyhOebC56gkjmPmmqI9XikmQu
+xvdWSXGSMGEDDsCBIKu7mmRh8bofH1RH86jOMatRrxz/v47ombnpX7Vvg0eUeeFg
+FJ8myeFRI06pS59J4ELapPwYD+WDBcqAtIPCrpURXssYylMJ+ByNwhOeU/xT4Co=
+=eJo/
 -----END PGP SIGNATURE-----
 
 ```
@@ -24,7 +24,7 @@ w6YhPC9WS9+vYpOYBUtrwvgDbS3QDTWU3yDfRlFlw6QTt1Z+j350ZQwhpKU/Dy8=
 size   exec  file                         contents                                                        
              ./                                                                                           
 109            .gitignore                 ec278daeb8f83cac2579d262b92ee6d7d872c4d1544e881ba515d8bcc05361ab
-6078           CHANGELOG.md               bad199ede4791eaa7116d521317b4a293f577d728ac9e422a86c2a23c8ae1aab
+6169           CHANGELOG.md               712daddbb746efdbfa66ae51558fe57084ba3c83cd8d1dde326c42bd9581d0f0
 1483           LICENSE                    333be7050513d91d9e77ca9acb4a91261721f0050209636076ed58676bfc643d
 1283           Makefile                   f758eaff1233e6752527e1c5db381095e354ff77f60c6cbf42e69a3914af2846
 43             README.md                  b2db580fc880756ae739bb148570f6afb1c250e5c0d2c5fa56ce41491753ca6c
@@ -49,11 +49,11 @@ size   exec  file                         contents
 17525              reddit.js              5173a43ed4e968df16a1c9dffe5266c50897c7ded2f0a6b678e75750093a8b51
 27414              twitter.js             96a873541c92ffbacf65611b7524019878daaa898e3fcfbd20b225d36238c1b3
 1254             sibkey.js                463dbc9fb88e5c2369b35115c721bafc45dda5955243ca64250accfdff198b8d
-6745             subkey.js                602e7c8c8cf06f4b88f8697d754271e4331a374b0ece66d98d489beae9ae88ea
+6922             subkey.js                4581af84bf9d346dc553865999f848cd513546e81822d8ba1e16521f6451711b
 1507             track.js                 739d0d6f9ef3a4bca822460e01881a77b8cc63bff6826817b4bfb16013bb8f29
 1544             util.js                  1760f3955e71bed8a332c02a1c9a96733f9af0e0f297c89ec354f83ed5bf3908
 18343            web_service.js           c42edb12b103db07bc24ddd7544499370cb2daf6d7f7692836ef9e14a6860e8d
-719            package.json               130d0a662bacc569212600fc964cfdc03d9aacb726e5ea7051421cc8025e8609
+720            package.json               d43f4a351d1ce04401ca448e032d84196f39eedd65f3170337e4367abec0e667
                src/                                                                                       
 1942             alloc.iced               78e6f956088a6ad910b2d173890eda03f7ffaf915b47e9024ca7d79aa3069f80
 494              announcement.iced        2dba8539acbc9de3f92340b7700aa89077108ee4e816347e4e52cd294185c982
@@ -75,7 +75,7 @@ size   exec  file                         contents
 6220               reddit.iced            73cd0dc8cce96fc90538c9291aad84e682a4c709fcbe6a6be69e7f1e7e25d5ac
 11403              twitter.iced           451ad85d141834396e995c54d46db1e8bb577de88b1f1cdc940b6be7c6b6f3aa
 552              sibkey.iced              f4abd48101707a6bb5e948ce86afd7106bc818e13da2c32495e4b82ad54f0abe
-2021             subkey.iced              e916fe57b78207f794f5692be52c0ea69946dc5b680afb3b98991dd28601fbcc
+2275             subkey.iced              825acbb98de6272dcb953a6d60b75128fcfc461b1ce9d831c15b5ee657d2daa6
 764              track.iced               e31ae07947e8c7e55ef37aaaedde7dd01acda6939cf938eb156c8bf4c0c0f3d7
 1052             util.iced                88092afaf23bf8dfe42a72252ac156be45e94588911584ecf535d228b108f2b9
 9386             web_service.iced         e0fc65c8746e6df3166b15168ff8016a0b2651530048401d6e94a52a1816c1b6

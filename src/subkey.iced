@@ -46,7 +46,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
       eng = skm.make_sig_eng()
       await eng.unbox sig, esc defer payload
 
-      # We should have signed up as an object with { reverse_key_sig : obj },
+      # We should have signed the object { reverse_key_sig : key },
       # but we're still supporting the old system if just signing the raw key
       payload = payload.reverse_key_sig if typeof(payload) is 'object'
       

@@ -1,3 +1,8 @@
+## 2.0.11 (2015-01-29)
+
+Security tweak:
+  - Sign a more descriptive reverse-key signature
+
 ## 2.0.10 (2015-01-29)
 
 Scraper tweak

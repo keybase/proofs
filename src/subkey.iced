@@ -20,7 +20,8 @@ exports.SubkeyBase = class SubkeyBase extends Base
       reverse_sig = null
       if @get_subkm().get_keypair().can_sign()
         eng = @get_subkm().make_sig_eng()
-        msg = @km().get_ekid()
+        msg = 
+          reverse_key_sig : @km().get_ekid()
         await eng.box msg, esc defer { armored, type }
         reverse_sig =
           sig : armored
@@ -44,6 +45,11 @@ exports.SubkeyBase = class SubkeyBase extends Base
     if (sig = json?.body?[@get_field()]?.reverse_sig?.sig)? and (skm = @get_subkm())?
       eng = skm.make_sig_eng()
       await eng.unbox sig, esc defer payload
+
+      # We should have signed up as an object with { reverse_key_sig : obj },
+      # but we're still supporting the old system if just signing the raw key
+      payload = payload.reverse_key_sig if typeof(payload) is 'object'
+      
       unless bufeq_secure (a = @km().get_ekid()), (b = payload)
         err = new Error "Bad reverse sig payload: #{a.toString('hex')} != #{b.toString('hex')}"
     cb err

@@ -3,8 +3,16 @@
 {constants} = require './constants'
 {make_esc} = require 'iced-error'
 pgp_utils = require('pgp-utils')
-{bufeq_secure} = pgp_utils.util
+{streq_secure} = pgp_utils.util
 
+#==========================================================================
+
+a_json_parse = (x, cb) ->
+  ret = err = null
+  try ret = JSON.parse x
+  catch e then err = e
+  cb err, ret
+  
 #==========================================================================
 
 exports.SubkeyBase = class SubkeyBase extends Base
@@ -21,8 +29,8 @@ exports.SubkeyBase = class SubkeyBase extends Base
       if @get_subkm().get_keypair().can_sign()
         eng = @get_subkm().make_sig_eng()
         msg = 
-          reverse_key_sig : @km().get_ekid()
-        await eng.box msg, esc defer { armored, type }
+          reverse_key_sig : @km().get_ekid().toString('hex')
+        await eng.box JSON.stringify(msg), esc defer { armored, type }
         reverse_sig =
           sig : armored
           type : type
@@ -42,16 +50,14 @@ exports.SubkeyBase = class SubkeyBase extends Base
     esc = make_esc cb, "SubkeyBase::_v_check"
     err = null
     await super { json }, esc defer()
+
     if (sig = json?.body?[@get_field()]?.reverse_sig?.sig)? and (skm = @get_subkm())?
       eng = skm.make_sig_eng()
-      await eng.unbox sig, esc defer payload
-
-      # We should have signed the object { reverse_key_sig : key },
-      # but we're still supporting the old system if just signing the raw key
-      payload = payload.reverse_key_sig if typeof(payload) is 'object'
-      
-      unless bufeq_secure (a = @km().get_ekid()), (b = payload)
-        err = new Error "Bad reverse sig payload: #{a.toString('hex')} != #{b.toString('hex')}"
+      await eng.unbox sig, esc defer raw
+      await a_json_parse raw, esc defer payload
+      key = payload.reverse_key_sig
+      unless streq_secure (a = @km().get_ekid().toString('hex')), (b = key)
+        err = new Error "Bad reverse sig payload: #{a} != #{b}"
     cb err
 
   constructor : (obj) ->

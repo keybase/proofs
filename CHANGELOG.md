@@ -1,3 +1,8 @@
+## 2.0.11 (2015-01-29)
+
+Tweaks:
+  - Strict reverse sig handling
+
 ## 2.0.10 (2015-01-29)
 
 Security tweak:

@@ -12,7 +12,7 @@ a_json_parse = (x, cb) ->
   try ret = JSON.parse x
   catch e then err = e
   cb err, ret
-  
+
 #==========================================================================
 
 exports.SubkeyBase = class SubkeyBase extends Base
@@ -28,7 +28,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
       reverse_sig = null
       if @get_subkm().get_keypair().can_sign()
         eng = @get_subkm().make_sig_eng()
-        msg = 
+        msg =
           reverse_key_sig : @km().get_ekid().toString('hex')
         await eng.box JSON.stringify(msg), esc defer { armored, type }
         reverse_sig =
@@ -37,6 +37,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
       obj =
         kid : @get_subkm().get_ekid().toString('hex')
         reverse_sig: reverse_sig
+      obj.parent_kid = @parent_kid if @parent_kid?
       @set_subkey obj
     cb null
 
@@ -77,6 +78,7 @@ exports.Subkey = class Subkey extends SubkeyBase
   constructor : (obj) ->
     @subkey = obj.subkey
     @subkm = obj.subkm
+    @parent_kid = obj.parent_kid
     super obj
 
 #==========================================================================

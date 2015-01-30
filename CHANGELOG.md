@@ -1,3 +1,8 @@
+## 2.0.12 (2015-01-30)
+
+Tweaks:
+  - Explicit parent_kid for subkeys
+
 ## 2.0.11 (2015-01-29)
 
 Tweaks:

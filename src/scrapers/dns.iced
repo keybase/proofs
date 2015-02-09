@@ -103,7 +103,7 @@ exports.DnsScraper = class DnsScraper extends BaseScraper
     rc = if err?
       @log "| DNS error: #{err}"
       v_codes.DNS_ERROR
-    else if (proof_text_check in txt_reformat(records)) then v_codes.OK
+    else if (proof_text_check in records.map((r) -> r.toString())) then v_codes.OK
     else
       @log "| DNS failed; found TXT entries: #{JSON.stringify records}"
       v_codes.NOT_FOUND

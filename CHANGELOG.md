@@ -1,3 +1,9 @@
+## 2.0.13 (2015-02-09)
+
+Bugfixes:
+  - the return format of dns.resolveTxt changed in Node v0.12.0;
+    workaround it with this fix.  Should still work for earlier nodes.
+
 ## 2.0.12 (2015-01-30)
 
 Tweaks:

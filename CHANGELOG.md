@@ -1,3 +1,8 @@
+## 2.0.14
+
+Tweaks:
+  - Session object in pubkey login 
+
 ## 2.0.13 (2015-02-09)
 
 Bugfixes:

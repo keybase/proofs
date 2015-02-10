@@ -16,6 +16,7 @@ exports.Auth = class Auth extends Base
   _json : () ->
     ret = super { expire_in : 24*60*60 }
     ret.body.nonce = if @nonce then @nonce.toString('hex') else null
+    ret.body.session = @session if @session?
     ret
 
 #==========================================================================

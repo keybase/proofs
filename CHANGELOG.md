@@ -1,4 +1,4 @@
-## 2.0.14
+## 2.0.14 (2015-02-10)
 
 Tweaks:
   - Session object in pubkey login 

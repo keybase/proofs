@@ -3,19 +3,19 @@
 -----BEGIN PGP SIGNATURE-----
 Comment: GPGTools - https://gpgtools.org
 
-iQIcBAABCgAGBQJU2MDaAAoJEGBSsq0xpmMc+mEP/1ODOHBFcskA0R36NuHUUcNO
-ApBzC2HK9qRoEDZyL1vwpe+k9k1QK+Jrc0TSUax6TSutWKfx1yjC8mMC5/CFqRKy
-QhhYK1MI4+IDnrxcTwxdYbXteAQ4nL33y97CwNvFTphAwmfk6rb6EXnPlni3gnZk
-PhWJ9QI0lo8QCuyw1SxzXlgjT8BdKJtPHks9KSzGKMDCbHT3En429OD5yEJQkPzb
-BitAV/GPzRcYmfW6lZqIaPkHTdKfJE7kZQgbZFl9NSum2tdXpX9s8RdtddkWbGUL
-0Cca2hhC/xa3/x5+dMNcIqGVmC+jxz5GPp5QIZhoo58uHOM3Qr0Y5spcuXCxEzFw
-c94A2+UumTl1rosISZJCxOQEa+yPRxml91WLP0QgF/LS1OB7NMOLbb8Cm60Yzs7t
-12u+mhFu6P8Mfr97Xd+s0sasVW5LCBxsPyMogEph9k3+9A+txGkKyiDURV0dA3f3
-GWsqPO6J3gnn6HEvs79Lqx4NLv7iygaTjDX+L1VBYKj5Ll8LNGbuzM+gL7+i1hHA
-IArT4VYPdq4y6puQC/PWy5SykC2Rwer7K5QhPCl4t5RtgVd/O5m1E2X/gfeBGnrA
-jpCcjfjw4LumqnqCP9Ax8DLvTCSIJ55ZFgQnRu4Y/ZDGpPWzZO9usN6tbdTGVa/b
-0lcI2B6cXoj2akqwhsp0
-=Fl9O
+iQIcBAABCgAGBQJU2hv1AAoJEGBSsq0xpmMcbqMP+wdgl3lzYLWoncihTEG1Whkb
+/meyrYB4IZa7no7LApN5VBTYWnC5EIuZlEKQToFXo8k0cqEznRdNBO3yUyAHXgNq
+5MyvZMvECQCcZJjVaPcFdrfLCE52jgNo6dr3tS19i7WH7pSafREjI1v/UFE4FbEp
+rHO32PiVf/VhoUxQaipC8csVurCdsCwRMPNGMXRThH9hw/Fd1AX43RwLQsuKtLTZ
+pBm4C0k+pDvc2GHLakw2BtcQ0DNbPHe/Pk5a0rhiPtvfs5unHeV/n2GBukJyLTGi
+BrACwjFRaPeukldDodTgPr+VQ0HjnITps6cR6z2gtHq/yQsI47qv57UjZ0cj+3xZ
+x9ocdIed7SUGwtXEAlRHwUntxV+5q+1Tw6yhuSCsX9NcDg+2MIabgIsek5ugj5/X
+eMDRRpiyie+3t5OyiqXKDZ3f4fQC/E+eRBIc3tWNiZdhUgY3AF2Uu8vZuUjLBew7
+kKiKOdAD69LfhIr3dDbnvTtiDrDRQZOM37hglDx2xAbUU2rdvZRG9p2fzqGIvtfC
+g25JgN6ESFNLwKKcCvicPtaqUSD+znmTtZd9JgMws5+c7fHq6/UbafC06VQpMth7
+jv5RhhhjpWZpdBm7pZGXYZOLKWYA1w/1QQFsdg89pEtXoBFEDVe9kZOMQUXoLmhK
+DeJW8scC48eqJPXbH6TT
+=FcVb
 -----END PGP SIGNATURE-----
 
 ```
@@ -30,14 +30,14 @@ jpCcjfjw4LumqnqCP9Ax8DLvTCSIJ55ZFgQnRu4Y/ZDGpPWzZO9usN6tbdTGVa/b
 size   exec  file                         contents                                                        
              ./                                                                                           
 109            .gitignore                 ec278daeb8f83cac2579d262b92ee6d7d872c4d1544e881ba515d8bcc05361ab
-6473           CHANGELOG.md               5f9f515eea513ebca73291e9885728711c9cd5657abf31bc49c938d6db22cc99
+6542           CHANGELOG.md               c4e8de7d642455f501278229ee0323c314a11d53fdb00c953089fea4fc1629bc
 1483           LICENSE                    333be7050513d91d9e77ca9acb4a91261721f0050209636076ed58676bfc643d
 1283           Makefile                   f758eaff1233e6752527e1c5db381095e354ff77f60c6cbf42e69a3914af2846
 43             README.md                  b2db580fc880756ae739bb148570f6afb1c250e5c0d2c5fa56ce41491753ca6c
                lib/                                                                                       
 1972             alloc.js                 08de0c03002707edf48f757d988abd163ba9583e7b9dacc06b8ae395ccd6502f
 1096             announcement.js          a59e553d003770d06eec5a413dd37c6532a6d6b049e35d7db479a8587a45b185
-1055             auth.js                  6c1d41d83d3eb98a83bb38b95938bb227b6a318046ae300da7eb4a9cc183b65f
+1172             auth.js                  45a9ec36fe168e7cbc9af0fa21a1cc2d2d8ff45a8ebe196e9751d8116ca25dde
 766              b64extract.js            1466f81bb930ddc439f877ef0cba4d20048f5477aafda294290f0fd0da527073
 21476            base.js                  6517df906c95ec69c15d3b628174744189c99da79e9aad25fe8ca41c55fbf4e5
 1911             constants.js             fd9a2861da23041fcc240936e28b16996da0c11d73bf4fd245d00f975230debb
@@ -59,11 +59,11 @@ size   exec  file                         contents
 1507             track.js                 739d0d6f9ef3a4bca822460e01881a77b8cc63bff6826817b4bfb16013bb8f29
 1544             util.js                  1760f3955e71bed8a332c02a1c9a96733f9af0e0f297c89ec354f83ed5bf3908
 18343            web_service.js           c42edb12b103db07bc24ddd7544499370cb2daf6d7f7692836ef9e14a6860e8d
-720            package.json               9e6b757455535977dac1600697053c6c52865e9a01c09dd335add27d57a92a32
+720            package.json               4ecccb36ac33b1c00bef941ee3eb40bddf123a3be1bf5ef636524047db9b7688
                src/                                                                                       
 1942             alloc.iced               78e6f956088a6ad910b2d173890eda03f7ffaf915b47e9024ca7d79aa3069f80
 494              announcement.iced        2dba8539acbc9de3f92340b7700aa89077108ee4e816347e4e52cd294185c982
-498              auth.iced                eff40ea0b3642c3829d6bbc87ca5ffb1b9f98fb137693917847633e041c9c38c
+569              auth.iced                206e879a196b260eb37282e314bccc4c85bca072426c3a34c99aba29e8c9f136
 704              b64extract.iced          47b06460fd61d8eb788878566c62086b1fd1f792a1712b3e8736766401bc8fee
 10677            base.iced                5908e595da486c0203fb7c353971974340757939fef7f127e7c435c48277bf91
 2140             constants.iced           d2941b934e645a2b4a9ffd136e94287a244de6c164261706d79f2f7a30996547

@@ -16,6 +16,7 @@ exports.constants = constants =
     subkey : "subkey"
     sibkey : "sibkey"
     device : "device"
+    eldest : "eldest"
   proof_types :
     none : 0
     keybase : 1

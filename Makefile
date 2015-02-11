@@ -20,6 +20,7 @@ $(BUILD_STAMP): \
 	lib/constants.js \
 	lib/cryptocurrency.js \
 	lib/device.js \
+	lib/eldest.js \
 	lib/main.js \
 	lib/revoke.js \
 	lib/sibkey.js \

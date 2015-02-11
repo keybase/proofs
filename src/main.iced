@@ -12,6 +12,7 @@ mods = [
   require('./cryptocurrency')
   require('./subkey')
   require('./sibkey')
+  require('./eldest')
   require('./announcement')
   require('./scrapers/twitter')
   require('./scrapers/github')

@@ -1,3 +1,10 @@
+## 2.0.15 (2015-02-11)
+
+Feature:
+  - New sigchain link type: eldest, for your self-signed eldest key.
+    It's synonymous with web_service_binding.keybase but 
+    should only happen at the start of a sigchain.
+
 ## 2.0.14 (2015-02-10)
 
 Tweaks:

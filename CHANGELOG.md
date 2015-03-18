@@ -1,3 +1,8 @@
+## 2.0.18 (2015-03-19)
+
+Nit:
+ - s/parent/delegated_by/.  This is a better name.
+
 ## 2.0.17 (2015-03-18)
 
 Features:

@@ -30,7 +30,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
         eng = @get_subkm().make_sig_eng()
         msg =
           ctime : unix_time()
-          parent : @km().get_ekid().toString('hex')
+          delegated_by : @km().get_ekid().toString('hex')
           uid : @user.local.uid
           username : @user.local.username
         await eng.box JSON.stringify(msg), esc defer { armored, type }
@@ -59,8 +59,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
       eng = skm.make_sig_eng()
       await eng.unbox sig, esc defer raw
       await a_json_parse raw, esc defer payload
-      key = payload.parent
-      unless streq_secure (a = @km().get_ekid().toString('hex')), (b = key)
+      unless streq_secure (a = @km().get_ekid().toString('hex')), (b = payload.delegated_by)
         err = new Error "Bad reverse sig payload: key ID #{a} != #{b}"
       unless (a = payload.uid) is (b = @user.local.uid)
         err = new Error "Bad reverse sig in payload; uid mismatch: #{a} != #{b}"

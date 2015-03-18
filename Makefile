@@ -27,6 +27,7 @@ $(BUILD_STAMP): \
 	lib/subkey.js \
 	lib/pgp_update.js \
 	lib/scrapers/base.js \
+	lib/scrapers/bitbucket.js \
 	lib/scrapers/coinbase.js \
 	lib/scrapers/dns.js \
 	lib/scrapers/generic_web_site.js \

@@ -3,7 +3,7 @@
 {constants} = require './constants'
 {make_esc} = require 'iced-error'
 pgp_utils = require('pgp-utils')
-{streq_secure} = pgp_utils.util
+{unix_time,streq_secure} = pgp_utils.util
 
 #==========================================================================
 
@@ -29,7 +29,10 @@ exports.SubkeyBase = class SubkeyBase extends Base
       if @get_subkm().can_sign()
         eng = @get_subkm().make_sig_eng()
         msg =
-          reverse_key_sig : @km().get_ekid().toString('hex')
+          ctime : unix_time()
+          parent : @km().get_ekid().toString('hex')
+          uid : @user.local.uid
+          username : @user.local.username
         await eng.box JSON.stringify(msg), esc defer { armored, type }
         reverse_sig =
           sig : armored
@@ -56,9 +59,15 @@ exports.SubkeyBase = class SubkeyBase extends Base
       eng = skm.make_sig_eng()
       await eng.unbox sig, esc defer raw
       await a_json_parse raw, esc defer payload
-      key = payload.reverse_key_sig
+      key = payload.parent
       unless streq_secure (a = @km().get_ekid().toString('hex')), (b = key)
-        err = new Error "Bad reverse sig payload: #{a} != #{b}"
+        err = new Error "Bad reverse sig payload: key ID #{a} != #{b}"
+      unless (a = payload.uid) is (b = @user.local.uid)
+        err = new Error "Bad reverse sig in payload; uid mismatch: #{a} != #{b}"
+      unless (a = payload.username) is (b = @user.local.username)
+        err = new Error "Bad reverse sig in payload; unsername mismatch: #{a} != #{b}"
+      console.log "good one!"
+      console.log payload
     cb err
 
   constructor : (obj) ->

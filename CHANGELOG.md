@@ -1,3 +1,9 @@
+## 2.0.17 (2015-03-18)
+
+Features:
+  - Expanded reverse key signatures, and renamed fields.  This might
+    break existing test data!
+
 ## 2.0.16 (2015-03-18)
 
 Feature:
@@ -8,13 +14,13 @@ Feature:
 
 Feature:
   - New sigchain link type: eldest, for your self-signed eldest key.
-    It's synonymous with web_service_binding.keybase but 
+    It's synonymous with web_service_binding.keybase but
     should only happen at the start of a sigchain.
 
 ## 2.0.14 (2015-02-10)
 
 Tweaks:
-  - Session object in pubkey login 
+  - Session object in pubkey login
 
 ## 2.0.13 (2015-02-09)
 
@@ -160,7 +166,7 @@ Bugfixes:
 
   - Arbitrarily cut a 1.0.0 release
   - Use the correct UserAgent format
-    - closes keybase/keybase-proofs#899 
+    - closes keybase/keybase-proofs#899
   - Reddit proofs
   - Coinbase proofs
   - Factor out some common code, but more work to go on this.
@@ -340,7 +346,7 @@ Features:
 ## 0.0.10 (2014-03-26)
 
 Features:
- 
+
   - Prove you own a website
 
 ## 0.0.9 (2014-03-26)

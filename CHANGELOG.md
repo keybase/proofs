@@ -1,3 +1,9 @@
+## 2.0.16 (2015-03-18)
+
+Feature:
+  - Use KMI.can_sign() and not KMI.get_keypair()?.can_sign()
+    Only works in KBPGP v2.0.9 and above.
+
 ## 2.0.15 (2015-02-11)
 
 Feature:

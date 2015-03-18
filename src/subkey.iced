@@ -26,7 +26,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
     esc = make_esc cb, "_v_generate"
     if not @get_subkey()? and @get_subkm()?
       reverse_sig = null
-      if @get_subkm().get_primary_keypair()?.can_sign()
+      if @get_subkm().can_sign()
         eng = @get_subkm().make_sig_eng()
         msg =
           reverse_key_sig : @km().get_ekid().toString('hex')

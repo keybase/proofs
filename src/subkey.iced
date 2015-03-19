@@ -65,8 +65,6 @@ exports.SubkeyBase = class SubkeyBase extends Base
         err = new Error "Bad reverse sig in payload; uid mismatch: #{a} != #{b}"
       unless (a = payload.username) is (b = @user.local.username)
         err = new Error "Bad reverse sig in payload; unsername mismatch: #{a} != #{b}"
-      console.log "good one!"
-      console.log payload
     cb err
 
   constructor : (obj) ->

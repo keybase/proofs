@@ -1,7 +1,10 @@
-## 2.0.19
+## 2.0.19 (2015-03-24)
 
 Bugfixes:
   - remove debug code
+  - Cache the ctime on sig generation so that if we call @json()
+    twice in the case of reverse sigs, we'll get the same blob both
+    times.
 Features:
   - pass back the reverse signature payload in sibkey signatures
   - Expand upon reverse sig; do it over the whole JSON object.

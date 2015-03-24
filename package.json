@@ -30,6 +30,6 @@
     "triplesec": ">=3.0.16"
   },
   "devDependencies": {
-    "iced-coffee-script": ">=1.7.1-e"
+    "iced-coffee-script": "^1.8.0-d"
   }
 }

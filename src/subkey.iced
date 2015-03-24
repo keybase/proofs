@@ -54,6 +54,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
     esc = make_esc cb, "SubkeyBase::_v_check"
     err = null
     await super { json }, esc defer()
+    extras = {}
 
     if (sig = json?.body?[@get_field()]?.reverse_sig?.sig)? and (skm = @get_subkm())?
       eng = skm.make_sig_eng()
@@ -65,7 +66,9 @@ exports.SubkeyBase = class SubkeyBase extends Base
         err = new Error "Bad reverse sig in payload; uid mismatch: #{a} != #{b}"
       unless (a = payload.username) is (b = @user.local.username)
         err = new Error "Bad reverse sig in payload; unsername mismatch: #{a} != #{b}"
-    cb err
+      unless err?
+        @reverse_sig = {payload : raw, kid : skm.get_ekid().toString('hex') } 
+    cb err, extras
 
   constructor : (obj) ->
     @device = obj.device

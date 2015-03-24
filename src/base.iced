@@ -285,7 +285,7 @@ class Base
       id = obj.id = verifier.id
       short_id = obj.short_id = verifier.short_id
     out = if err? then {}
-    else { json_obj, json_str, id, short_id, etime : verifier.get_etime() }
+    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig }
     cb err, out
 
   #-------

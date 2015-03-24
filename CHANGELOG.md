@@ -1,3 +1,10 @@
+## 2.0.19
+
+Bugfixes:
+  - remove debug code
+Features:
+  - pass back the reverse signature payload in sibkey signatures
+
 ## 2.0.18 (2015-03-19)
 
 Nit:

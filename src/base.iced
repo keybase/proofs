@@ -208,6 +208,11 @@ class Base
   #------
 
   _json : ({expire_in}) ->
+
+    # Cache the unix_time() we generate in case we need to call @_json()
+    # twice.  This happens for reverse signatures!
+    ctime = if @_ctime? then @_ctime else (@_ctim = unix_time())
+
     ret = {
       seqno : @seqno
       prev : @prev
@@ -285,7 +290,7 @@ class Base
       id = obj.id = verifier.id
       short_id = obj.short_id = verifier.short_id
     out = if err? then {}
-    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig }
+    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid }
     cb err, out
 
   #-------

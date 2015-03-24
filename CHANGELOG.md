@@ -4,6 +4,7 @@ Bugfixes:
   - remove debug code
 Features:
   - pass back the reverse signature payload in sibkey signatures
+  - Expand upon reverse sig; do it over the whole JSON object.
 
 ## 2.0.18 (2015-03-19)
 

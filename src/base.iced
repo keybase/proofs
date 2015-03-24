@@ -211,7 +211,7 @@ class Base
 
     # Cache the unix_time() we generate in case we need to call @_json()
     # twice.  This happens for reverse signatures!
-    ctime = if @_ctime? then @_ctime else (@_ctim = unix_time())
+    ctime = if @_ctime? then @_ctime else (@_ctime = unix_time())
 
     ret = {
       seqno : @seqno

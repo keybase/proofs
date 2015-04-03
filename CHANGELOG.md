@@ -1,4 +1,4 @@
-## 2.0.10 (2015-04-03)
+## 2.0.20 (2015-04-03)
 
 Bugfixes:
   - Allow revocation of keys via sig links

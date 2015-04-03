@@ -3,13 +3,13 @@
 -----BEGIN PGP SIGNATURE-----
 Comment: GPGTools - https://gpgtools.org
 
-iQEcBAABCgAGBQJVEXbNAAoJEJgKPw0B/gTfP/EH/0Mk6GckzgZr/3cWqx+1fXmQ
-YVAHz3ItaA9O3kaRX6NnHPfkYBS4XjJN/0+YzaTKO6/KpVXo6uOxSNcX+QGbqGLz
-BsRhvG1J46Dzd1KJCdNzvge0C6LXX4rVUsE7AGUoyvPQLddybF7s7tNA2WAbezi1
-RQY7b2NubyfsEkUb3z5QH8uSDPafIYk9yPRBm9MUARWjsH1ATbS+HSSLVzA3fvmG
-5+hBv05SFe5uCOakFJmmjI/4rc68m4OVcOmink04ZAmkF8JPTMXO5W12/2hVHrUF
-yqAzbAaKqpKnmrRkJYfxtFk0/upoul9XSK08Bgmt+U4fzLeSJ3p5dgbYvHthgbg=
-=nzIp
+iQEcBAABCgAGBQJVHwaeAAoJEJgKPw0B/gTfssgIALbUoJ8wKVMvDmIMfD39a7NO
+IQqALF7NkNKksJmx08vOJkHAGJc1Gpdqx3PlC+wuO3Hxwy+P+bWPQ8I2mKPajCsm
+hto/gNExvhHUYXipi7mzpUL8uaJgMUU5gdgasZ7KdPZVVdrZTosIAcjgY86zwDm1
+5daSNFyBBJFke64IZhkDFdUGQrYNoWGYsd4k1jk2ZEAB+creImxp7HxjSiFx4DsM
+lSk3eHE5HKHAse3SK+QGQcYj0i3IXLADHsoDbGS/IuIeLWiEDrdRv3T55mvvSWEc
+cK6iDQZ6KurGc+BGzixJVtjnIYiExjYgDvOMaSECMWAiZj0I1q3No9MV5aR5N4I=
+=zXNM
 -----END PGP SIGNATURE-----
 
 ```
@@ -24,7 +24,7 @@ yqAzbAaKqpKnmrRkJYfxtFk0/upoul9XSK08Bgmt+U4fzLeSJ3p5dgbYvHthgbg=
 size   exec  file                         contents                                                        
              ./                                                                                           
 109            .gitignore                 ec278daeb8f83cac2579d262b92ee6d7d872c4d1544e881ba515d8bcc05361ab
-7441           CHANGELOG.md               0c4bfa3f07e1eb4697f79c1fc74db28f9858cd120092e188b8592d7bf7224554
+7519           CHANGELOG.md               410766a5a2eccfc31fa812ff046b42265a2fd5e9c94b78d634bc090b7ba52be1
 1483           LICENSE                    333be7050513d91d9e77ca9acb4a91261721f0050209636076ed58676bfc643d
 1300           Makefile                   fcff8f579f90830a5fd88e9bdf919679ecf5234ce0e341ac6ec8e1a86cfa00f1
 43             README.md                  b2db580fc880756ae739bb148570f6afb1c250e5c0d2c5fa56ce41491753ca6c
@@ -39,7 +39,7 @@ size   exec  file                         contents
 1006             device.js                7d064f5e6ff18419fa140a8aab899520754256862b8fad6e4280f324496813e1
 1049             eldest.js                94923af29601d02f6186b54e9a8476e953f46eccf37eb3c4ff894176257bc155
 786              main.js                  dfa7c60f107e9c0bb2af030ca17982b341dd91427d0cacec2500d4df5d3d622b
-2342             revoke.js                af038a5d2b4dde6b64640eca52f2a978887142f70dab4b70d29a9d8f6656021c
+2608             revoke.js                662e69f82418c69940d2e67b6fa1b5749a6bb736a15255c16bb79b93071331d0
                  scrapers/                                                                                
 6325               base.js                2940854a1a146562c0df210753f7ded8aa2efc401ad0afa7b25e8eb086695c07
 4195               coinbase.js            2540e611d0c8da84567bad3b3b7e0089daf3ac3f1355bf08ecd2e14279067896
@@ -54,7 +54,7 @@ size   exec  file                         contents
 1507             track.js                 739d0d6f9ef3a4bca822460e01881a77b8cc63bff6826817b4bfb16013bb8f29
 1544             util.js                  1760f3955e71bed8a332c02a1c9a96733f9af0e0f297c89ec354f83ed5bf3908
 18343            web_service.js           c42edb12b103db07bc24ddd7544499370cb2daf6d7f7692836ef9e14a6860e8d
-719            package.json               bdcbeb2f97414161704dabc53da85dbde794496c7ac48b865ac2f3b2f57dae6f
+719            package.json               2c0c8d95379fde50e929f7e4bc5dcaf8b9c175180dd61e5e8275fd34abcae420
                src/                                                                                       
 2016             alloc.iced               e325b4df405570afbeed919af065d464f09027e1855f55e29862d98ced4378aa
 494              announcement.iced        2dba8539acbc9de3f92340b7700aa89077108ee4e816347e4e52cd294185c982
@@ -66,7 +66,7 @@ size   exec  file                         contents
 451              device.iced              01bc321fb6bfbc3bad5b175b62b9ef7bf970e6bcec79242aee2f3f9edf007084
 463              eldest.iced              bd2096f2c1cc04268ca4fb647715f3099b81811c163465dc477f12f0b6ae389a
 614              main.iced                d1fb7d3680a963249ab0bd70744f3e961acc6aeb446576c6af72ea394ffa606b
-538              revoke.iced              023a15aafd455e3da039524780865eae8a8ff424e173f0d300b5d12b656820da
+676              revoke.iced              fcc2c0e50b6fea60f44194638935a346325bda974585e9133204cc8b1ca3516b
                  scrapers/                                                                                
 3906               base.iced              4ab3741589ac89be6fc35a6e9499191a4fc7c8d140eb4ae13452c4193321ba77
 2408               coinbase.iced          234fc3c5ee46c668e9480f6c2859a8f0bf360e1f0f0dc75efbe227fc85d94dd6

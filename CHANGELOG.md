@@ -1,3 +1,8 @@
+## 2.0.21
+
+Features:
+  - Allow `expire_in` for signatures
+
 ## 2.0.20 (2015-04-03)
 
 Bugfixes:

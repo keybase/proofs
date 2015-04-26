@@ -127,7 +127,7 @@ class Base
 
   #------
 
-  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @eldest_kid}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @eldest_kid, @expire_in}) ->
 
   #------
 
@@ -218,7 +218,7 @@ class Base
       prev : @prev
       ctime : unix_time()
       tag : constants.tags.sig
-      expire_in : expire_in or constants.expire_in
+      expire_in : expire_in or @expire_in or constants.expire_in
       body :
         version : constants.versions.sig
         type : @_type()

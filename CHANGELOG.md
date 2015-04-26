@@ -2,6 +2,7 @@
 
 Features:
   - Allow `expire_in` for signatures
+  - Allow passing `ctime` in for signatures, and actually use it
 
 ## 2.0.20 (2015-04-03)
 

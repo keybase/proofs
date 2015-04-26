@@ -127,7 +127,7 @@ class Base
 
   #------
 
-  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @eldest_kid, @expire_in}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @eldest_kid, @expire_in, @ctime}) ->
 
   #------
 
@@ -211,12 +211,12 @@ class Base
 
     # Cache the unix_time() we generate in case we need to call @_json()
     # twice.  This happens for reverse signatures!
-    ctime = if @_ctime? then @_ctime else (@_ctime = unix_time())
+    ctime = if @ctime? then @ctime else (@ctime = unix_time())
 
     ret = {
       seqno : @seqno
       prev : @prev
-      ctime : unix_time()
+      ctime : ctime
       tag : constants.tags.sig
       expire_in : expire_in or @expire_in or constants.expire_in
       body :

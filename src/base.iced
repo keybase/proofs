@@ -207,6 +207,16 @@ class Base
 
   #------
 
+  has_revoke : () -> 
+    if not @revoke? then false
+    else if @revoke.sig_id? then true
+    else if (@revoke.sig_ids?.length > 0) then true
+    else if @revoke.kid? then true
+    else if (@revoke.kids?.length > 0) then true
+    else false
+
+  #------
+  
   _json : ({expire_in}) ->
 
     # Cache the unix_time() we generate in case we need to call @_json()
@@ -250,7 +260,7 @@ class Base
 
     ret.body.client = @client if @client?
     ret.body.merkle_root = @merkle_root if @merkle_root?
-    ret.body.revoke = @revoke if (@revoke?.sig_id? or @revoke?.sig_ids?.length > 0)
+    ret.body.revoke = @revoke if @has_revoke()
 
     return ret
 

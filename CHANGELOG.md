@@ -1,8 +1,9 @@
-## 2.0.21
+## 2.0.21 (2015-05-06)
 
 Features:
   - Allow `expire_in` for signatures
   - Allow passing `ctime` in for signatures, and actually use it
+  - Add a `reverse_sig_check` method to Subkey that we can call directly.
 
 ## 2.0.20 (2015-04-03)
 

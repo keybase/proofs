@@ -58,21 +58,23 @@ exports.SubkeyBase = class SubkeyBase extends Base
 
   _v_check : ({json}, cb) ->
     esc = make_esc cb, "SubkeyBase::_v_check"
-    err = null
     await super { json }, esc defer()
+    await @reverse_sig_check { json, subkm : @get_subkm() }, esc defer()
+    cb null
 
-    if (sig = json?.body?[@get_field()]?.reverse_sig)? and (skm = @get_subkm())?
-      eng = skm.make_sig_eng()
+  reverse_sig_check : ({json, subkm}, cb) ->
+    esc = make_esc cb, "SubkeyBase::reverse_sig_check"
+    err = null
+    if (sig = json?.body?[@get_field()]?.reverse_sig)? and subkm?
+      eng = subkm.make_sig_eng()
       await eng.unbox sig, esc defer raw
       await a_json_parse raw, esc defer payload
-      rsk = skm.get_ekid().toString('hex')
-
+      rsk = subkm.get_ekid().toString('hex')
       if (err = @_match_json json, payload)? then # noop
       else if not streq_secure (a = json?.body?[@get_field()]?.kid), (b = rsk)
         err = new Error "Sibkey KID mismatch: #{a} != #{b}"
       else
         @reverse_sig_kid = rsk
-
     cb err
 
   constructor : (obj) ->

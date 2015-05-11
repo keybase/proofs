@@ -3,19 +3,19 @@
 -----BEGIN PGP SIGNATURE-----
 Comment: GPGTools - https://gpgtools.org
 
-iQIcBAABCgAGBQJVStB5AAoJEGBSsq0xpmMcx4YQALSpkJyJMDFfH/6SAx8luC5R
-RxRC+0Bv0ZPJTXKOuogxaNIwhhCdmW4XLQ4PmFcZ4wfykEs1Gf2V3umnHDljx+i2
-s0JtLHpJKumZvk/kp4xTUmLuNbiYkgg5+8otso++nLQXGDHwzUv4HbXktke36slC
-H9XRU55j9ASVgtXhXc7tQ2CUgwet/1C35tMqsc1ffDiSS3EiO33N+ntZHn3dxquw
-+D7guICX6ZX5ZuUd+P9ZwxfBbBms227u2O6SHuh0q9lHWIG7FHFijsuE6p/fd7qf
-fQjnMEXc1l4Xhgy2eGKNJn1VPNPVoAFWXJKcCTa+oNWeT5y5OpICTgU2/Lon1BKc
-CHbZ8q9ejTxV47yeY1p9v/iC+QtXpQdH7GUekmUETEfX0jrbsp4bohGmxtFfyJ+P
-EXI0k7cr6zJlVmEO1IBJSKFIesXyFUmsQZDd6tkH6N9MKpjyzUD9/IWw+2DWUel+
-xb9foBP7vFOGslddBPVohkumlZ+Zi9PJEuA4dIkIkpouqeHo/7zopw+QoSxPrP+U
-p0CuSa/zY3kbJ7HxGKum0Zkuf62rU4zsk8ZVzMEhqYJP7zMfvAGcpB1zzVZTzKh4
-o7f3nQQW3yEheNVCglBQ8mNa0Xdo6gs+lnSRaruFjBjZrgqFi8Yts+lm1cCrl9yo
-XlhgCLHKk/RbjYFGUk2M
-=HJj1
+iQIcBAABCgAGBQJVUKJUAAoJEGBSsq0xpmMczeoQALKrwQhHgY0N9sCqthpiyvTf
+rvAeNOKuEZf2RhUs5SMiV0MuXm/7H9WBDzXMelLPL8yN3uNkKCswd79E0892mx5B
+DJiHOWifyqJHXQdH587yP6BqU/Tk4dU7Z3Ec3sxO0pUMPUGnuZs7wz6JVHEZ+pew
+XSnMa847caTJvFdXt6v1dsZB2hNbnMh4QJ1mt2NlQ4Qq+/5a/W643F3dyto1XQ9T
+TwrWALrMAItWUwnZV7+2WU3AYZ2l2D9eQyPCkvq1GPiA7g4s+3G5Nh7KeTabUmNU
+FdHdNubbTVts6O7bYdyGmtmFgJ3GwnGbW79quHQXXXCMDM6Eoqru0UUbiAo+9XzP
+NT8rhkq6LMbYKADdb9Kiiqy8O4aVqEr8ckGahVaVLdKJpQf03mBpGpyHQTSN8L6Z
+S5wJ0MZm51LYvdn2gUMAtyA0RvA/S+pxevHN+8Fj9EsHYqP2c/czwvsUwnTWBfX2
+NdSJKnQgCl1rO6ddDRtn8gEqRmOy2Rgw2+JuxpdNnWuXAbFSly33QOd9e/KStxqM
+1cQoaA/a5VaN5CNjAYuw6msACwSCZ9LGts3B/s8KJKNTOW1TfmoiTr1UdmzcDNeF
+rkPXGysm4ueG8SFJZ44eVRgdnVyD/hmNItcpa+rEy70Itp0U7dWesObWSqK5h3BZ
+LG/UHVEm+CJlbMCvvPcT
+=nV1i
 -----END PGP SIGNATURE-----
 
 ```
@@ -30,7 +30,7 @@ XlhgCLHKk/RbjYFGUk2M
 size   exec  file                         contents                                                        
              ./                                                                                           
 109            .gitignore                 ec278daeb8f83cac2579d262b92ee6d7d872c4d1544e881ba515d8bcc05361ab
-7741           CHANGELOG.md               f3a763d7ed2e083a19d6c36c1618b842ead67232dcbd1c611e0ef9f26590c534
+7834           CHANGELOG.md               dca6dbd6694853fe5a3c26a0d596ecdd51cb97c6de8224a0da75968f887dc3d8
 1483           LICENSE                    333be7050513d91d9e77ca9acb4a91261721f0050209636076ed58676bfc643d
 1300           Makefile                   fcff8f579f90830a5fd88e9bdf919679ecf5234ce0e341ac6ec8e1a86cfa00f1
 43             README.md                  b2db580fc880756ae739bb148570f6afb1c250e5c0d2c5fa56ce41491753ca6c
@@ -44,7 +44,7 @@ size   exec  file                         contents
 1126             cryptocurrency.js        8f8b3bde879340bbd0898f7718767084b931e462b3c52ea580fcf34a51425004
 1006             device.js                7d064f5e6ff18419fa140a8aab899520754256862b8fad6e4280f324496813e1
 1049             eldest.js                94923af29601d02f6186b54e9a8476e953f46eccf37eb3c4ff894176257bc155
-786              main.js                  dfa7c60f107e9c0bb2af030ca17982b341dd91427d0cacec2500d4df5d3d622b
+814              main.js                  d5831aebfcee521d7f3e214f63caf4e1a526520af793c5ef161c1eadb2f82f99
 2293             revoke.js                bf30ce7296c3ded9a3e577ecb4f9a8c1771732dea2d6934472ffc93be0780451
                  scrapers/                                                                                
 6325               base.js                2940854a1a146562c0df210753f7ded8aa2efc401ad0afa7b25e8eb086695c07
@@ -59,8 +59,8 @@ size   exec  file                         contents
 9490             subkey.js                a0df6b1e92e993d2b84ab5f78cda247cd35ccc7007386b0ff1ec5de4d20562c5
 1507             track.js                 739d0d6f9ef3a4bca822460e01881a77b8cc63bff6826817b4bfb16013bb8f29
 1544             util.js                  1760f3955e71bed8a332c02a1c9a96733f9af0e0f297c89ec354f83ed5bf3908
-18343            web_service.js           c42edb12b103db07bc24ddd7544499370cb2daf6d7f7692836ef9e14a6860e8d
-719            package.json               319b3825d4f14d9b92fc79dca8ed10c6055dbd15caf6042810c96667bd520fd9
+18399            web_service.js           a19d972a9800b4b24ee81c8e97f7b8206ad43c27e37f35acd7e1948f39aa6496
+719            package.json               b92c9f3f8afce6f47c7d702291aada3adc914ea1d2d2b701919c6a74ebce801a
                src/                                                                                       
 2016             alloc.iced               e325b4df405570afbeed919af065d464f09027e1855f55e29862d98ced4378aa
 494              announcement.iced        2dba8539acbc9de3f92340b7700aa89077108ee4e816347e4e52cd294185c982
@@ -71,7 +71,7 @@ size   exec  file                         contents
 508              cryptocurrency.iced      2b7908e35666ad912bc2306d71e1b217a93d04b29075f23ac5049ee94eae74d5
 451              device.iced              01bc321fb6bfbc3bad5b175b62b9ef7bf970e6bcec79242aee2f3f9edf007084
 463              eldest.iced              bd2096f2c1cc04268ca4fb647715f3099b81811c163465dc477f12f0b6ae389a
-614              main.iced                d1fb7d3680a963249ab0bd70744f3e961acc6aeb446576c6af72ea394ffa606b
+643              main.iced                ba5a4d8d6ba46252f4489253dfa70af35f6f811f67b97023df6e7ac7f6a46b5f
 676              revoke.iced              dae9f745f7c44e993328cf8bbded78d9c92b66106403b31cc9d1c832b4871368
                  scrapers/                                                                                
 3906               base.iced              4ab3741589ac89be6fc35a6e9499191a4fc7c8d140eb4ae13452c4193321ba77
@@ -86,7 +86,7 @@ size   exec  file                         contents
 3001             subkey.iced              e17558ab8b9b9e4fbb4e7b8fbbe9087990cb237368e40a77e6ba657c03b81094
 764              track.iced               e31ae07947e8c7e55ef37aaaedde7dd01acda6939cf938eb156c8bf4c0c0f3d7
 1052             util.iced                88092afaf23bf8dfe42a72252ac156be45e94588911584ecf535d228b108f2b9
-9386             web_service.iced         e0fc65c8746e6df3166b15168ff8016a0b2651530048401d6e94a52a1816c1b6
+9438             web_service.iced         1be0cbc74db55cccaf14c8acae480058a44e5a64ae4bfd6459ac24a8f19cf649
 1673           test_scraper.iced          099823ea87768b45dd205bd6dc36773999730dadb26fe3844e0a05f8668bb9d1
 ```
 

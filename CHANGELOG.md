@@ -1,3 +1,8 @@
+## 2.0.22 (2015-05-11)
+
+Features:
+  - Expose some hidden base classes for testing purposes.
+
 ## 2.0.21 (2015-05-06)
 
 Features:

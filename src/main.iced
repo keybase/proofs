@@ -15,6 +15,7 @@ mods = [
   require('./eldest')
   require('./announcement')
   require('./scrapers/twitter')
+  require('./scrapers/base')
   require('./scrapers/github')
   require('./scrapers/reddit')
   require('./scrapers/generic_web_site')

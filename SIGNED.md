@@ -3,19 +3,13 @@
 -----BEGIN PGP SIGNATURE-----
 Comment: GPGTools - https://gpgtools.org
 
-iQIcBAABCgAGBQJVUKJUAAoJEGBSsq0xpmMczeoQALKrwQhHgY0N9sCqthpiyvTf
-rvAeNOKuEZf2RhUs5SMiV0MuXm/7H9WBDzXMelLPL8yN3uNkKCswd79E0892mx5B
-DJiHOWifyqJHXQdH587yP6BqU/Tk4dU7Z3Ec3sxO0pUMPUGnuZs7wz6JVHEZ+pew
-XSnMa847caTJvFdXt6v1dsZB2hNbnMh4QJ1mt2NlQ4Qq+/5a/W643F3dyto1XQ9T
-TwrWALrMAItWUwnZV7+2WU3AYZ2l2D9eQyPCkvq1GPiA7g4s+3G5Nh7KeTabUmNU
-FdHdNubbTVts6O7bYdyGmtmFgJ3GwnGbW79quHQXXXCMDM6Eoqru0UUbiAo+9XzP
-NT8rhkq6LMbYKADdb9Kiiqy8O4aVqEr8ckGahVaVLdKJpQf03mBpGpyHQTSN8L6Z
-S5wJ0MZm51LYvdn2gUMAtyA0RvA/S+pxevHN+8Fj9EsHYqP2c/czwvsUwnTWBfX2
-NdSJKnQgCl1rO6ddDRtn8gEqRmOy2Rgw2+JuxpdNnWuXAbFSly33QOd9e/KStxqM
-1cQoaA/a5VaN5CNjAYuw6msACwSCZ9LGts3B/s8KJKNTOW1TfmoiTr1UdmzcDNeF
-rkPXGysm4ueG8SFJZ44eVRgdnVyD/hmNItcpa+rEy70Itp0U7dWesObWSqK5h3BZ
-LG/UHVEm+CJlbMCvvPcT
-=nV1i
+iQEcBAABCgAGBQJVVl+HAAoJEJgKPw0B/gTfPhAIAJB6+oqif/8IAWbpNAIHDmfv
+KlQok+gE1q9tPLxg0lKL6VGVFv/aLkOXGrSqHHXKfGIHY6AGehXxCrSQ1bxEs80S
+13ciDdUMev4+K26kPJ5mxfrMCoNgVPKFrrY01tpsqei0JpOQ+c/GuQ3nBfs2Mxov
+qL83LRvTm0RoTn4BjDr8pEsY0Hw1m9XAGtTH7fsYvNUP5Bno4OInb6hxuWic9qJ+
+5k7S+iTeXuaVQxFRQMwTGER5RFlCpi46csVILfKnsNLq4ptBNjewXBWkLLTqjNAh
+ISNE+l2n1bc54FDhv5Uis2vQ4BTjIzCYbY1E+iY+g6myT2Ep6L5lv5idzqEqLqw=
+=V0Qw
 -----END PGP SIGNATURE-----
 
 ```
@@ -30,12 +24,12 @@ LG/UHVEm+CJlbMCvvPcT
 size   exec  file                         contents                                                        
              ./                                                                                           
 109            .gitignore                 ec278daeb8f83cac2579d262b92ee6d7d872c4d1544e881ba515d8bcc05361ab
-7834           CHANGELOG.md               dca6dbd6694853fe5a3c26a0d596ecdd51cb97c6de8224a0da75968f887dc3d8
+7929           CHANGELOG.md               caf6d78885a131dc4dc2c1d7bc684955980f05f9993faf86f7c36e3f1c4748ff
 1483           LICENSE                    333be7050513d91d9e77ca9acb4a91261721f0050209636076ed58676bfc643d
 1300           Makefile                   fcff8f579f90830a5fd88e9bdf919679ecf5234ce0e341ac6ec8e1a86cfa00f1
 43             README.md                  b2db580fc880756ae739bb148570f6afb1c250e5c0d2c5fa56ce41491753ca6c
                lib/                                                                                       
-2042             alloc.js                 9d37fc8dcbde3441571be41debd0bcb446bc78c4f744974d5bf2c42b38678230
+2183             alloc.js                 80b4333b140b257837bde8ea6520c784441dcbdc306423477dbf5a409879a055
 1096             announcement.js          a59e553d003770d06eec5a413dd37c6532a6d6b049e35d7db479a8587a45b185
 1172             auth.js                  45a9ec36fe168e7cbc9af0fa21a1cc2d2d8ff45a8ebe196e9751d8116ca25dde
 766              b64extract.js            1466f81bb930ddc439f877ef0cba4d20048f5477aafda294290f0fd0da527073
@@ -60,9 +54,9 @@ size   exec  file                         contents
 1507             track.js                 739d0d6f9ef3a4bca822460e01881a77b8cc63bff6826817b4bfb16013bb8f29
 1544             util.js                  1760f3955e71bed8a332c02a1c9a96733f9af0e0f297c89ec354f83ed5bf3908
 18399            web_service.js           a19d972a9800b4b24ee81c8e97f7b8206ad43c27e37f35acd7e1948f39aa6496
-719            package.json               b92c9f3f8afce6f47c7d702291aada3adc914ea1d2d2b701919c6a74ebce801a
+719            package.json               eb2835a2551647f9038b8eb23e6696270fe023d3f98ace4259bd18f78efd16dc
                src/                                                                                       
-2016             alloc.iced               e325b4df405570afbeed919af065d464f09027e1855f55e29862d98ced4378aa
+2108             alloc.iced               6d1579ecdd933a02379532534c1a09e32f573ae20ecb71a3d2a3d80649620904
 494              announcement.iced        2dba8539acbc9de3f92340b7700aa89077108ee4e816347e4e52cd294185c982
 569              auth.iced                206e879a196b260eb37282e314bccc4c85bca072426c3a34c99aba29e8c9f136
 704              b64extract.iced          47b06460fd61d8eb788878566c62086b1fd1f792a1712b3e8736766401bc8fee

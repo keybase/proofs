@@ -1,3 +1,8 @@
+## 2.0.23
+
+Features:
+  - Allow an expanded lookup table of proof types, for testing purposes.
+
 ## 2.0.22 (2015-05-11)
 
 Features:

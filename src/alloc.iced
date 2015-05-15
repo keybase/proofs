@@ -37,17 +37,17 @@ lookup_tab = {
 
 #--------------------------------------------
 
-get_klass = (type) ->
+get_klass = (type, extra_lookup_tab) ->
   err = klass = null
-  unless (klass = lookup_tab[type])?
+  unless (klass = extra_lookup_tab?[type])? or (klass = lookup_tab[type])?
     err = new Error "Unknown proof class: #{type}"
   [err, klass]
 
 #=======================================================
 
-alloc = (type, args) ->
+alloc = (type, args, extra_lookup_tab) ->
   ret = null
-  [err, klass] = get_klass type
+  [err, klass] = get_klass type, extra_lookup_tab
   if klass?
     ret = new klass args
   ret

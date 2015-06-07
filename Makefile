@@ -35,6 +35,7 @@ $(BUILD_STAMP): \
 	lib/scrapers/twitter.js \
 	lib/track.js \
 	lib/web_service.js \
+	lib/update_passphrase_hash.js \
 	lib/util.js
 	date > $@
 

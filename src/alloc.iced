@@ -10,6 +10,7 @@ base = require './base'
 {Sibkey} = require './sibkey'
 {Device} = require './device'
 {Eldest} = require './eldest'
+{UpdatePassphraseHash} = require './update_passphrase_hash'
 
 #=======================================================
 
@@ -33,6 +34,7 @@ lookup_tab = {
   "sibkey"                         : Sibkey
   "device"                         : Device
   "eldest"                         : Eldest
+  "update_passphrase_hash"         : UpdatePassphraseHash
 }
 
 #--------------------------------------------

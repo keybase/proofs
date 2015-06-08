@@ -14,7 +14,7 @@ exports.UpdatePassphraseHash = class UpdatePassphraseHash extends Base
 
   _json : () ->
     ret = super { expire_in : 24*60*60 }
-    ret.update_passphrase_hash = @update_passphrase_hash
+    ret.body.update_passphrase_hash = @update_passphrase_hash
     ret
 
 #==========================================================================

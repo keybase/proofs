@@ -1,3 +1,8 @@
+## 2.0.24 (2015-06-15)
+
+Features:
+  * Allow update of passphrase via signed statement
+
 ## 2.0.23 (2015-05-15)
 
 Features:

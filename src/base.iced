@@ -4,7 +4,7 @@ pgp_utils = require('pgp-utils')
 triplesec = require('triplesec')
 {WordArray} = triplesec
 {SHA256} = triplesec.hash
-{decode} = pgp_utils.armor
+kbpgp = require 'kbpgp'
 {make_esc} = require 'iced-error'
 util = require 'util'
 {base64_extract} = require './b64extract'
@@ -332,8 +332,8 @@ class Base
       len_floor = constants.short_id_bytes
       slack = 3
     else
-      [ err, msg ] = decode args.sig
-      if not err? and (msg.type isnt "MESSAGE")
+      [ err, msg ] = kbpgp.ukm.decode_sig { armored: args.sig }
+      if not err? and (msg.type isnt kbpgp.const.openpgp.message_types.generic)
         err = new Error "wrong message type; expected a generic message; got #{msg.type}"
       if not err?
         check_for = msg.body.toString('base64')

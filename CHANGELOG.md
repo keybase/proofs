@@ -1,3 +1,11 @@
+## 2.0.25
+
+Security upgrade:
+  * Require reverse sigs for sibkey
+
+Features:
+  * Allow dual sibkey/subkey provisioning, useful for single-transaction workflow in passphrase update.
+
 ## 2.0.24 (2015-06-15)
 
 Features:

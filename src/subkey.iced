@@ -23,6 +23,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
   get_subkm : () -> null
   set_subkey : (s) ->
   get_field : () -> null
+  need_reverse_sig : () -> false
 
   _v_generate : (opts, cb) ->
     esc = make_esc cb, "_v_generate"
@@ -75,6 +76,8 @@ exports.SubkeyBase = class SubkeyBase extends Base
         err = new Error "Sibkey KID mismatch: #{a} != #{b}"
       else
         @reverse_sig_kid = rsk
+    else if @need_reverse_sig()
+      err = new Error "Need a reverse sig, but didn't find one"
     cb err
 
   constructor : (obj) ->

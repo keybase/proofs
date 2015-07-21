@@ -52,14 +52,21 @@ class GlobalHunter
           cachebust : Math.random()
       args.qs.after = after if after?
       @_scraper.log "+ [Reddit] Start at after=#{after}"
+      @_scraper.log "| [Reddit] URL is #{JSON.stringify args}"
       await @_scraper._get_url_body args, defer err, @_last_rc, body
-      after = body.data.after
-      posts = body.data.children
-      @_scraper.log "- [Reddit] Got back #{posts.length} posts"
-      if posts.length
-        @index posts
-        first = posts[0] unless first?
-      go = false if not after? or not posts.length or posts[-1...][0].data.created_utc < stop
+      go = false
+      if err?
+        @_scraper.log "- [Reddit] Error in fetch: #{err.toString()}"
+      else if not body?.data?
+        @_scraper.log "- [Reddit] No data found"
+      else
+        after = body.data.after
+        posts = body.data.children
+        @_scraper.log "- [Reddit] Got back #{posts.length} posts"
+        if posts.length
+          @index posts
+          first = posts[0] unless first?
+        go = false if not after? or not posts.length or posts[-1...][0].data.created_utc < stop
     @_most_recent = first.data.created_utc if first?
     @_scraper.log "- [Reddit] rescraped; most_recent is now #{@_most_recent}"
     cb null

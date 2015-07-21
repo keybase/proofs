@@ -1,3 +1,8 @@
+## 2.0.26 (2015-07-21)
+
+Bugfixes:
+ * Fix crasher with reddit scraping
+
 ## 2.0.25
 
 Security upgrade:

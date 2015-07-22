@@ -1,3 +1,8 @@
+## 2.0.27 (2015-07-22)
+
+Bugfixes:
+  * For dualkey sigtype
+
 ## 2.0.26 (2015-07-21)
 
 Bugfixes:

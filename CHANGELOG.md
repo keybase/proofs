@@ -1,3 +1,9 @@
+## 2.0.28 (2015-07-23)
+
+Feature:
+  * Allow third-party DNS library, so we can interoperate
+    with broken Node v0.12 DNS TXT resolver: https://github.com/joyent/node/issues/9285
+
 ## 2.0.27 (2015-07-22)
 
 Bugfixes:

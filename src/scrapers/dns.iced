@@ -23,7 +23,8 @@ dns = require 'dns'
 #  This method reformats the results into Node < 0.12.0 style
 #
 txt_reformat = (v) ->
-  if v.length is 0 then v
+  if not v? then []
+  else if v.length is 0 then v
   else if Array.isArray(v[0]) then (sv[0] for sv in v)
   else v
 

@@ -1,3 +1,8 @@
+## 2.0.29 (2015-07-23)
+
+Bugfix:
+  * Bugfix in the previous, handle empty TXT lookups too
+
 ## 2.0.28 (2015-07-23)
 
 Feature:

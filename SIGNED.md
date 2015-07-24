@@ -3,19 +3,13 @@
 -----BEGIN PGP SIGNATURE-----
 Comment: GPGTools - https://gpgtools.org
 
-iQIcBAABCgAGBQJVr4ybAAoJEGBSsq0xpmMcxbAP/RDtBBEOuQcrQ7qPz3oNePlz
-dRnOPkmP0oMZKCFG6jKoKfbq0wh/xfaj2jXs0yZ5PuGMRDXASxoanTSbDrpl1WWM
-kzi2iyKQpjk4fRDbVfGlBntm9UTris/m/5ycH5aRviW5JMe8xfOBqHW8bCtjV/86
-bZzfDNv+chCe3ULP3Mmzvcigom3VM57EiVN1HtlqXn1a3Cn8NZr4vvSIKmEahLGS
-Zdw3Dz6PoRcAamNFpd1nHbXOXJq0Z0+NnOG9lbWAbbuMefVNp8ajTGKgyvhJlOps
-VPqCIaaRl7d1wOI1bvhNm2wfwVw+7+AtpQdhNL9+G2PWK+A6bvOApcQgaddGZ/AB
-pp2RbnGCgjcCUmEb4SjOt0faw1+RCYHpb2e1CETMJ+j5z1no9T4c7XG+mC20QLin
-ijbcLZ9dxtG8tgo6jP4Far9vOOJz06jukvCX6p++2GHLB4HNyeVBi8CiYcotNWGr
-qIB6gFBF8ErtyeahIK2fMhU8031O4/NB1mq9alaaK4u5h1gD9GhdqXIiok5vQ8VD
-mHYivSKvNR/UxIF8cxBJlE8qezLTS5YjD+FdoD/e+4DtwryfFaWOATTwyUKAw0JB
-yLoU5yt0cY/B5a6MZboPnY2OyrEh3uKnOHrc9odQKqc+w6t8uUfI0MmhejjLKe3+
-m2jhkxX+ysqYK0SINm0S
-=Rs3N
+iQEcBAABCgAGBQJVsj50AAoJEJgKPw0B/gTfRXEH/An6o/NHWcnNupWKm61m+6YO
+G52Eu/fh/BZu+6zuyfepPP0TdlM2KcdBYRPHPW3p3sZ2oBuRLcrhMJpf4dM5f27/
+T0P4vZqXUDjvNO4DSCZiQn8WSecn1TSylmDInOPgVmf6ns5b6KIcPrBGzQPIIjvL
+6YJaZbN6ox/ju5m1MA4WGjkt6209CCjmSodCX3vRI7/I3cztqnLMzZYEMDHYKMus
+7bFN/t0GjXz2uoVmSENmGVRtsc9bfqyfpNCo24ZJm4fm5XBH4+8cWM+T/FNe0Xd+
+z/f3xYG9VTWDnw+Fdrgn5sNdy6XbyX+kMtOVDZGFaDP0V7qkUSftZ08eh4wKc/o=
+=yb/7
 -----END PGP SIGNATURE-----
 
 ```
@@ -30,7 +24,7 @@ m2jhkxX+ysqYK0SINm0S
 size   exec  file                             contents                                                        
              ./                                                                                               
 109            .gitignore                     ec278daeb8f83cac2579d262b92ee6d7d872c4d1544e881ba515d8bcc05361ab
-8340           CHANGELOG.md                   e56f061a22bbfcef63711682b9313a4cbdd611e945b6d5f5ecaf5a1aee84765b
+8520           CHANGELOG.md                   8c7b93b1aea85c105bb6b8a60fb87c513dd93315c3db636eb7288baca8a5f1e3
 1483           LICENSE                        333be7050513d91d9e77ca9acb4a91261721f0050209636076ed58676bfc643d
 1333           Makefile                       7ce559d18f40d4980d635184648ca3b9b8c695c65b4fb1ccd5cd566ccb096e5b
 43             README.md                      b2db580fc880756ae739bb148570f6afb1c250e5c0d2c5fa56ce41491753ca6c
@@ -49,7 +43,7 @@ size   exec  file                             contents
                  scrapers/                                                                                    
 6392               base.js                    db98e2349217287c98feba718b0bdd9570c5e1108370942af9ca2a2b59be5ed9
 4137               coinbase.js                5d28f2c525f69e64881d0ae5dd38c535a324f894d98b67d1a5b8217a4c564ce3
-8140               dns.js                     39bbc2a736689951ccf828735efbdab640b457ead999aa23195cecd01e3dc38b
+8194               dns.js                     78cceca752eb3126a4585dad928b5f83246d67ba801b146c6a178e09a3fe315c
 9369               generic_web_site.js        aa3fff8c4d36f86182666642117ec71c4c1574d44eeeba675f698d08fb9a1edd
 9901               github.js                  221586b7fd13ec28a51479319902fdb143a1b37d25dcdb7926826b100917ffbd
 5995               hackernews.js              0e73885c9dba4dbba56fc042afe6002aeae1699094f77555c831d2a15348033c
@@ -61,7 +55,7 @@ size   exec  file                             contents
 1265             update_passphrase_hash.js    5fb80f29fea9f16e3afdb2bc81d311ca4bef0b03a6d18172747a31fd785cac95
 1544             util.js                      1760f3955e71bed8a332c02a1c9a96733f9af0e0f297c89ec354f83ed5bf3908
 18399            web_service.js               a19d972a9800b4b24ee81c8e97f7b8206ad43c27e37f35acd7e1948f39aa6496
-744            package.json                   2ab706605c45c87b1e69a58420faab21f1a3283f002d683058d226da1dec5a73
+744            package.json                   f16668a28fe9d5e4c9a92a9832e66a7d17f85524e32d3354e974809349605e36
                src/                                                                                           
 2279             alloc.iced                   3b73228556a1901f8f27c4a1e89c9c0c56e8c1c00e1378209ecd2b8f2d3902d5
 494              announcement.iced            2dba8539acbc9de3f92340b7700aa89077108ee4e816347e4e52cd294185c982
@@ -77,7 +71,7 @@ size   exec  file                             contents
                  scrapers/                                                                                    
 4029               base.iced                  e110786284dda6cd78bc0be507ff9ac0add3a128c959c073562416b513d8b2d8
 2370               coinbase.iced              5b1132561f0c33d4c35ba2d7d9c32200e77d83c68a3bce3d770b27085d649bcd
-3931               dns.iced                   81473a9d1433be5af36b92fe058f689057d72d531131167ac7e289ba794d7514
+4056               dns.iced                   6f8a61658ad1cfe89160996825ebf510a2ee385a6e84e1cd191be47ace0b5e8c
 3249               generic_web_site.iced      7a70be6c922e5adb73459973b81143ec9020b109cdbcc5acf349e47c5ca1f68d
 3305               github.iced                f10410ccca3bb3fc5045024dada97a4974984ee433476bea30c1ab47f870da90
 2909               hackernews.iced            cb14793b3ea889bcbc2121430bc3728655e125806001211864d3c90c1104505a

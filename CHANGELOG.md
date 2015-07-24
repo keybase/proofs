@@ -1,4 +1,9 @@
-## 2.0.29 (2015-07-23)
+## 2.0.30 (2015-07-24)
+
+Bugfix:
+  * Initially find Reddit proofs by looking at the user's submissions, not by scraping /r/KeybaseProofs
+
+## 2.0.29 (2015-07-24)
 
 Bugfix:
   * Bugfix in the previous, handle empty TXT lookups too

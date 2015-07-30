@@ -30,9 +30,7 @@ lookup_tab = {
   "revoke"                         : Revoke,
   "cryptocurrency"                 : Cryptocurrency,
   "announcement"                   : Announcement,
-  "subkey"                         : Subkey,
-  "sibkey"                         : Sibkey
-  "dualkey"                        : Dualkey
+  "delegatekey"                    : DelegateKey,
   "device"                         : Device
   "eldest"                         : Eldest
   "update_passphrase_hash"         : UpdatePassphraseHash

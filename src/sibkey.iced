@@ -11,7 +11,6 @@ exports.Sibkey = class Sibkey extends SubkeyBase
   get_subkey : () -> @sibkey
   get_subkm : () -> @sibkm
   set_subkey : (s) -> @sibkey = s
-  _type : () -> constants.sig_types.sibkey
   need_reverse_sig : () -> true
 
   constructor : (obj) ->

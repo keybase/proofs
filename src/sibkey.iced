@@ -15,6 +15,7 @@ exports.Sibkey = class Sibkey extends SubkeyBase
   need_reverse_sig : () -> true
 
   _required_sections : () -> super().concat(["sibkey"])
+  _optional_sections : () -> super().concat(["revoke"])
 
   constructor : (obj) ->
     @sibkey = obj.sibkey

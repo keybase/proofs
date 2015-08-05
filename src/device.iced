@@ -12,6 +12,8 @@ exports.Device = class Device extends Base
 
   _type : () -> constants.sig_types.device
 
+  _required_stanzas : () -> super.concat(["device"])
+
   _json : () ->
     ret = super {}
     ret.body.device = @device

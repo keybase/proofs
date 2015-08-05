@@ -25,6 +25,8 @@ exports.Sibkey = class Sibkey extends SubkeyBase
 
 exports.Dualkey = class Dualkey extends Base
 
+  _required_stanzas : () -> super.concat(["sibkey", "subkey"])
+
   constructor : (obj) ->
     @sibkey = new Sibkey obj
     @subkey = new Subkey obj

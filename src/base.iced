@@ -197,7 +197,7 @@ class Base
       new Error "Wrong seq_type: wanted '#{a}' but got '#{b}'"
     else if not (key = json?.body?.key)?
       new Error "no 'body.key' block in signature"
-    else if stanza_error = @_check_stanzas(json)?
+    else if stanza_error = @_check_stanzas(json)
       stanza_error
     else
       err = @_v_check_key key
@@ -216,11 +216,11 @@ class Base
   _check_stanzas : (json) ->
     for stanza in @_required_stanzas()
       unless json?.body?[stanza]
-        return new Error "no 'body.#{stanza}' block in signature"
+        return new Error "Need a '#{stanza}' section of the signature block"
 
     for stanza, _ of json?.body
       unless (stanza in @_required_stanzas()) or (stanza in @_optional_stanzas())
-        return new Error "'body.#{stanza}' is not an allowed key for this signature"
+        return new Error "'#{stanza}' section is not allowed for this signature type"
 
     false
 

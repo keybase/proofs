@@ -12,7 +12,7 @@ exports.UpdatePassphraseHash = class UpdatePassphraseHash extends Base
 
   _type : () -> constants.sig_types.update_passphrase_hash
 
-  _required_stanzas : () -> super().concat(["update_passphrase_hash"])
+  _required_sections : () -> super().concat(["update_passphrase_hash"])
 
   _json : () ->
     ret = super { expire_in : 24*60*60 }

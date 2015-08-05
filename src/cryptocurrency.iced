@@ -12,8 +12,8 @@ exports.Cryptocurrency = class Cryptocurrency extends Base
 
   _type : () -> constants.sig_types.cryptocurrency
 
-  _required_stanzas : () -> super().concat(["cryptocurrency"])
-  _optional_stanzas : () -> super().concat(["revoke"])
+  _required_sections : () -> super().concat(["cryptocurrency"])
+  _optional_sections : () -> super().concat(["revoke"])
 
   _json : () ->
     ret = super {}

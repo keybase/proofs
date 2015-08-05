@@ -8,7 +8,7 @@ exports.Revoke = class Revoke extends Base
 
   _type : () -> constants.sig_types.revoke
 
-  _required_stanzas : () -> super().concat(["revoke"])
+  _required_sections : () -> super().concat(["revoke"])
 
   _v_check : ({json}, cb) ->
     await super { json }, defer err

@@ -12,7 +12,7 @@ exports.Track = class Track extends Base
 
   _type : () -> constants.sig_types.track
 
-  _required_stanzas : () -> super().concat(["track"])
+  _required_sections : () -> super().concat(["track"])
 
   _json : () ->
     ret = super {}
@@ -29,7 +29,7 @@ exports.Untrack = class Untrack extends Base
 
   _type : () -> constants.sig_types.untrack
 
-  _required_stanzas : () -> super().concat(["untrack"])
+  _required_sections : () -> super().concat(["untrack"])
 
   _json : () ->
     ret = super {}

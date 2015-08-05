@@ -12,7 +12,7 @@ exports.Device = class Device extends Base
 
   _type : () -> constants.sig_types.device
 
-  _required_stanzas : () -> super().concat(["device"])
+  _required_sections : () -> super().concat(["device"])
 
   _json : () ->
     ret = super {}

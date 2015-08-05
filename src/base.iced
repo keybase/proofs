@@ -197,30 +197,30 @@ class Base
       new Error "Wrong seq_type: wanted '#{a}' but got '#{b}'"
     else if not (key = json?.body?.key)?
       new Error "no 'body.key' block in signature"
-    else if stanza_error = @_check_stanzas(json)
-      stanza_error
+    else if section_error = @_check_sections(json)
+      section_error
     else
       err = @_v_check_key key
     cb err
 
   #------
 
-  _required_stanzas : () -> ["key", "type", "version"]
+  _required_sections : () -> ["key", "type", "version"]
 
   #------
 
-  _optional_stanzas : () -> ["client", "merkle_root"]
+  _optional_sections : () -> ["client", "merkle_root"]
 
   #------
 
-  _check_stanzas : (json) ->
-    for stanza in @_required_stanzas()
-      unless json?.body?[stanza]
-        return new Error "Need a '#{stanza}' section of the signature block"
+  _check_sections : (json) ->
+    for section in @_required_sections()
+      unless json?.body?[section]
+        return new Error "Need a '#{section}' section of the signature block"
 
-    for stanza, _ of json?.body
-      unless (stanza in @_required_stanzas()) or (stanza in @_optional_stanzas())
-        return new Error "'#{stanza}' section is not allowed for this signature type"
+    for section, _ of json?.body
+      unless (section in @_required_sections()) or (section in @_optional_sections())
+        return new Error "'#{section}' section is not allowed for this signature type"
 
     false
 

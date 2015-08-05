@@ -14,7 +14,7 @@ exports.Sibkey = class Sibkey extends SubkeyBase
   _type : () -> constants.sig_types.sibkey
   need_reverse_sig : () -> true
 
-  _required_stanzas : () -> super().concat(["sibkey"])
+  _required_sections : () -> super().concat(["sibkey"])
 
   constructor : (obj) ->
     @sibkey = obj.sibkey
@@ -25,7 +25,7 @@ exports.Sibkey = class Sibkey extends SubkeyBase
 
 exports.Dualkey = class Dualkey extends Base
 
-  _required_stanzas : () -> super().concat(["sibkey", "subkey"])
+  _required_sections : () -> super().concat(["sibkey", "subkey"])
 
   constructor : (obj) ->
     @sibkey = new Sibkey obj

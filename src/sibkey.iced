@@ -14,6 +14,8 @@ exports.Sibkey = class Sibkey extends SubkeyBase
   _type : () -> constants.sig_types.sibkey
   need_reverse_sig : () -> true
 
+  _required_stanzas : () -> super.concat(["sibkey"])
+
   constructor : (obj) ->
     @sibkey = obj.sibkey
     @sibkm = obj.sibkm
@@ -31,7 +33,7 @@ exports.Dualkey = class Dualkey extends Base
 
   _type : () -> constants.sig_types.dualkey
 
-  _json : () -> 
+  _json : () ->
     ret = super {}
     ret.body.device = @device
     sib = @sibkey._json()

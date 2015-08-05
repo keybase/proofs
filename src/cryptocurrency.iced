@@ -12,7 +12,10 @@ exports.Cryptocurrency = class Cryptocurrency extends Base
 
   _type : () -> constants.sig_types.cryptocurrency
 
-  _json : () -> 
+  _required_stanzas : () -> super.concat(["cryptocurrency"])
+  _optional_stanzas : () -> super.concat(["revoke"])
+
+  _json : () ->
     ret = super {}
     ret.body.cryptocurrency = @cryptocurrency
     return ret

@@ -19,6 +19,11 @@ class WebServiceBinding extends Base
 
   #---------------
 
+  _required_stanzas : () -> super.concat(["service"])
+  _optional_stanzas : () -> super.concat(["revoke"])
+
+  #---------------
+
   # For Twitter, Github, etc, this will be empty.  For non-signle-occupants,
   # it will be the unique id for the resource, like https://keybase.io/ for
   # Web services.

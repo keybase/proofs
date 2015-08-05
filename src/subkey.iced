@@ -24,6 +24,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
   set_subkey : (s) ->
   get_field : () -> null
   need_reverse_sig : () -> false
+  _required_stanzas : () -> super.concat(["subkey"])
 
   _v_generate : (opts, cb) ->
     esc = make_esc cb, "_v_generate"

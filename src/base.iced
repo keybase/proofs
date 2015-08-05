@@ -197,9 +197,32 @@ class Base
       new Error "Wrong seq_type: wanted '#{a}' but got '#{b}'"
     else if not (key = json?.body?.key)?
       new Error "no 'body.key' block in signature"
+    else if stanza_error = @_check_stanzas(json)?
+      stanza_error
     else
       err = @_v_check_key key
     cb err
+
+  #------
+
+  _required_stanzas : () -> ["key", "type", "version"]
+
+  #------
+
+  _optional_stanzas : () -> ["client", "merkle_root"]
+
+  #------
+
+  _check_stanzas : (json) ->
+    for stanza in @_required_stanzas()
+      unless json?.body?[stanza]
+        return new Error "no 'body.#{stanza}' block in signature"
+
+    for stanza, _ of json?.body
+      unless (stanza in @_required_stanzas()) or (stanza in @_optional_stanzas())
+        return new Error "'body.#{stanza}' is not an allowed key for this signature"
+
+    false
 
   #------
 
@@ -207,7 +230,7 @@ class Base
 
   #------
 
-  has_revoke : () -> 
+  has_revoke : () ->
     if not @revoke? then false
     else if @revoke.sig_id? then true
     else if (@revoke.sig_ids?.length > 0) then true
@@ -216,7 +239,7 @@ class Base
     else false
 
   #------
-  
+
   _json : ({expire_in}) ->
 
     # Cache the unix_time() we generate in case we need to call @_json()

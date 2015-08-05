@@ -13,7 +13,7 @@ exports.Auth = class Auth extends Base
 
   _type : () -> constants.sig_types.auth
 
-  _optional_stanzas : () -> super.concat(["nonce", "session"])
+  _optional_stanzas : () -> super().concat(["nonce", "session"])
 
   _json : () ->
     ret = super { expire_in : 24*60*60 }

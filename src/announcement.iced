@@ -12,7 +12,7 @@ exports.Announcement = class Announcement extends Base
 
   _type : () -> constants.sig_types.announcement
 
-  _required_stanzas : () -> super.concat(["announcement"])
+  _required_stanzas : () -> super().concat(["announcement"])
 
   _json : () ->
     ret = super {}

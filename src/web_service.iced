@@ -22,7 +22,7 @@ class WebServiceBinding extends Base
   # service has to be optional because some legacy sigchains
   # use this type to prove ownership of a new key with no
   # service stanza
-  _optional_stanzas : () -> super.concat(["revoke", "service"])
+  _optional_stanzas : () -> super().concat(["revoke", "service"])
 
   #---------------
 

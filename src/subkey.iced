@@ -24,7 +24,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
   set_subkey : (s) ->
   get_field : () -> null
   need_reverse_sig : () -> false
-  _optional_stanzas : () -> super.concat(["device"])
+  _optional_stanzas : () -> super().concat(["device"])
 
   _v_generate : (opts, cb) ->
     esc = make_esc cb, "_v_generate"
@@ -94,7 +94,7 @@ exports.Subkey = class Subkey extends SubkeyBase
   get_subkm : () -> @subkm
   set_subkey : (s) -> @subkey = s
   _type : () -> constants.sig_types.subkey
-  _required_stanzas : () -> super.concat(["subkey"])
+  _required_stanzas : () -> super().concat(["subkey"])
 
   constructor : (obj) ->
     @subkey = obj.subkey

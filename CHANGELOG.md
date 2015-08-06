@@ -1,3 +1,8 @@
+## 2.0.33 (2015-08-06)
+
+Fix embarrassment:
+ * Rename internal methods in SubkeyBase to be more sensible
+
 ## 2.0.32 (2015-08-06)
 
 Bugfix:

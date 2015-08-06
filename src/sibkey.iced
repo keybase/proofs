@@ -8,9 +8,9 @@
 exports.Sibkey = class Sibkey extends SubkeyBase
 
   get_field : () -> "sibkey"
-  get_subkey : () -> @sibkey
-  get_subkm : () -> @sibkm
-  set_subkey : (s) -> @sibkey = s
+  get_new_key_section : () -> @sibkey
+  set_new_key_section : (s) -> @sibkey = s
+  get_new_km : () -> @sibkm
   _type : () -> constants.sig_types.sibkey
   need_reverse_sig : () -> true
 

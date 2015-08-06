@@ -1,3 +1,8 @@
+## 2.0.32 (2015-08-06)
+
+Bugfix:
+  * Update `eldest` and `revoke` statements to have an optional `device` section.
+
 ## 2.0.31 (2015-08-06)
 
 Feature:

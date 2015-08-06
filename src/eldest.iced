@@ -12,6 +12,8 @@ exports.Eldest = class Eldest extends Base
 
   _type : () -> constants.sig_types.eldest
 
+  _optional_sections : () -> super().concat(["device"])
+
   _json : () ->
     ret = super {}
     ret.body.device = @device if @device?

@@ -13,9 +13,7 @@ exports.Auth = class Auth extends Base
 
   _type : () -> constants.sig_types.auth
 
-  # TODO once legacy clients not using "auth" sections are gone, we should remove
-  # "nonce" and "session" and make "auth" required
-  _optional_sections : () -> super().concat(["nonce", "session", "auth"])
+  _required_sections : () -> super().concat(["auth"])
 
   _json : () ->
     ret = super { expire_in : 24*60*60 }

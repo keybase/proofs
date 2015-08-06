@@ -3,13 +3,13 @@
 -----BEGIN PGP SIGNATURE-----
 Comment: GPGTools - https://gpgtools.org
 
-iQEcBAABCgAGBQJVw8V9AAoJEJgKPw0B/gTfsMkH/igv7XbhPsyCgLnOBT8FuTlt
-a+0pcN0Nuxjvt3hl2+ox0UDMNmLGk7UQ7WeWfOWDSFfTeqWLlXSb7cYNlSFpi7YX
-EaWkxIGMcxw+Bd7Fzx1IfywZs7mhTb+zUdLXLMPOlyUOkh4+mRKTI5sNpBtEWP+U
-SdNP8Jb02cGxY8a0AB3J8HyIGvFZhfSClHAcUNAEGkRjaukvLKZ3QxyVv1syoa6U
-IZe8AFw1Y/DGZ4rr3NKMeqRXGJVVHRs2vBb0JJzEj5wuSDfWoO1mni2/+BGxpPne
-0ruo9kSm5/8WoZYgo6tqlQmjd6LM25WwPltjZBEW0R3bkiuWtyc5L45sICOK8ig=
-=+mNq
+iQEcBAABCgAGBQJVw9PpAAoJEJgKPw0B/gTf5AcH/1vfRy8b5QVlIbcd87A4fpOC
+nlNMH3aDExqMcM4dhoaWJZgnQbi0JQudELux1qIYG5ihP0zNkA6BeXItERcAcCoC
+C6uRGVxxVpNwCtZZ+c3oQq4C/Xe95TDKD9ZYIg6u8GYm+HoU5mfoSr1RpvxOzFXk
+MZGRNf7CyTrQGBil+y4TQ8m1oGlH2GoATAQ8AzVCxwwZsaGOqljgEUcfIeoMW8fs
+78BA9ALqO/2yCBS9Mz7npDIn5fM7ChcK6mG7sn8k2noeOCCchOle+UNQTZy98fFG
+/5uJW3ZyiRdu6HJyqMh5TGTaCl4dInjH3LFoJRNMSLTUHNHYXpDvdrivSm7ZzFM=
+=ZPJI
 -----END PGP SIGNATURE-----
 
 ```
@@ -24,7 +24,7 @@ IZe8AFw1Y/DGZ4rr3NKMeqRXGJVVHRs2vBb0JJzEj5wuSDfWoO1mni2/+BGxpPne
 size   exec  file                             contents                                                        
              ./                                                                                               
 109            .gitignore                     ec278daeb8f83cac2579d262b92ee6d7d872c4d1544e881ba515d8bcc05361ab
-9182           CHANGELOG.md                   3da59a095c548c102651a26198b165ab3dbbc6c4bfc7319c0b21b836c635af9d
+9287           CHANGELOG.md                   fbd7fa21a1b25305a5e772ef1e9ed8a14d520dbaa6d56e81d8595c56e53d6cd0
 1483           LICENSE                        333be7050513d91d9e77ca9acb4a91261721f0050209636076ed58676bfc643d
 1333           Makefile                       7ce559d18f40d4980d635184648ca3b9b8c695c65b4fb1ccd5cd566ccb096e5b
 43             README.md                      b2db580fc880756ae739bb148570f6afb1c250e5c0d2c5fa56ce41491753ca6c
@@ -49,13 +49,13 @@ size   exec  file                             contents
 5995               hackernews.js              0e73885c9dba4dbba56fc042afe6002aeae1699094f77555c831d2a15348033c
 8535               reddit.js                  508d1b349ce6a992afe5c882d7c541c1ff85990645343dbfd748c09888d8ce3f
 27418              twitter.js                 fda7930b6de79013601c22d0585833e6c2bf09594ec7890a4852ef3e21d24df5
-6160             sibkey.js                    7ab2dbd8ddab650e6e0e8e0ae477f909ced2484ea471fdf149e2b447c4fc7420
-9958             subkey.js                    de76c52f695043e3dc247e2fd4e1ddef4cd0ae2b281b6b14f6c69993d5d5f474
+6183             sibkey.js                    4c468e62dd0378b7d8748560f7b54c1342f741bca7b8f5de3203bae8a3a5afa6
+10082            subkey.js                    ec1c09ee4de9169b20642aa43d9690202b8ff0b8a0f8f3578f7a1d47daad83ea
 1793             track.js                     be71c42e84f199a8567045ed46f8070ae7b6ed0f96fd8bcab06dd94f8e77f7a9
 1452             update_passphrase_hash.js    e8553ce15b8bc30b7b76e5bea48fd9af6655d691c64fd2ba907e643e77295877
 1544             util.js                      1760f3955e71bed8a332c02a1c9a96733f9af0e0f297c89ec354f83ed5bf3908
 18574            web_service.js               de307b2fe19c9a3153c4e055927f672aabfa1c65146f02e8cca5137b2e48d74f
-744            package.json                   6a2e830e028899808aecdbfffc776838ad5bc38944a768ba4d2af976c5b3d437
+744            package.json                   01d1d645800e08dc64735f1ee9e916cf135d8423f27908af4cbdd01c56b0a56b
                src/                                                                                           
 2279             alloc.iced                   3b73228556a1901f8f27c4a1e89c9c0c56e8c1c00e1378209ecd2b8f2d3902d5
 556              announcement.iced            844c76d3f67d5d39f0b423d86b70572491577b63db898abb7b3b02b9b9331050
@@ -77,8 +77,8 @@ size   exec  file                             contents
 2909               hackernews.iced            cb14793b3ea889bcbc2121430bc3728655e125806001211864d3c90c1104505a
 4082               reddit.iced                8a4f6902eee7e1609df18bf9a00b5934d2e9a16eaf20bd6231b3d11b2554effe
 11418              twitter.iced               9bbb6cfdc464a5ed3261cc8f1a14a12e18325d6b0edc753c7a9e133b58d9328e
-1579             sibkey.iced                  a5b2110621c7bc736b8883f0cae0210a2d9b8df1b9491797a571ebe5e0490443
-3242             subkey.iced                  1ecf723fbf2916b17f04c883bfe1b31bab808ada70c552b714e49e14065e0d47
+1598             sibkey.iced                  a5ee2998b39c5e484fa41344ff4020b6ad264dfb4fa66b65c531a262ef3925fc
+3412             subkey.iced                  417caafeb994f0a65fde961d62c047b17fd7bf91c796f0fa9c4048eb8a6873d3
 876              track.iced                   0cb030469136cb06de7bf75eca05b7da310a6950417ac8d3190c798989e91717
 647              update_passphrase_hash.iced  75e791e9b2d9b1677e548e14221cf9b037aee08bd29019c4306bd677294fe736
 1052             util.iced                    88092afaf23bf8dfe42a72252ac156be45e94588911584ecf535d228b108f2b9

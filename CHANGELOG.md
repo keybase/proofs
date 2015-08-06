@@ -1,4 +1,4 @@
-## 2.0.31 (2015-07-24)
+## 2.0.31 (2015-08-06)
 
 Feature:
   * Each sigtype now has required and optional sections of the `body`. If there are `sections` in the body not that don't correspond to the sigtype, it will now be considered invalid.

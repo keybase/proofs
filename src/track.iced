@@ -14,10 +14,8 @@ exports.Track = class Track extends Base
 
   _required_sections : () -> super().concat(["track"])
 
-  _json : () ->
-    ret = super {}
+  _v_customize_json : (ret) ->
     ret.body.track = @track
-    return ret
 
 #==========================================================================
 
@@ -31,9 +29,7 @@ exports.Untrack = class Untrack extends Base
 
   _required_sections : () -> super().concat(["untrack"])
 
-  _json : () ->
-    ret = super {}
+  _v_customize_json : (ret) ->
     ret.body.untrack = @untrack
-    return ret
 
 #==========================================================================

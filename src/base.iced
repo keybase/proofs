@@ -16,6 +16,11 @@ exports.hash_sig = hash_sig = (sig_body) ->
 
 #------
 
+hash_pgp_key = (key) ->
+  (new kbpgp.hash.SHA256 new Buffer key.trim()).toString("hex")
+
+#------
+
 add_ids = (sig_body, out) ->
   hash = hash_sig sig_body
   id = hash.toString('hex')
@@ -173,6 +178,34 @@ class Base
 
   #------
 
+  _v_include_pgp_hash : -> false
+  _v_require_full_pgp_hash : -> false
+  _v_pgp_km_to_hash : () -> @km()
+  _v_pgp_hash_dest : (body) -> body.key
+
+  full_pgp_hash : (opts, cb) ->
+    if @_full_pgp_hash is undefined
+      esc = make_esc cb
+      await @_v_pgp_km_to_hash()?.export_pgp_public {}, esc defer key
+      @_full_pgp_hash = if key? then hash_pgp_key key else null
+    cb null, @_full_pgp_hash
+
+  check_pgp_hash: ({json}, cb) ->
+    err = null
+    if not (hash_in = @_v_pgp_hash_dest(json.body)?.full_pgp_hash)?
+      if @_v_require_full_pgp_hash()
+        err = new Error "This sig type requires a PGP key hash but none was provided"
+    else
+      await @full_pgp_hash {}, defer err, hash_real
+      if err? then # noop
+      else if not hash_real?
+        err = new Error "A PGP key hash (#{hash_in}) was in the sig body but no key was provided"
+      else if hash_in isnt hash_real
+        err = new Error "New PGP key's hash (#{hash_real}) doesn't match hash in signature (#{hash_in})"
+    cb err
+
+  #------
+
   _v_check : ({json}, cb) ->
 
     # The default seq_type is PUBLIC
@@ -200,7 +233,11 @@ class Base
     else if (section_error = @_check_sections(json))?
       section_error
     else
-      err = @_v_check_key key
+      @_v_check_key key
+
+    if not err?
+      await @check_pgp_hash {json}, defer err
+
     cb err
 
   #------
@@ -244,9 +281,14 @@ class Base
 
   #------
 
-  _json : ({expire_in}) ->
+  _v_customize_json : (ret) ->
 
-    # Cache the unix_time() we generate in case we need to call @_json()
+  #------
+
+  generate_json : ({expire_in} = {}, cb) ->
+    err = null
+
+    # Cache the unix_time() we generate in case we need to call @generate_json()
     # twice.  This happens for reverse signatures!
     ctime = if @ctime? then @ctime else (@ctime = unix_time())
 
@@ -289,11 +331,12 @@ class Base
     ret.body.merkle_root = @merkle_root if @merkle_root?
     ret.body.revoke = @revoke if @has_revoke()
 
-    return ret
+    @_v_customize_json ret
 
-  #------
+    if @_v_include_pgp_hash()
+      await @full_pgp_hash {}, defer err, @_v_pgp_hash_dest(ret.body).full_pgp_hash
 
-  json : -> json_stringify_sorted @_json {}
+    cb err, json_stringify_sorted ret
 
   #------
 
@@ -305,7 +348,7 @@ class Base
     esc = make_esc cb, "generate"
     out = null
     await @_v_generate {}, esc defer()
-    json = @json()
+    await @generate_json {}, esc defer json
     await @sig_eng.box json, esc defer {pgp, raw, armored}
     {short_id, id} = make_ids raw
     out = { pgp, json, id, short_id, raw, armored }

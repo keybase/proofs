@@ -26,6 +26,9 @@ exports.SubkeyBase = class SubkeyBase extends Base
   need_reverse_sig : () -> false
   _optional_sections : () -> super().concat(["device"])
 
+  _v_pgp_km_to_hash : -> @get_new_km()
+  _v_pgp_hash_dest : (body) -> body[@get_field()]
+
   _v_generate : (opts, cb) ->
     esc = make_esc cb, "_v_generate"
     if not @get_new_key_section()? and @get_new_km()?
@@ -35,17 +38,15 @@ exports.SubkeyBase = class SubkeyBase extends Base
       obj.parent_kid = @parent_kid if @parent_kid?
       @set_new_key_section obj
       if @get_new_km().can_sign()
-        msg = @json()
         eng = @get_new_km().make_sig_eng()
+        await @generate_json {}, esc defer msg
         await eng.box msg, esc defer { armored, type }
         obj.reverse_sig = armored
     cb null
 
-  _json : () ->
-    ret = super {}
+  _v_customize_json : (ret) ->
     ret.body[@get_field()] = @get_new_key_section()
     ret.body.device = @device if @device?
-    return ret
 
   _match_json : (outer, inner) ->
     outer = json_cp outer

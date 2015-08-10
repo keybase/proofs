@@ -14,9 +14,7 @@ exports.Announcement = class Announcement extends Base
 
   _required_sections : () -> super().concat(["announcement"])
 
-  _json : () ->
-    ret = super {}
+  _v_customize_json : (ret) ->
     ret.body.announcement = @announcement
-    return ret
 
 #==========================================================================

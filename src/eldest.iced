@@ -6,6 +6,8 @@
 
 exports.Eldest = class Eldest extends Base
 
+  _v_include_pgp_hash : () -> true
+
   constructor : (obj) ->
     @device = obj.device
     super obj
@@ -14,9 +16,7 @@ exports.Eldest = class Eldest extends Base
 
   _optional_sections : () -> super().concat(["device"])
 
-  _json : () ->
-    ret = super {}
+  _v_customize_json : (ret) ->
     ret.body.device = @device if @device?
-    return ret
 
 #==========================================================================

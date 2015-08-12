@@ -18,7 +18,6 @@ exports.constants = constants =
     sibkey : "sibkey"
     device : "device"
     eldest : "eldest"
-    dualkey : "dualkey"
   proof_types :
     none : 0
     keybase : 1

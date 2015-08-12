@@ -1,3 +1,8 @@
+## 2.0.36 (2015-08-12)
+
+Retired feature:
+  * Strip out dualkey, they never made it into the wild
+
 ## 2.0.35 (2015-08-12)
 
 Bugfix:

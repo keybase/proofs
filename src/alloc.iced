@@ -7,7 +7,7 @@ base = require './base'
 {Cryptocurrency} = require './cryptocurrency'
 {Announcement} = require './announcement'
 {Subkey} = require './subkey'
-{Dualkey,Sibkey} = require './sibkey'
+{Sibkey} = require './sibkey'
 {Device} = require './device'
 {Eldest} = require './eldest'
 {UpdatePassphraseHash} = require './update_passphrase_hash'
@@ -32,7 +32,6 @@ lookup_tab = {
   "announcement"                   : Announcement,
   "subkey"                         : Subkey,
   "sibkey"                         : Sibkey
-  "dualkey"                        : Dualkey
   "device"                         : Device
   "eldest"                         : Eldest
   "update_passphrase_hash"         : UpdatePassphraseHash

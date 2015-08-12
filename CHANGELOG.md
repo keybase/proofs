@@ -1,3 +1,8 @@
+## 2.0.34 (2015-08-12)
+
+Enhancement:
+  * Add better error messages when invalid sections are found
+
 ## 2.0.33 (2015-08-06)
 
 Fix embarrassment:

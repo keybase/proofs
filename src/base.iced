@@ -216,11 +216,11 @@ class Base
   _check_sections : (json) ->
     for section in @_required_sections()
       unless json?.body?[section]
-        return new Error "Need a '#{section}' section of the signature block"
+        return new Error "Missing '#{section}' section #{if json.seqno? then "in seqno" + json.seqno else ""}, required for #{json.body.type} signatures"
 
     for section, _ of json?.body
       unless (section in @_required_sections()) or (section in @_optional_sections())
-        return new Error "'#{section}' section is not allowed for this signature type"
+        return new Error "'#{section}' section #{if json.seqno? then "in seqno" + json.seqno else ""} is not allowed for #{json.body.type} signatures"
 
     false
 

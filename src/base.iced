@@ -197,7 +197,7 @@ class Base
       new Error "Wrong seq_type: wanted '#{a}' but got '#{b}'"
     else if not (key = json?.body?.key)?
       new Error "no 'body.key' block in signature"
-    else if section_error = @_check_sections(json)
+    else if (section_error = @_check_sections(json))?
       section_error
     else
       err = @_v_check_key key
@@ -210,19 +210,23 @@ class Base
   #------
 
   _optional_sections : () -> ["client", "merkle_root"]
+  _is_wildcard_link : () -> false
 
   #------
 
+  # Return a JavaScript Error on failure, or null if no failure.
   _check_sections : (json) ->
     for section in @_required_sections()
       unless json?.body?[section]
-        return new Error "Missing '#{section}' section #{if json.seqno? then "in seqno" + json.seqno else ""}, required for #{json.body.type} signatures"
+        return new Error "Missing '#{section}' section #{if json.seqno? then "in seqno " + json.seqno else ""}, required for #{json.body.type} signatures"
 
-    for section, _ of json?.body
-      unless (section in @_required_sections()) or (section in @_optional_sections())
-        return new Error "'#{section}' section #{if json.seqno? then "in seqno" + json.seqno else ""} is not allowed for #{json.body.type} signatures"
+    # Sometimes we don't really need to check, we just need a "key" section
+    unless @_is_wildcard_link()
+      for section, _ of json?.body
+        unless (section in @_required_sections()) or (section in @_optional_sections())
+          return new Error "'#{section}' section #{if json.seqno? then "in seqno " + json.seqno else ""} is not allowed for #{json.body.type} signatures"
 
-    false
+    null
 
   #------
 
@@ -376,6 +380,7 @@ class GenericBinding extends Base
   _type : () -> null
   resource_id : () -> ""
   _service_obj_check : () -> true
+  _is_wildcard_link : () -> true
 
 #==========================================================================
 

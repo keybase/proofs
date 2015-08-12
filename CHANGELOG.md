@@ -1,3 +1,9 @@
+## 2.0.35 (2015-08-12)
+
+Bugfix:
+  * Sometimes we just want a generic chainlink; in that case, don't worry about
+    checking optional sections against the link-specific whitelist.
+
 ## 2.0.34 (2015-08-12)
 
 Enhancement:

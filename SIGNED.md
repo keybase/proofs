@@ -3,13 +3,13 @@
 -----BEGIN PGP SIGNATURE-----
 Comment: GPGTools - https://gpgtools.org
 
-iQEcBAABCgAGBQJVw9PpAAoJEJgKPw0B/gTf5AcH/1vfRy8b5QVlIbcd87A4fpOC
-nlNMH3aDExqMcM4dhoaWJZgnQbi0JQudELux1qIYG5ihP0zNkA6BeXItERcAcCoC
-C6uRGVxxVpNwCtZZ+c3oQq4C/Xe95TDKD9ZYIg6u8GYm+HoU5mfoSr1RpvxOzFXk
-MZGRNf7CyTrQGBil+y4TQ8m1oGlH2GoATAQ8AzVCxwwZsaGOqljgEUcfIeoMW8fs
-78BA9ALqO/2yCBS9Mz7npDIn5fM7ChcK6mG7sn8k2noeOCCchOle+UNQTZy98fFG
-/5uJW3ZyiRdu6HJyqMh5TGTaCl4dInjH3LFoJRNMSLTUHNHYXpDvdrivSm7ZzFM=
-=ZPJI
+iQEcBAABCgAGBQJVy0X9AAoJEJgKPw0B/gTfRG8H/jHqJuWD9KKVrqXBPNYG6lC5
+c2PfoH31Y5cOfLdyNDmz2F/bL+DMox7bN1h1v1m8djAwu/VYx4lWLf92r6Q7Z1kP
+kZoAshGQUPX8VyPsVcRTa3zXaMe+IqKmgefqWuZHvsN4TgMtR+UVsLCqrcB4fpUN
+Cif5AodHeVNRuVlB4r1hLHfZ6kr0IMT3TTi4JYGK03eJPmrx9AC8WJ+atYN8LdIQ
+RdBQpNQfUQBzcr5LyrqG5ZihQSGQ2PqDFrA2XzaFaIzXnescF8VvXtNiJN/gWaAz
+tpJfpMxQY3mjXCXWYPb4cv64IXgtlS6DQdRCBROdAHE+U6+AuuXFmGfRgy1+OLg=
+=U7IU
 -----END PGP SIGNATURE-----
 
 ```
@@ -24,7 +24,7 @@ MZGRNf7CyTrQGBil+y4TQ8m1oGlH2GoATAQ8AzVCxwwZsaGOqljgEUcfIeoMW8fs
 size   exec  file                             contents                                                        
              ./                                                                                               
 109            .gitignore                     ec278daeb8f83cac2579d262b92ee6d7d872c4d1544e881ba515d8bcc05361ab
-9287           CHANGELOG.md                   fbd7fa21a1b25305a5e772ef1e9ed8a14d520dbaa6d56e81d8595c56e53d6cd0
+9387           CHANGELOG.md                   7d9b592c84b13239c0a5c20fc450d4d6a1c18cc67bb5757c4b89b327b3f08a28
 1483           LICENSE                        333be7050513d91d9e77ca9acb4a91261721f0050209636076ed58676bfc643d
 1333           Makefile                       7ce559d18f40d4980d635184648ca3b9b8c695c65b4fb1ccd5cd566ccb096e5b
 43             README.md                      b2db580fc880756ae739bb148570f6afb1c250e5c0d2c5fa56ce41491753ca6c
@@ -33,7 +33,7 @@ size   exec  file                             contents
 1257             announcement.js              4e0509baa4187e00db6a64c8ad684bc0bca9cfbdda879bf5e8c507085696ff3d
 1365             auth.js                      098e919e67fe37bcd2043f6e04502072f9f81cd5082a16fceef9d4d211907042
 766              b64extract.js                1466f81bb930ddc439f877ef0cba4d20048f5477aafda294290f0fd0da527073
-23354            base.js                      e214e9f657e0524a57f9232da7bd72f2a07519c0203da0b41f8256b948de7ba0
+23514            base.js                      36bdc92be4742e429d5dd0ca7a97472afabde7d75eeca823bfd7f5015a91a315
 2017             constants.js                 c1c6279c22c026d775488efb773d20d376187b0b82a8e8d52ddd64bc02e616c2
 1452             cryptocurrency.js            a3b942e90ca8250ac443e679114fd91c772e54939347e0afbcb73c6cad978411
 1149             device.js                    0d73372dcfa25a6f1b2e1c6ff5fa8d4eb6dc2142ba217cd2771c337324898f49
@@ -55,13 +55,13 @@ size   exec  file                             contents
 1452             update_passphrase_hash.js    e8553ce15b8bc30b7b76e5bea48fd9af6655d691c64fd2ba907e643e77295877
 1544             util.js                      1760f3955e71bed8a332c02a1c9a96733f9af0e0f297c89ec354f83ed5bf3908
 18574            web_service.js               de307b2fe19c9a3153c4e055927f672aabfa1c65146f02e8cca5137b2e48d74f
-744            package.json                   01d1d645800e08dc64735f1ee9e916cf135d8423f27908af4cbdd01c56b0a56b
+744            package.json                   5338aebcd4fe291697421cef8477467a3d469ba7537651da23ff9eb87e689187
                src/                                                                                           
 2279             alloc.iced                   3b73228556a1901f8f27c4a1e89c9c0c56e8c1c00e1378209ecd2b8f2d3902d5
 556              announcement.iced            844c76d3f67d5d39f0b423d86b70572491577b63db898abb7b3b02b9b9331050
 657              auth.iced                    6416f6791cad9c24bd6e0475c2f0eb2459c61d22ba1279db07cded682bd19749
 704              b64extract.iced              47b06460fd61d8eb788878566c62086b1fd1f792a1712b3e8736766401bc8fee
-11802            base.iced                    fb5d5ebad2ccb7e7660cd9e53c5a66bebd5b9cc3fea34fa65a33cd4039a28fbe
+11942            base.iced                    bc4311ead979fd9510856451df9532ff9a74708eec06da858d2da409bdbdf4ed
 2240             constants.iced               52c4e235edbe9789ac7ebbf10096daba635e8c1f13d6df5babd79044f5cae8b8
 628              cryptocurrency.iced          f2b5696a76d35fd3894982acbaf4d62d7530ea191c3503eb8098ffdff183b50a
 508              device.iced                  8f8da4c6ee6f6ee9f52ef9653fe2fc9fde898dca9b47f33a242b9488bf0ce799

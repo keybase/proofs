@@ -14,6 +14,7 @@ mods = [
   require('./subkey')
   require('./sibkey')
   require('./eldest')
+  require('./pgp_update')
   require('./announcement')
   require('./scrapers/twitter')
   require('./scrapers/base')

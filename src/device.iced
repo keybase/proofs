@@ -14,9 +14,7 @@ exports.Device = class Device extends Base
 
   _required_sections : () -> super().concat(["device"])
 
-  _json : () ->
-    ret = super {}
+  _v_customize_json : (ret) ->
     ret.body.device = @device
-    return ret
 
 #==========================================================================

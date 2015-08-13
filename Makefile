@@ -25,6 +25,7 @@ $(BUILD_STAMP): \
 	lib/revoke.js \
 	lib/sibkey.js \
 	lib/subkey.js \
+	lib/pgp_update.js \
 	lib/scrapers/base.js \
 	lib/scrapers/coinbase.js \
 	lib/scrapers/dns.js \

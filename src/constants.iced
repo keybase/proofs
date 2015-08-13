@@ -11,6 +11,7 @@ exports.constants = constants =
     auth : "auth"
     untrack : "untrack"
     revoke : "revoke"
+    pgp_update : "pgp_update"
     update_passphrase_hash : "update_passphrase_hash"
     cryptocurrency : "cryptocurrency"
     announcement : "announcement"

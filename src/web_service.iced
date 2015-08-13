@@ -8,10 +8,8 @@ class WebServiceBinding extends Base
 
   #------
 
-  _json : () ->
-    ret = super {}
+  _v_customize_json : (ret) ->
     ret.body.service = o if (o = @service_obj())?
-    return ret
 
   #---------------
 

@@ -1,7 +1,11 @@
-## 2.0.36 (2015-08-12)
+## 2.0.36 (2015-08-13)
 
 Retired feature:
   * Strip out dualkey, they never made it into the wild
+
+Feature:
+  * Sigs which add PGP keys now include a hash of the armored key
+  * Add a new sig type for updating PGP keys which also includes the full hash
 
 ## 2.0.35 (2015-08-12)
 

@@ -2,29 +2,29 @@
 ```
 -----BEGIN PGP SIGNATURE-----
 
-iQQcBAABCAAGBQJVzQGlAAoJEA2qGkqx2IKR/fAgAIsSNekBtEH2U7X78sKZM1jq
-CWKliW2UnriB/ywhsyGMO1a2osnaqAu0MWw1+mbWwuTfxiZKE2uUuQGdYOiId2d3
-sXdxV1biqB6bc6yy+oesFHhylR4KyQYA1Np0+ZTFNsGFu6JqZeUDiC9P0srVFSRV
-VYRKm0X4B0UtXVRzAXbnYejc0zwWaguzKveUVjBoY1sQGBYN5DpnNTFuyqvH/uWW
-7pktzpYCBNRXiglND8M7LN0hQJPNE2Cnpisbk7NcukTEsbR8fr1Z3BAeQhTIykis
-t6XuwyZiKUqIiAm5165IuGVw3WYiTP/rFhBrzzXlWjTYSGQ781PVUovsoBSYnPnH
-B0jOob4CRqwQejXuH24MBtq/za7YHZlFZsmayMtFgBKhkICZcg1Vmlw4X6lPBy0t
-Ck18CMEW2QofMbHR/AKUamy3jJ1Wt+aReqrxFvryOAxVi2fXz5Xjmjg6NHylXXlr
-opDbBZ8l/5CqD7X0zm1OUfyW7uNAHI+by5NjGvTtbM3H0kXRTVoGSObBs9Ohs5PB
-CuD79JH38CT3imYEYGPOmH9nD+f0fSfJKAOM2HqMHJ6ySPwQTdBaYqyh0J1fyQIk
-AbGg+hOP73Os4KpulZmFlzULjfnVfB0CDMZwo1iR0k34M68wNZGA1CmugzaXaQYV
-NJvtjXreH5iLxm4o1weyrzW4fmo/iYDy9DBeXV/92js/G8imEOA787DyC8a9TCiY
-8Zi4Jci96D2xbX1exVHYDgtDNtPzgYXHwPqJQUFN0nOocknB0mbpbN/0Gtk15GpM
-62DVRAZ0bNY5Mn7gpAq6MLq6ASkaRT022stiH9uhJHOhTL8rwmL7jBzKfP9b0FI6
-BKCODilYV7iGrEJJR2sXIctjIlO8Ei0QMEaJa4nADR4LE5gsB4lE0ovTi7SwbU5b
-Pu80HE7688siyRFjzkl3SlmFmAWqD6G/Lr6P8mN7xLR1PKpk73mSX9morKMAZFyf
-eZDOMjzGhDhu3MasEqp+dKmwZVP62P7sR1JEiRXtZfjd2KG/4l+FnhMluvxRk9ZX
-Xld5YDBFx/T6T+ESOL+shR1MB7DUuHtQOYI7Uw0LG/8b5C2w4ejfSXfyHY4qdxp9
-BJ9Kjl05ZhlOq+hCPUn5Avfq5inaoogPAu6xKbPt4P85MwBkVVQDLN/jWEyRYYRR
-NdeLPYMjrs3C5Kxpa8oAxBazOd26ZErdKQdA7zHMPXpX4Rzzn5HiNE8QJvggK0uj
-Z/bPuJbXG39ixQ1sVUAQ90UunQIuFnJt0C0CUpQKEM+3MMf2SMq6/JG7EvpYc/DF
-8QcJMyES3emStSEkRNPXUTZVCO13heNSg7YPFru39H0pyw/iVqTA/6bNmWREaD0=
-=JXKy
+iQQcBAABCAAGBQJV0mCMAAoJEA2qGkqx2IKRnOUf/ROMC6bwW1zDaQ4Nkb4URRo8
+7+Xp8xD78sSjYmPwVJ2ZCebzxIn+Pv+UNCQAw+PlzH1TWKM4CW4GdyGN1T3fb1HP
+CZUj7zuFcSN032lkmQv51Yb5bW0iza4HVKUw0ByKplKtUg0X34W8BZ2+fxwxaUgm
+Y+sjrTQWdRVEaiYTVmHs4iaCNCcZ8KdAnfC/icdZzoIR8oVu4kbngSJoKsqgXBTD
+k6VKkUtEqddgyXOAXT9FjEym3tJxlGSZdDXQmCKLdGVmn94kssZYbDEFpjNNa58l
+mTvxfy2e/Qmi3Sn7kBH1KWceTYhl+u896J/fxU8/waPP0z1G/enTtegkj9o1kstz
+HMX0rUp+RxaLk6jnhqsJeGp5FP9a4K/n37d5KVx9Q5bqDUrR8HL1IjjMPhP9Ehrt
+cBcr/MZ1y96JLYuu5Cn3HCNsHnIQISqHcnqDxM6UPvXXpR5ZWU8kLuLV9rMuzkWz
+7Pe9nGVpw2h0xwk8uAbnulsxPaKCbG9Xzb2VczMM3BSepktL1i92mm+cYQbZgKbu
+6sb6FSMvu7yZ1iuqjuD8/2tqGcYK5AfW4tl/xf2IuY1/Vryalu+Mc8Vuso4e3hnB
+lz+qZAgkCHYsebXunjum4IUDrE1aq7qtU0SjGaxj/z1BY0pcdj3j8LzscgRiwotB
+r6r6PhB9x+wh1JUO4JCwaeZeRevASJI8Os5oC2cvUXaFRKZc6OdL2XKbLyvTnvYG
+PHiZFNtx0kWVPrCbSQz4QnLg01HT/f/PAHo0N+8IHH/TuJZz2ASassNuDF4UKk0T
+j7RU7+6NaoSkyrjVSrycQAGisLHxZo5RPJh9LSc+v3xIJSlT7gfoGCRQEymhvfiG
+1ihsKod4Tq+yzYw8xawyXXQLEVmYpRvFtECG9Nxgf9an/237VUBJ9h6DziAjPmYn
+GKp78fvRpk154Q0IJDS6gv0LaLl2nwh2YETGFj1qEKEhd7BKqXCFtpzQojU2iAwF
+4gaWsIWIVIuojotWVEiP2t0eL8ngjiMOrfMbFiaf9d2GZyS8s50pz744CvXUGqsA
+k90abotBc2Smi4AZnW0H0ra8swr3ZGlQA9VA51v/kGpX7MncVAMhOkj10Jt68hy1
+fL5XSPPyeLTw8ZbLpIVzvdJrRPqqWWayldBfLowFVhyIH2q1fUxnpa21twE1eM4A
+QZx1v35DaAhCfj00imyxxjvac4/uYPDdJqm1Lv8WnaDtxq6XZj1GB7umQcFAQSpv
+Ek6Ae6lcQqXtdSVd12F3vGwVa256pjfMNI+nqzVfo74BjiLW3fKLH6YSunV0+dTZ
+GtBYiNV2olIKzrPS0xbGqkRhlWJccdhypCFpT+aD04M8aFD9NY1v1Fva0gVES6c=
+=5JRG
 -----END PGP SIGNATURE-----
 
 ```
@@ -54,7 +54,7 @@ size   exec  file                             contents
 1087             device.js                    f77d694ccf19c81b8c1977bb5c0280979a8b15983ced95675d6f5d44cedf67a7
 1213             eldest.js                    247e278e532d83491c9dbfadee9b255cce61080e434ad82a66bdb37de082a36f
 876              main.js                      db4305d87fbe84cad7bc946977f6585838043b65ec6661ce4d527d028b0e3a23
-1019             pgp_update.js                2e56db3eb672e78259ee674ea4140f5a409e5d4b54dee7b8b5f9081f04058c38
+1137             pgp_update.js                7be02640de4baf37de1329c1320f5b8c761d4d0673711784c826e8598237726f
 2578             revoke.js                    57106f23d108ce01a6d781a795417c86a09633af73ff1c9630d3893a8bc47e5f
                  scrapers/                                                                                    
 6392               base.js                    db98e2349217287c98feba718b0bdd9570c5e1108370942af9ca2a2b59be5ed9
@@ -71,7 +71,7 @@ size   exec  file                             contents
 1506             update_passphrase_hash.js    f2cfce382fd677e31a88f3646eb2d90258583a1ef68fe74dcd178a2e178229f6
 1544             util.js                      1760f3955e71bed8a332c02a1c9a96733f9af0e0f297c89ec354f83ed5bf3908
 18515            web_service.js               e11b8b389fec9036ea8dc79be5498936df633b26b909517b12cf2b28335d8db9
-744            package.json                   010f327837fce13db72a7830d90b5d28ffaded78d52fbb763b608aa4d1571924
+744            package.json                   52c5dbec15bf22a2d96d47c978cc9796e6bc1d78fbb2f2d541d4af395f5c9887
                src/                                                                                           
 2310             alloc.iced                   b96667ec7c853d57379ae01491544490ec37d3a6b4083b19e56475dbc102f2ee
 537              announcement.iced            98ddc17f5c6b66874ed2a273032d5c5e118d1ef3a7f5a08f4c7fb9cf06e811cf
@@ -83,7 +83,7 @@ size   exec  file                             contents
 489              device.iced                  b0c028eb2598c48d9d24be615e066e0a03e8b7b1930a4ca58f29d23517daf0bc
 537              eldest.iced                  a2284157260dfc4e50aa7f7376fea3bc11438cc524f88436eb601c8083dd5dcc
 707              main.iced                    5ae67ea7f1efcd50b4e6afd77f83ba336ee708abe91ec87e3c7a5e7fe0144d14
-313              pgp_update.iced              a0cd059498ff6cabb7840970d04253d2cdccc1ebfdd978b49917918017adf69e
+385              pgp_update.iced              10dcbc85bf7048a01f74ba2b67094b11e048eb52f082811a7f5410601b607741
 788              revoke.iced                  2b94671a923dcdd274d0f769f186f0757a27db64828eaad5fa5eb1a24f9e479f
                  scrapers/                                                                                    
 4029               base.iced                  e110786284dda6cd78bc0be507ff9ac0add3a128c959c073562416b513d8b2d8

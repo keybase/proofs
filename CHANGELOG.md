@@ -1,3 +1,19 @@
+## 2.0.39 (2015-08-20)
+
+Bugfix:
+  * Fix a crash when generating `eldest` links.
+
+## 2.0.38 (2015-08-20)
+
+Bugfix:
+  * `pgp_update` links now put PGP key metadata in a separate stanza instead of the `key` stanza.
+  * PGP keys' fingerprints are validated now.
+
+## 2.0.37 (2015-08-17)
+
+Bugfix:
+  * `pgp_update` links now take a dedicated KeyManager for the PGP key being updated
+
 ## 2.0.36 (2015-08-13)
 
 Retired feature:

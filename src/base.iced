@@ -178,23 +178,50 @@ class Base
 
   #------
 
-  _v_include_pgp_hash : -> false
-  _v_require_full_pgp_hash : -> false
-  _v_pgp_km_to_hash : () -> @km()
-  _v_pgp_hash_dest : (body) -> body.key
+  # true if PGP details (full_hash and fingerprint) should be inserted at
+  # @_v_pgp_details_dest()
+  _v_include_pgp_details : -> false
 
+  # true if this link type is only valid if it includes PGP details
+  _v_require_pgp_details : -> false
+
+  # Given the JSON body, the object where PGP key details should end up
+  _v_pgp_details_dest : (body) -> body.key
+
+  # If @_v_include_pgp_details() is true, a KeyManager containing a PGP key
+  _v_pgp_km : () -> null
+
+  # Generates (and caches) a hash for PGP keys, returns null for other kinds of keys
   full_pgp_hash : (opts, cb) ->
     if @_full_pgp_hash is undefined
       esc = make_esc cb
-      await @_v_pgp_km_to_hash()?.export_pgp_public {}, esc defer key
+      await @_v_pgp_km()?.export_pgp_public {}, esc defer key
       @_full_pgp_hash = if key? then hash_pgp_key key else null
     cb null, @_full_pgp_hash
 
-  check_pgp_hash: ({json}, cb) ->
+  # Adds the PGP hash and fingerprint to `body`. Noop for non-PGP keys (unless
+  # @_v_require_pgp_details returns true, then returns an error.)
+  _add_pgp_details : ({body}, cb) ->
+    return cb(null) unless @_v_include_pgp_details()
+
+    dest = @_v_pgp_details_dest(body)
+    await @full_pgp_hash {}, defer err, full_hash
+    if err then # noop
+    else if full_hash?
+      dest.full_hash = full_hash
+      dest.fingerprint = @_v_pgp_km().get_pgp_fingerprint().toString('hex') unless dest.fingerprint?
+    else if @_v_require_pgp_details()
+      err = new Error "#{@proof_type_str()} proofs require a PGP key"
+
+    cb err
+
+  _check_pgp_details: ({json}, cb) ->
     err = null
-    if not (hash_in = @_v_pgp_hash_dest(json.body)?.full_pgp_hash)?
-      if @_v_require_full_pgp_hash()
-        err = new Error "This sig type requires a PGP key hash but none was provided"
+    details = @_v_pgp_details_dest(json.body)
+
+    if not (hash_in = details?.full_hash)? or not (fp_in = details?.fingerprint)? or not (kid_in = details?.kid)?
+      if @_v_require_pgp_details()
+        err = new Error "#{@proof_type_str()} proofs require a PGP key's KID, fingerprint, and full_hash but one or more were missing."
     else
       await @full_pgp_hash {}, defer err, hash_real
       if err? then # noop
@@ -202,6 +229,11 @@ class Base
         err = new Error "A PGP key hash (#{hash_in}) was in the sig body but no key was provided"
       else if hash_in isnt hash_real
         err = new Error "New PGP key's hash (#{hash_real}) doesn't match hash in signature (#{hash_in})"
+      else if fp_in isnt (fp_real = @_v_pgp_km().get_pgp_fingerprint().toString('hex'))
+        err = new Error "New PGP key's fingerprint (#{fp_real}) doesn't match fingerprint in signature (#{fp_in})"
+      else if kid_in isnt (kid_real = @_v_pgp_km().get_ekid().toString('hex'))
+        err = new Error "New PGP key's KID (#{kid_real}) doesn't match KID in signature (#{kid_in})"
+
     cb err
 
   #------
@@ -236,7 +268,7 @@ class Base
       @_v_check_key key
 
     if not err?
-      await @check_pgp_hash {json}, defer err
+      await @_check_pgp_details {json}, defer err
 
     cb err
 
@@ -333,8 +365,7 @@ class Base
 
     @_v_customize_json ret
 
-    if @_v_include_pgp_hash()
-      await @full_pgp_hash {}, defer err, @_v_pgp_hash_dest(ret.body).full_pgp_hash
+    await @_add_pgp_details {body: ret.body}, defer err
 
     cb err, json_stringify_sorted ret
 

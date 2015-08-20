@@ -26,8 +26,8 @@ exports.SubkeyBase = class SubkeyBase extends Base
   need_reverse_sig : () -> false
   _optional_sections : () -> super().concat(["device"])
 
-  _v_pgp_km_to_hash : -> @get_new_km()
-  _v_pgp_hash_dest : (body) -> body[@get_field()]
+  _v_pgp_details_dest : (body) -> body[@get_field()]
+  _v_pgp_km : -> @get_new_km()
 
   _v_generate : (opts, cb) ->
     esc = make_esc cb, "_v_generate"

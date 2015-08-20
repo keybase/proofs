@@ -14,7 +14,7 @@ exports.Sibkey = class Sibkey extends SubkeyBase
   _type : () -> constants.sig_types.sibkey
   need_reverse_sig : () -> true
 
-  _v_include_pgp_hash : () -> true
+  _v_include_pgp_details : () -> true
   _required_sections : () -> super().concat(["sibkey"])
   _optional_sections : () -> super().concat(["revoke"])
 

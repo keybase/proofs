@@ -5,9 +5,9 @@
 
 exports.PGPUpdate = class PGPUpdate extends Base
 
-  _v_include_pgp_hash : () -> true
-  _v_require_full_pgp_hash : () -> true
-  _v_pgp_km_to_hash : () -> @pgpkm
+  _v_include_pgp_details : () -> true
+  _v_require_pgp_details : () -> true
+  _v_pgp_km : () -> @pgpkm
 
   _type : () -> constants.sig_types.pgp_update
 

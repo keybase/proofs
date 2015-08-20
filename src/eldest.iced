@@ -7,7 +7,7 @@
 exports.Eldest = class Eldest extends Base
 
   _v_include_pgp_details : () -> true
-  _v_pgp_km : () -> @km
+  _v_pgp_km : () -> @km()
 
   constructor : (obj) ->
     @device = obj.device

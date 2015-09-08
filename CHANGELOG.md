@@ -1,3 +1,8 @@
+## 2.0.40 (2015-09-08)
+
+Enhancement:
+  * Use kbpgp to generate PGP key hashes
+
 ## 2.0.39 (2015-08-20)
 
 Bugfix:

@@ -16,11 +16,6 @@ exports.hash_sig = hash_sig = (sig_body) ->
 
 #------
 
-hash_pgp_key = (key) ->
-  (new kbpgp.hash.SHA256 new Buffer key.trim()).toString("hex")
-
-#------
-
 add_ids = (sig_body, out) ->
   hash = hash_sig sig_body
   id = hash.toString('hex')
@@ -195,8 +190,7 @@ class Base
   full_pgp_hash : (opts, cb) ->
     if @_full_pgp_hash is undefined
       esc = make_esc cb
-      await @_v_pgp_km()?.export_pgp_public {}, esc defer key
-      @_full_pgp_hash = if key? then hash_pgp_key key else null
+      await @_v_pgp_km()?.pgp_full_hash {}, esc defer @_full_pgp_hash
     cb null, @_full_pgp_hash
 
   # Adds the PGP hash and fingerprint to `body`. Noop for non-PGP keys (unless

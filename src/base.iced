@@ -112,24 +112,17 @@ class Verifier
 
   #---------------
 
-  _check_json_formatting : (cb) ->
-    err = null
-    cb err
-
-  #---------------
-
   _check_json : (cb) ->
     json_str_buf = @payload
     json_str_utf8 = json_str_buf.toString('utf8')
     err = null
     if not /^[\x20-\x7e]+$/.test json_str_utf8
-      err = new Error "All JSON proof characters must be in the ASCII set"
+      err = new Error "All JSON proof characters must be in the ASCII set (properly escaped UTF8 is permissible)"
     else
       [e, @json] = katch (() -> JSON.parse json_str_buf)
       err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?
       if not err?
-        ours = json_stringify_sorted @json
-        if ours isnt json_str_utf8
+        if @strict and ((ours = json_stringify_sorted(@json)) isnt json_str_utf8)
           err = new Error "non-canonlical JSON found in strict mode (#{ours} v #{json_str_utf8})"
         else
           await @base._v_check {@json}, defer err

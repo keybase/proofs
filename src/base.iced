@@ -54,7 +54,7 @@ exports.cieq = cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase(
 
 class Verifier
 
-  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids}, @sig_eng, @base) ->
+  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict}, @sig_eng, @base) ->
 
   #---------------
 
@@ -112,14 +112,28 @@ class Verifier
 
   #---------------
 
+  _check_json_formatting : (cb) ->
+    err = null
+    cb err
+
+  #---------------
+
   _check_json : (cb) ->
-    jsons = @payload
-    [e, @json] = katch (() -> JSON.parse jsons)
-    err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?
-    if not err?
-      jsons = jsons.toString('utf8')
-      await @base._v_check {@json}, defer err
-    cb err, @json, jsons
+    json_str_buf = @payload
+    json_str_utf8 = json_str_buf.toString('utf8')
+    err = null
+    if not /^[\x20-\x7e]+$/.test json_str_utf8
+      err = new Error "All JSON proof characters must be in the ASCII set"
+    else
+      [e, @json] = katch (() -> JSON.parse json_str_buf)
+      err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?
+      if not err?
+        ours = json_stringify_sorted @json
+        if ours isnt json_str_utf8
+          err = new Error "non-canonlical JSON found in strict mode (#{ours} v #{json_str_utf8})"
+        else
+          await @base._v_check {@json}, defer err
+    cb err, @json, json_str_utf8
 
 #==========================================================================
 
@@ -387,6 +401,7 @@ class Base
   # @option obj {string} short_id The shortened sig ID that's for the tweet (or similar)
   # @option obj {bool} skip_ids Don't bother checking IDs
   # @option obj {bool} make_ids Make Ids when verifying
+  # @option obj {bool} strict Turn on all strict-mode checks
   verify : (obj, cb) ->
     verifier = new Verifier obj, @sig_eng, @
     await verifier.verify defer err, json_obj, json_str

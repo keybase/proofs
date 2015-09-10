@@ -1,3 +1,8 @@
+## 2.0.41
+
+Enhancement:
+  - Strict JSON checking
+
 ## 2.0.40 (2015-09-08)
 
 Enhancement:

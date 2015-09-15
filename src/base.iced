@@ -1,6 +1,6 @@
 {proof_type_to_string,constants} = require './constants'
 pgp_utils = require('pgp-utils')
-{katch,akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u,streq_secure} = pgp_utils.util
+{trim,katch,akatch,bufeq_secure,json_stringify_sorted,unix_time,base64u,streq_secure} = pgp_utils.util
 triplesec = require('triplesec')
 {WordArray} = triplesec
 {SHA256} = triplesec.hash
@@ -114,10 +114,13 @@ class Verifier
 
   _check_json : (cb) ->
     json_str_buf = @payload
-    json_str_utf8 = json_str_buf.toString('utf8')
+
+    # Before we run any checks on the input json, let's trim any leading
+    # or trailing whitespace.
+    json_str_utf8 = trim(json_str_buf.toString('utf8'))
     err = null
     if not /^[\x20-\x7e]+$/.test json_str_utf8
-      err = new Error "All JSON proof characters must be in the ASCII set (properly escaped UTF8 is permissible)"
+      err = new Error "All JSON proof characters must be in the visible ASCII set (properly escaped UTF8 is permissible)"
     else
       [e, @json] = katch (() -> JSON.parse json_str_buf)
       err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?

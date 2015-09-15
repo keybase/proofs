@@ -1,3 +1,9 @@
+## 2.0.42 (2015-09-15)
+
+Bugfix:
+  - Disregard trailing whitespace in JSON when checking for non-acceptable
+    characters and strict-mode byte-for-byte comparison
+
 ## 2.0.41 (2015-09-10)
 
 Enhancement:

@@ -117,16 +117,17 @@ class Verifier
 
     # Before we run any checks on the input json, let's trim any leading
     # or trailing whitespace.
-    json_str_utf8 = trim(json_str_buf.toString('utf8'))
+    json_str_utf8 = json_str_buf.toString('utf8')
+    json_str_utf8_trimmed = trim json_str_utf8
     err = null
-    if not /^[\x20-\x7e]+$/.test json_str_utf8
+    if not /^[\x20-\x7e]+$/.test json_str_utf8_trimmed
       err = new Error "All JSON proof characters must be in the visible ASCII set (properly escaped UTF8 is permissible)"
     else
       [e, @json] = katch (() -> JSON.parse json_str_buf)
       err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?
       if not err?
-        if @strict and ((ours = json_stringify_sorted(@json)) isnt json_str_utf8)
-          err = new Error "non-canonlical JSON found in strict mode (#{ours} v #{json_str_utf8})"
+        if @strict and ((ours = trim(json_stringify_sorted(@json))) isnt json_str_utf8_trimmed)
+          err = new Error "non-canonlical JSON found in strict mode (#{ours} v #{json_str_utf8_trimmed})"
         else
           await @base._v_check {@json}, defer err
     cb err, @json, json_str_utf8

@@ -1,3 +1,8 @@
+## 2.0.43 (2015-09-15)
+
+Bugfix:
+  - Unbreak the site, don't return our trimed JSON
+
 ## 2.0.42 (2015-09-15)
 
 Bugfix:

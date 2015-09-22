@@ -51,30 +51,39 @@ exports.BitbucketScraper = class BitbucketScraper extends BaseScraper
 
   _search_snippet : ({snippet, proof_text_check}, cb) ->
     out = {}
-    if not (u = snippet.links.self)?
+    @log "+ Searching snippet #{JSON.stringify snippet}"
+    if not (u = snippet?.links?.self?.href)?
       @log "| snippet didn't have a URL"
       rc = v_codes.FAILED_PARSE
     else
       await @_get_body u, true, defer err, rc, json
-      if rc isnt v_codes.OK then # noop
-      else if not json.files? then rc = v_codes.FAILED_PARSE
+      if err?
+        @log "| snippet #{u} failed to return a files list; #{err.toString()}"
+        rc = v_codes.HTTP_OTHER
+      else if rc isnt v_codes.OK
+        @log "| snippet #{u} failed to return a files list; rc=#{rc}"
+      else if not json.files?
+        @log "| snippet didn't have a files section"
+        rc = v_codes.FAILED_PARSE
       else
         rc = v_codes.NOT_FOUND
-        for filename, file of json.files when (ul = json.links.self.href)?
-          await @_get_body ul, false, defer err, rc, content
-          if rc isnt v_codes.OK then # noop
+        for filename, file of json.files when (ul = file?.links?.self?.href)?
+          await @_get_body ul, false, defer err, rc2, content
+          if err?
+            @log "| search #{filename} (#{ul}): #{err.toString()}"
+          else if rc2 isnt v_codes.OK
+            @log "| search #{filename} (#{ul}): non-OK code #{rc2}"
+          else if (id = @_stripr(content).indexOf(proof_text_check)) < 0
+            @log "| search #{filename} (#{ul}) -> content miss"
           else
-            if (id = @_stripr(content).indexOf(proof_text_check)) >= 0
-              @log "| search #{filename} -> found"
-              rc = v_codes.OK
-              out =
-                api_url : file.links.self.href
-                remote_id : snippet.id
-                human_url : snippet.link.html.href
-              break
-            else
-              @log "| search #{filename} -> miss"
-        @log "| search snippet #{u} -> #{rc}"
+            @log "| search #{filename} (#{ul})-> found"
+            rc = v_codes.OK
+            out =
+              api_url : file.links.self.href
+              remote_id : snippet.id
+              human_url : file.links.html.href
+            break
+    @log "- search snippet #{u} -> #{rc}"
     out.rc = rc
     cb out
 

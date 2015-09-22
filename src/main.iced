@@ -24,6 +24,7 @@ mods = [
   require('./scrapers/dns')
   require('./scrapers/coinbase')
   require('./scrapers/hackernews')
+  require('./scrapers/bitbucket')
 ]
 
 for m in mods

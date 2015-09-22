@@ -1,3 +1,8 @@
+## 2.0.44
+
+Features:
+  - Bitbucket support (thanks to @mark-adams)
+
 ## 2.0.43 (2015-09-15)
 
 Bugfix:

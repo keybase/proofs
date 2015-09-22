@@ -44,7 +44,7 @@ exports.BitbucketScraper = class BitbucketScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   _check_api_url : ({api_url,username}) ->
-    rxx = new RegExp("^https://bitbucket.org/#{username}/", "i")
+    rxx = new RegExp("^https://api.bitbucket.org/2.0/snippets/#{username}/", "i")
     return (api_url? and api_url.match(rxx));
 
   # ---------------------------------------------------------------------------

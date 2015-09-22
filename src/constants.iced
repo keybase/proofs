@@ -27,6 +27,7 @@ exports.constants = constants =
     reddit : 4
     coinbase : 5
     hackernews : 6
+    bitbucket : 7
     generic_web_site : 1000
     dns              : 1001
   expire_in : 60*60*24*365*5 # 5 years....

@@ -24,6 +24,7 @@ lookup_tab = {
   "web_service_binding.dns"        : web_service.DnsBinding,
   "web_service_binding.coinbase"   : web_service.CoinbaseBinding,
   "web_service_binding.hackernews" : web_service.HackerNewsBinding,
+  "web_service_binding.bitbucket"  : web_service.BitbucketBinding,
   "generic_binding"                : base.GenericBinding,
   "track"                          : Track,
   "untrack"                        : Untrack,
@@ -62,4 +63,3 @@ exports.get_klass = get_klass
 exports.alloc = alloc
 
 #=======================================================
-

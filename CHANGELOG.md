@@ -1,4 +1,4 @@
-## 2.0.44
+## 2.0.44 (2015-09-25)
 
 Features:
   - Bitbucket support (thanks to @mark-adams)

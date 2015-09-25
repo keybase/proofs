@@ -63,7 +63,7 @@ class Verifier
   #---------------
 
   get_etime : () ->
-    if @json.ctime? and @json.expire_in? then (@json.ctime + @json.expire_in)
+    if @json.ctime? and @json.expire_in then (@json.ctime + @json.expire_in)
     else null
 
   #---------------
@@ -93,6 +93,7 @@ class Verifier
     now = unix_time()
     if not @json.ctime? then err = new Error "No `ctime` in signature"
     else if not @json.expire_in? then err = new Error "No `expire_in` in signature"
+    else if not @json.expire_in then @etime = null
     else if (expired = (now - @json.ctime - @json.expire_in)) > 0
       err = new Error "Expired #{expired}s ago"
     else
@@ -329,12 +330,17 @@ class Base
     # twice.  This happens for reverse signatures!
     ctime = if @ctime? then @ctime else (@ctime = unix_time())
 
+    pick = (v...) ->
+      for e in v when e?
+        return e
+      return null
+
     ret = {
       seqno : @seqno
       prev : @prev
       ctime : ctime
       tag : constants.tags.sig
-      expire_in : expire_in or @expire_in or constants.expire_in
+      expire_in : pick(expire_in, @expire_in, constants.expire_in)
       body :
         version : constants.versions.sig
         type : @_type()

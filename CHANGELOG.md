@@ -2,6 +2,7 @@
 
 Features:
   - Bitbucket support (thanks to @mark-adams)
+  - Allow 0-time expirations in sig gens
 
 ## 2.0.43 (2015-09-15)
 

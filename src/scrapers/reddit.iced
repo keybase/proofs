@@ -25,6 +25,13 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
     else
       null
 
+
+  # ---------------------------------------------------------------------------
+
+  _check_api_url : ({api_url,username}) ->
+    rxx = new RegExp("^#{SUBREDDIT}", "i")
+    return (api_url? and api_url.match(rxx));
+
   # ---------------------------------------------------------------------------
 
   hunt2 : ({username, proof_text_check, name}, cb) ->

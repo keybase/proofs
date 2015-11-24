@@ -1,3 +1,8 @@
+## 2.0.46 (2015-11-24)
+
+Bugfixes:
+  - Fix regressions in reddit proofs (missing _check_api_url function)
+
 ## 2.0.45 (2015-11-24)
 
 Bugfixes:

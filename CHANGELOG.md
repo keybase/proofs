@@ -1,3 +1,8 @@
+## 2.0.45 (2015-11-24)
+
+Bugfixes:
+  - Workaround new coinbase HTML style
+
 ## 2.0.44 (2015-09-25)
 
 Features:

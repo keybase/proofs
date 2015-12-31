@@ -3,6 +3,7 @@
 pkg = require '../../package.json'
 {decode_sig} = require('kbpgp').ukm
 {space_normalize} = require '../util'
+{b64find} = require '../b64extract'
 
 #==============================================================
 
@@ -69,7 +70,8 @@ class BaseScraper
   #-------------------------------------------------------------
 
   _find_sig_in_raw : (proof_text_check, raw) ->
-    return space_normalize(raw).indexOf(space_normalize(proof_text_check)) >= 0
+    ptc_buf = new Buffer proof_text_check, "base64"
+    return b64find raw, ptc_buf
 
   #-------------------------------------------------------------
 

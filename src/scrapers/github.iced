@@ -1,5 +1,6 @@
 {BaseScraper} = require './base'
 {constants} = require '../constants'
+{b64find} = require '../b64extract'
 {v_codes} = constants
 
 #================================================================================
@@ -13,7 +14,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   _check_args : (args) ->
-    if not(args.username?) 
+    if not(args.username?)
       new Error "Bad args to Github proof: no username given"
     else if not (args.name?) or (args.name isnt 'github')
       new Error "Bad args to Github proof: type is #{args.name}"
@@ -35,7 +36,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
     @log "| search index #{url} -> #{rc}"
     if rc is v_codes.OK
       rc = v_codes.NOT_FOUND
-      for gist in json 
+      for gist in json
         await @_search_gist { gist, proof_text_check }, defer out
         break if out.rc is v_codes.OK
     out.rc or= rc
@@ -51,7 +52,8 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   _search_gist : ({gist, proof_text_check}, cb) ->
     out = {}
-    if not (u = gist.url)? 
+    ptc_buf = new Buffer proof_text_check, "base64"
+    if not (u = gist.url)?
       @log "| gist didn't have a URL"
       rc = v_codes.FAILED_PARSE
     else
@@ -61,10 +63,10 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
       else
         rc = v_codes.NOT_FOUND
         for filename, file of json.files when (content = file.content)?
-          if (id = @_stripr(content).indexOf(proof_text_check)) >= 0
+          if b64find content, ptc_buf
             @log "| search #{filename} -> found"
             rc = v_codes.OK
-            out = 
+            out =
               api_url : file.raw_url
               remote_id : gist.id
               human_url : gist.html_url
@@ -82,9 +84,10 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
     # calls back with a v_code or null if it was ok
     await @_get_body api_url, false, defer err, rc, raw
 
-    rc = if rc isnt v_codes.OK                  then rc
-    else if (raw.indexOf proof_text_check) >= 0 then v_codes.OK
-    else                                             v_codes.NOT_FOUND
+    ptc_buf = new Buffer proof_text_check, "base64"
+    rc = if rc isnt v_codes.OK     then rc
+    else if (b64find raw, ptc_buf) then v_codes.OK
+    else                                v_codes.NOT_FOUND
     cb err, rc
 
   # ---------------------------------------------------------------------------

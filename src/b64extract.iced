@@ -33,7 +33,7 @@ exports.base64_extract = base64_extract= (text) ->
 class Finder
 
   constructor : (corpus) ->
-    @rxx = new RegExp '\\s*(([a-zA-Z0-9/+_-]+)(={0,3}))\\s*$'
+    @rxx = new RegExp '^\\s*(([a-zA-Z0-9/+_-]+)(={0,3}))\\s*$'
     @lines = corpus.split /\r*\n/
 
   find_one_block : (start) ->
@@ -57,11 +57,8 @@ class Finder
     while i < @lines.length
       [msg, i] = @find_one_block i
       if msg.length
-        try
-          buf = new Buffer msg, 'base64'
-          return true if bufeq_fast buf, needle
-        catch e
-          # noop
+        buf = new Buffer msg, 'base64'
+        return true if bufeq_fast buf, needle
     return false
 
 #============================

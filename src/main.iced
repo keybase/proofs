@@ -1,6 +1,7 @@
 
 mods = [
   require('./web_service')
+  require('./b64extract')
   require('./util')
   require('./alloc')
   require('./constants')

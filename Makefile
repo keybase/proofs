@@ -46,16 +46,7 @@ build: $(BUILD_STAMP)
 test-server: $(BUILD_STAMP)
 	$(ICED) test/run.iced
 
-test-browser: $(TEST_STAMP) $(BUILD_STAMP)
-	@echo "Please visit in your favorite browser --> file://$(WD)/test/browser/index.html"
-
-test/browser/test.js: test/browser/main.iced $(BUILD_STAMP)
-	$(BROWSERIFY) -t icsify $< > $@
-
-$(TEST_STAMP): test/browser/test.js
-	date > $@
-
-test: test-server test-browser
+test: test-server
 
 clean:
 	rm -rf lib/* lib/scrapers/* $(BUILD_STAMP) $(TEST_STAMP)

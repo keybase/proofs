@@ -1,3 +1,8 @@
+## 2.0.47
+
+Bugfix:
+ - Make github base64-finder more lenient, so it works with windows-introduced newlines in keybase sig format
+
 ## 2.0.46 (2015-11-24)
 
 Bugfixes:

@@ -1,6 +1,5 @@
 {BaseScraper} = require './base'
 {constants} = require '../constants'
-{b64find} = require '../b64extract'
 {v_codes} = constants
 
 #================================================================================
@@ -52,7 +51,6 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   _search_gist : ({gist, proof_text_check}, cb) ->
     out = {}
-    ptc_buf = new Buffer proof_text_check, "base64"
     if not (u = gist.url)?
       @log "| gist didn't have a URL"
       rc = v_codes.FAILED_PARSE
@@ -63,7 +61,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
       else
         rc = v_codes.NOT_FOUND
         for filename, file of json.files when (content = file.content)?
-          if b64find content, ptc_buf
+          if @_find_sig_in_raw(proof_text_check, content)
             @log "| search #{filename} -> found"
             rc = v_codes.OK
             out =
@@ -85,9 +83,9 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
     await @_get_body api_url, false, defer err, rc, raw
 
     ptc_buf = new Buffer proof_text_check, "base64"
-    rc = if rc isnt v_codes.OK     then rc
-    else if (b64find raw, ptc_buf) then v_codes.OK
-    else                                v_codes.NOT_FOUND
+    rc = if rc isnt v_codes.OK                       then rc
+    else if @_find_sig_in_raw(proof_text_check, raw) then v_codes.OK
+    else                                                  v_codes.NOT_FOUND
     cb err, rc
 
   # ---------------------------------------------------------------------------

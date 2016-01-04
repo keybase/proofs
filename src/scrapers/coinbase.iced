@@ -61,9 +61,7 @@ exports.CoinbaseScraper = class CoinbaseScraper extends BaseScraper
       rc = if not divs.length then v_codes.FAILED_PARSE
       else if not (txt = divs.first()?.html())? then v_codes.CONTENT_MISSING
       else
-        # strip all \r's out, which coinbase seems to insert....
-        txt = txt.replace(/\r/g, '')
-        if txt.indexOf(proof_text_check) >= 0 then v_codes.OK
+        if @_find_sig_in_raw(proof_text_check,txt) then v_codes.OK
         else  v_codes.NOT_FOUND
 
     cb err, rc

@@ -55,6 +55,7 @@ exports.constants = constants =
     FAILED_PARSE:      106
     DNS_ERROR :        107
     AUTH_FAILED:       108
+    HTTP_429:          129 # rate-limiting we can retry right away..
     HTTP_500:          150
     TIMEOUT:           160
 

@@ -302,6 +302,22 @@ class HackerNewsBinding extends SocialNetworkBinding
 
 #==========================================================================
 
+class GooglePlusBinding extends SocialNetworkBinding
+  service_name : -> "googleplus"
+  proof_type   : -> constants.proof_types.googleplus
+
+  # FIXME: no idea what the requirements for G+ are.
+  # also consider stripping off URL prefix automatically if user enters it
+  @check_name : (n) ->
+    if not n? or not (n = n.toLowerCase())? then false
+    else if n.match /^[+]?[a-z0-9][a-z0-9-]{0,38}$/ then true
+    else false
+
+  @name_hint : () -> "Your user ID (Whatever shows up in the URL when you hit Profile on Desktop; could be a number starting with 1 or a +(letters) if you have a custom URL"
+  check_name : (n) -> GooglePlusBinding.check_name(n)
+
+#==========================================================================
+
 exports.TwitterBinding = TwitterBinding
 exports.RedditBinding = RedditBinding
 exports.KeybaseBinding = KeybaseBinding
@@ -312,5 +328,6 @@ exports.DnsBinding = DnsBinding
 exports.HackerNewsBinding = HackerNewsBinding
 exports.SocialNetworkBinding = SocialNetworkBinding
 exports.BitbucketBinding = BitbucketBinding
+exports.GooglePlusBinding = GooglePlusBinding
 
 #==========================================================================

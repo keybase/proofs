@@ -56,6 +56,7 @@ class Finder
     i = 0
     while i < @lines.length
       [msg, i] = @find_one_block i
+      console.log msg
       if msg.length
         buf = new Buffer msg, 'base64'
         return true if bufeq_fast buf, needle

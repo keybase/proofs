@@ -86,6 +86,7 @@ class BaseScraper
     opts.headers or= {}
     opts.headers["User-Agent"] = user_agent
     await @libs.request opts, defer err, response, body
+    console.log body
     rc = if err?
       if err.code is 'ETIMEDOUT' then               v_codes.TIMEOUT
       else                                          v_codes.HOST_UNREACHABLE

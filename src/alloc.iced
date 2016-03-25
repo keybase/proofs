@@ -25,6 +25,7 @@ lookup_tab = {
   "web_service_binding.coinbase"   : web_service.CoinbaseBinding,
   "web_service_binding.hackernews" : web_service.HackerNewsBinding,
   "web_service_binding.bitbucket"  : web_service.BitbucketBinding,
+  "web_service_binding.googleplus"  : web_service.GooglePlusBinding,
   "generic_binding"                : base.GenericBinding,
   "track"                          : Track,
   "untrack"                        : Untrack,

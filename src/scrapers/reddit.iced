@@ -60,12 +60,14 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
 
     for post in posts
       @log "| title: #{post.title}"
-      if (@check_post { post, username, proof_text_check }) is v_codes.OK
+      if (rc = @check_post { post, username, proof_text_check }) is v_codes.OK
         @log "| Found a good post!"
         proof_post = post
         break
+      else
+        @log "| hunt failed with rc=#{rc}"
 
-    @log "-"
+    @log "- Scan of posts with OK=#{proof_post?}"
 
     if not proof_post?
       return cb null, rc: v_codes.NOT_FOUND

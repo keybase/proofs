@@ -18,6 +18,7 @@ mods = [
   require('./pgp_update')
   require('./announcement')
   require('./scrapers/twitter')
+  require('./scrapers/facebook')
   require('./scrapers/base')
   require('./scrapers/github')
   require('./scrapers/reddit')

@@ -30,6 +30,7 @@ $(BUILD_STAMP): \
 	lib/scrapers/bitbucket.js \
 	lib/scrapers/coinbase.js \
 	lib/scrapers/dns.js \
+	lib/scrapers/facebook.js \
 	lib/scrapers/generic_web_site.js \
 	lib/scrapers/github.js \
 	lib/scrapers/hackernews.js \

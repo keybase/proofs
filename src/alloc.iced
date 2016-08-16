@@ -17,6 +17,7 @@ base = require './base'
 
 lookup_tab = {
   "web_service_binding.twitter"    : web_service.TwitterBinding,
+  "web_service_binding.facebook"   : web_service.FacebookBinding,
   "web_service_binding.github"     : web_service.GithubBinding,
   "web_service_binding.reddit"     : web_service.RedditBinding,
   "web_service_binding.keybase"    : web_service.KeybaseBinding,

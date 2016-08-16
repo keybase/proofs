@@ -213,6 +213,26 @@ class TwitterBinding extends SocialNetworkBinding
 
 #==========================================================================
 
+class FacebookBinding extends SocialNetworkBinding
+
+  service_name : -> "facebook"
+  proof_type   : -> constants.proof_types.facebook
+  is_short     : -> true
+
+  @check_name : (n) ->
+    # Technically Facebook doesn't count dots in the character count, and also
+    # prohibits leading/trailing/consecutive dots.
+    ret = if not n? or not (n = n.toLowerCase())? then false
+    else if n.match /^[a-z0-9.]{5,50}$/ then true
+    else false
+    return ret
+
+  check_name : (n) -> FacebookBinding.check_name(n)
+
+  @name_hint : () -> "alphanumerics and dots, between 5 and 50 characters long"
+
+#==========================================================================
+
 class KeybaseBinding extends WebServiceBinding
 
   _service_obj_check : (x) -> not x?
@@ -303,6 +323,7 @@ class HackerNewsBinding extends SocialNetworkBinding
 #==========================================================================
 
 exports.TwitterBinding = TwitterBinding
+exports.FacebookBinding = FacebookBinding
 exports.RedditBinding = RedditBinding
 exports.KeybaseBinding = KeybaseBinding
 exports.GithubBinding = GithubBinding

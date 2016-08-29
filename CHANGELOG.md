@@ -1,4 +1,14 @@
-## 2.0.47 (2015-01-04)
+## 2.0.49 (2016-08-29)
+
+Features:
+ - Preliminary Facebook support
+
+## 2.0.48 (2016-06-15)
+
+Features:
+ - Better debugging for reddit
+
+## 2.0.47 (2016-01-04)
 
 Bugfix:
  - Make github base64-finder more lenient, so it works with windows-introduced newlines in keybase sig format

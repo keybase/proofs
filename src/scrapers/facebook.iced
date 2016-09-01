@@ -3,6 +3,7 @@
 {v_codes} = constants
 {decode_sig} = require('kbpgp').ukm
 {make_ids} = require '../base'
+url = require 'url'
 
 #================================================================================
 
@@ -81,12 +82,10 @@ exports.FacebookScraper = class FacebookScraper extends BaseScraper
     if not user_profile_link?
       @log "failed to find link to author profile"
       return [v_codes.CONTENT_MISSING, null, null]
-    link_regex = new RegExp("^https://m.facebook.com/([a-zA-Z.]+)?", "i")
-    match = user_profile_link.match(link_regex)
-    if not match?
-      @log "failed to parse author profile link"
+    username = url.parse(user_profile_link)?.pathname?.split("/")[1]
+    if not username?
+      @log "failed to parse author profile link: #{user_profile_link}"
       return [v_codes.CONTENT_MISSING, null, null]
-    username = match[1]
 
     # Get the proof text from the contents of the second header in the story.
     proof_text = $('#m_story_permalink_view h3').eq(1).text()

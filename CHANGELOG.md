@@ -1,3 +1,8 @@
+## 2.0.50 (2016-09-01)
+
+Bugfixes:
+ - Fix FB usernames with digits in them >.<
+
 ## 2.0.49 (2016-08-29)
 
 Features:

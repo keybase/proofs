@@ -77,8 +77,9 @@ exports.FacebookScraper = class FacebookScraper extends BaseScraper
 
   _extract_username_and_text : (html) ->
     $ = @libs.cheerio.load html
+    post_headers_selector = "#m_story_permalink_view > div:first-child > div:first-child > div:first-child h3"
     # Get the username from the first link in the first header in the story.
-    user_profile_link = $('#m_story_permalink_view h3 a').first().attr('href')
+    user_profile_link = $(post_headers_selector).eq(0).find('a').first().attr('href')
     if not user_profile_link?
       @log "failed to find link to author profile"
       return [v_codes.CONTENT_MISSING, null, null]
@@ -88,7 +89,7 @@ exports.FacebookScraper = class FacebookScraper extends BaseScraper
       return [v_codes.CONTENT_MISSING, null, null]
 
     # Get the proof text from the contents of the second header in the story.
-    proof_text = $('#m_story_permalink_view h3').eq(1).text()
+    proof_text = $(post_headers_selector).eq(1).text()
     if not proof_text? or proof_text == ""
       @log "failed to find proof text"
       return [v_codes.CONTENT_MISSING, null, null]

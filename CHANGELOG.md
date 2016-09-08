@@ -1,3 +1,8 @@
+## 2.0.51 (2016-09-08)
+
+Bugfixes:
+ - Make the Facebook CSS selectors stricter
+
 ## 2.0.50 (2016-09-01)
 
 Bugfixes:

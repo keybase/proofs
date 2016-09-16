@@ -113,7 +113,7 @@ exports.FacebookScraper = class FacebookScraper extends BaseScraper
 
 username_normalize = (username) ->
   # Lowercase the letters and remove all dots.
-  username.toLowerCase().replace(/\./g)
+  username.toLowerCase().replace(/\./g, '')
 
 usernames_equal = (user1, user2) ->
   username_normalize(user1) == username_normalize(user2)

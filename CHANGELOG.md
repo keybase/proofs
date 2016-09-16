@@ -1,3 +1,8 @@
+## 2.0.52 (2016-09-16)
+
+Bugfixes:
+ - Make the Facebook username normalization handle dots properly.
+
 ## 2.0.51 (2016-09-08)
 
 Bugfixes:

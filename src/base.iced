@@ -198,6 +198,11 @@ class Base
   # If @_v_include_pgp_details() is true, a KeyManager containing a PGP key
   _v_pgp_km : () -> null
 
+  # Most proofs require both username and UID but some may only require
+  # one or the other.
+  _v_require_username : () -> true
+  _v_require_uid      : () -> true
+
   # Generates (and caches) a hash for PGP keys, returns null for other kinds of keys
   full_pgp_hash : (opts, cb) ->
     if @_full_pgp_hash is undefined
@@ -244,15 +249,46 @@ class Base
 
   #------
 
+  _v_check_user : ({json}) ->
+    has_user_id = false
+
+    if json?.body?.key?.username
+      if not cieq (a = json?.body?.key?.username), (b = @user.local.username)
+        return new Error "Wrong local user: got '#{a}' but wanted '#{b}'"
+      else
+        has_user_id = true
+    else if @_v_require_username()
+      return new Error "no username given, but was was required"
+
+    if json?.body?.key?.uid
+      if (a = json?.body?.key?.uid) isnt (b = @user.local.uid)
+        return new Error "Wrong local uid: got '#{a}' but wanted '#{b}'"
+      else
+        has_user_id = true
+    else if @_v_require_uid()
+      return new Error "no uid given, but was was required"
+
+    if (v = @user.local.emails)? and (e = json?.body?.key?.email)?
+      if e.toLowerCase() in v
+        has_user_id = true
+      else
+        return new Error "given email '#{e}' doesn't match"
+
+    if not has_user_id
+      return new Error "no UID or username given for signature"
+
+    return null
+
+  #------
+
   _v_check : ({json}, cb) ->
 
     # The default seq_type is PUBLIC
     seq_type = (v) -> if v? then v else constants.seq_types.PUBLIC
 
-    err = if not cieq (a = json?.body?.key?.username), (b = @user.local.username)
-      new Error "Wrong local user: got '#{a}' but wanted '#{b}'"
-    else if (a = json?.body?.key?.uid) isnt (b = @user.local.uid)
-      new Error "Wrong local uid: got '#{a}' but wanted '#{b}'"
+    err = @_v_check_user {json}
+
+    err = if err? then err
     else if not cieq (a = json?.body?.key?.host), (b = @host)
       new Error "Wrong host: got '#{a}' but wanted '#{b}'"
     else if (a = @_type())? and ((b = json?.body?.type) isnt a)
@@ -360,6 +396,9 @@ class Base
 
     if @eldest_kid?
       ret.body.key.eldest_kid = @eldest_kid
+
+    if (e = @user.local.email)?
+      ret.body.key.email = e
 
     # Can be:
     #

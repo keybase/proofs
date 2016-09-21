@@ -22,4 +22,8 @@ exports.Auth = class Auth extends Base
 
   _json : () -> super { expire_in : 24*60*60 }
 
+  # we can get away with only one of the two following
+  _v_require_username : () -> false
+  _v_require_uid      : () -> false
+
 #==========================================================================

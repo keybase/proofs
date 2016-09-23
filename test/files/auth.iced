@@ -60,6 +60,17 @@ exports.test_auth_success_email_only = (T,cb) ->
       carg.user.local.emails = [ email ]
   }, cb
 
+exports.test_auth_success_email_only_upper_case = (T,cb) ->
+  email = new_email()
+  test_auth T, {
+    gen_hook : (garg) ->
+      delete garg.user.local.uid
+      delete garg.user.local.username
+      garg.user.local.email = email.toUpperCase()
+    verify_hook : (varg, carg) ->
+      carg.user.local.emails = [ email ]
+  }, cb
+
 exports.test_auth_failure_wrong_email = (T,cb) ->
   email = new_email()
   test_auth T, {

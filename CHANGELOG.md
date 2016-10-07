@@ -1,3 +1,8 @@
+## 2.0.53 (2016-10-07)
+
+Bugfixes:
+  - Allow device revokes along with key revokes
+
 ## 2.0.52 (2016-09-16)
 
 Bugfixes:

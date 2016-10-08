@@ -9,6 +9,7 @@ mods = [
   require('./track')
   require('./auth')
   require('./update_passphrase_hash')
+  require('./update_settings')
   require('./device')
   require('./revoke')
   require('./cryptocurrency')

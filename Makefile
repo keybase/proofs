@@ -39,6 +39,7 @@ $(BUILD_STAMP): \
 	lib/track.js \
 	lib/web_service.js \
 	lib/update_passphrase_hash.js \
+	lib/update_settings.js \
 	lib/util.js
 	date > $@
 

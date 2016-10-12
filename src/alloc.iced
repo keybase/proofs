@@ -12,6 +12,7 @@ base = require './base'
 {Eldest} = require './eldest'
 {PGPUpdate} = require './pgp_update'
 {UpdatePassphraseHash} = require './update_passphrase_hash'
+{UpdateSettings} = require './update_settings'
 
 #=======================================================
 
@@ -39,6 +40,7 @@ lookup_tab = {
   "eldest"                         : Eldest
   "pgp_update"                     : PGPUpdate
   "update_passphrase_hash"         : UpdatePassphraseHash
+  "update_settings"                : UpdateSettings
 }
 
 #--------------------------------------------

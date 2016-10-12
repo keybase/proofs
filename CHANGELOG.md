@@ -1,7 +1,17 @@
+## 2.0.55
+
+Feature:
+ - Add an update_settings signature type
+
+## 2.0.54
+
+Bugfixes:
+ - Add fields for revoking
+
 ## 2.0.53 (2016-10-07)
 
 Bugfixes:
-  - Allow device revokes along with key revokes
+ - Allow device revokes along with key revokes
 
 ## 2.0.52 (2016-09-16)
 

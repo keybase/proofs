@@ -110,12 +110,3 @@ exports.FacebookScraper = class FacebookScraper extends BaseScraper
       if proof_text_check.split(/\s+/).indexOf(med_id)  < 0
         err = new Error "Cannot find #{med_id} in #{proof_text_check}"
     return err
-
-#================================================================================
-
-username_normalize = (username) ->
-  # Lowercase the letters and remove all dots.
-  username.toLowerCase().replace(/\./g, '')
-
-usernames_equal = (user1, user2) ->
-  username_normalize(user1) == username_normalize(user2)

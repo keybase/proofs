@@ -35,66 +35,68 @@ exports.FacebookScraper = class FacebookScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  _check_api_url : ({api_url,username}) ->
-    # The Facebook mobile site (unlike the desktop site, weirdly) *ignores* the
-    # username in a post URL. So asserting the username here does *not* prove
-    # that this user authored the post. We still have to do that inside the
-    # text.
-    #
-    # What we are checking here, is that the page we're loading is in fact a
-    # post. If not, who knows what markup we could be tricked into matching.
-    # It's hard to know for sure what tricks an attacker (probably the Keybase
-    # server in this case) might be able to pull with all the different
-    # Facebook endpoints that exist, so we're as strict with the URL here as we
-    # can be. We enforce that post ID's are numeric-only, though we might need
-    # to relax that if we find any exceptions.
-    rxx = new RegExp("^https://m.facebook.com/#{username}/posts/[0-9]+$", "i")
-    return (api_url? and api_url.match(rxx));
+  _convert_url_to_desktop : (api_url) ->
+    # Previously the api_url referred to the Facebook m-site, but now we want
+    # to check the desktop site (because it enforces author usernames better,
+    # and we can't rely on them being present in the markup). This is a
+    # temporary measure to allow new, correct clients to check proofs with the
+    # old URLs. Eventually we can convert everything in our DB/scraper and get
+    # rid of it.
+    mobile = "https://m.facebook.com/"
+    desktop = "https://www.facebook.com/"
+    if api_url.startsWith(mobile)
+      # Only replace the first occurrence.
+      return api_url.replace(mobile, desktop)
+    else
+      return api_url
+
+  # ---------------------------------------------------------------------------
+
+  _check_api_url : ({api_url, username}) ->
+    if not api_url?
+      return false
+
+    # Note that the Facebook m-site does *not* enforce that the username in a
+    # URL matches the author of the post. We can only rely on that as long as
+    # we're using the desktop site.
+    rxx = new RegExp("^https://www.facebook.com/#{username}/posts/[0-9]+$", "i")
+    desktop_url = @_convert_url_to_desktop(api_url)
+    return desktop_url.match(rxx)
 
   # ---------------------------------------------------------------------------
 
   check_status: ({username, api_url, proof_text_check, remote_id}, cb) ->
+    desktop_url = @_convert_url_to_desktop(api_url)
+
     # calls back with a v_code or null if it was ok
-    await @_get_url_body { url: api_url }, defer err, rc, raw
+    await @_get_url_body { url: desktop_url }, defer err, rc, raw
     if err? or rc != v_codes.OK
       return cb err, rc
 
-    [rc, fb_username, fb_text] = @_extract_username_and_text raw
-    if rc != v_codes.OK
-      return cb null, rc
+    # Previously we would parse markup to extract the username and proof text.
+    # We had to switch to the desktop site to validate the usernames of people
+    # with the "no search engine scraping" Facebook privacy setting turned on.
+    # That in turn made it much harder to parse the markup we get, because what
+    # we want comes down in an embedded comment. However, because the desktop
+    # site (again, unlike the m-site) does not display comments or ads to
+    # logged-out users, we can do a simple string match on the whole page to
+    # find the proof text. It's possible there's some way I haven't thought of
+    # for other users to inject strings somewhere in this page, and if so we'll
+    # need to change it.
 
-    if not usernames_equal(username, fb_username)
-      @log "expected username '#{username}' but found '#{fb_username}'"
-      return cb null, v_codes.BAD_USERNAME
+    # See http://stackoverflow.com/a/6969486
+    regex_escaped_proof_text = proof_text_check.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
 
-    if proof_text_check.trim() != fb_text.trim()
-      @log "expected proof '#{proof_text_check}' but found '#{fb_text}'"
-      return cb null, v_codes.BAD_USERNAME
+    # We require a tiny bit of structure, which is that the proof must appear
+    # as the exact contents of an <a> tag. Again, this is just a textual search
+    # -- the <a> tag in question is actually expected to be in a comment.
+    proof_text_regex = new RegExp("<a[^>]*>\\s*#{regex_escaped_proof_text}\\s*</a[^>]*>")
+
+    if not raw.match(proof_text_regex)?
+      @log "failed to find proof text '#{proof_text_check}' in Facebook response"
+      return cb null, v_codes.TEXT_NOT_FOUND
 
     cb null, v_codes.OK
-
-  # ---------------------------------------------------------------------------
-
-  _extract_username_and_text : (html) ->
-    $ = @libs.cheerio.load html
-    post_headers_selector = "#m_story_permalink_view > div:first-child > div:first-child > div:first-child h3"
-    # Get the username from the first link in the first header in the story.
-    user_profile_link = $(post_headers_selector).eq(0).find('a').first().attr('href')
-    if not user_profile_link?
-      @log "failed to find link to author profile"
-      return [v_codes.CONTENT_MISSING, null, null]
-    username = url.parse(user_profile_link)?.pathname?.split("/")[1]
-    if not username?
-      @log "failed to parse author profile link: #{user_profile_link}"
-      return [v_codes.CONTENT_MISSING, null, null]
-
-    # Get the proof text from the contents of the second header in the story.
-    proof_text = $(post_headers_selector).eq(1).text()
-    if not proof_text? or proof_text == ""
-      @log "failed to find proof text"
-      return [v_codes.CONTENT_MISSING, null, null]
-
-    return [v_codes.OK, username, proof_text]
 
   # ---------------------------------------------------------------------------
 

@@ -1,3 +1,8 @@
+## 2.0.56
+
+Feature:
+ - Better bitcoin checking, and add zcash support
+
 ## 2.0.55
 
 Feature:

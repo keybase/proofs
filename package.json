@@ -23,6 +23,7 @@
     "url": "https://github.com/keybase/proofs/issues"
   },
   "dependencies": {
+    "bitcoyne": "^1.0.2",
     "iced-error": ">=0.0.9",
     "iced-lock": "^1.0.1",
     "iced-runtime": ">=0.0.1",
@@ -31,7 +32,7 @@
     "triplesec": ">=3.0.16"
   },
   "devDependencies": {
-    "iced-coffee-script": "^1.8.0-d",
+    "iced-coffee-script": "^108.0.11",
     "iced-test": "0.0.22"
   }
 }

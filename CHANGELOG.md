@@ -1,3 +1,8 @@
+## 2.0.57 (2016-11-04)
+
+Bufixes:
+ - Facebook support that works even for private profiles.
+
 ## 2.0.56
 
 Feature:

@@ -66,6 +66,13 @@ exports.FacebookScraper = class FacebookScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   check_status: ({username, api_url, proof_text_check, remote_id}, cb) ->
+    # Facebook URLs contain more input from the user than other types (which
+    # are purely built by the hunters), and so we need to fully validate them
+    # here. We also rely on them to assert the author.
+    if not @_check_api_url({api_url, username})
+      @log "Facebook post URL isn't valid for user #{username}: #{api_url}"
+      return cb null, v_codes.CONTENT_FAILURE
+
     desktop_url = @_convert_url_to_desktop(api_url)
 
     # calls back with a v_code or null if it was ok

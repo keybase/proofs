@@ -68,7 +68,10 @@ exports.FacebookScraper = class FacebookScraper extends BaseScraper
   check_status: ({username, api_url, proof_text_check, remote_id}, cb) ->
     # Facebook URLs contain more input from the user than other types (which
     # are purely built by the hunters), and so we need to fully validate them
-    # here. We also rely on them to assert the author.
+    # here. Also just as important, we rely on the post URL to assert the
+    # author. (Most people have a profile link in the page that we could use
+    # instead, but people with the "no scraping my profile" Facebook privacy
+    # setting do *not*.)
     if not @_check_api_url({api_url, username})
       @log "Facebook post URL isn't valid for user #{username}: #{api_url}"
       return cb null, v_codes.CONTENT_FAILURE
@@ -80,27 +83,26 @@ exports.FacebookScraper = class FacebookScraper extends BaseScraper
     if err? or rc != v_codes.OK
       return cb err, rc
 
-    # Previously we would parse markup to extract the username and proof text.
-    # We had to switch to the desktop site to validate the usernames of people
-    # with the "no search engine scraping" Facebook privacy setting turned on.
-    # That in turn made it much harder to parse the markup we get, because what
-    # we want comes down in an embedded comment. However, because the desktop
-    # site (again, unlike the m-site) does not display comments or ads to
-    # logged-out users, we can do a simple string match on the whole page to
-    # find the proof text. It's possible there's some way I haven't thought of
-    # for other users to inject strings somewhere in this page, and if so we'll
-    # need to change it.
+    page$ = @libs.cheerio.load(raw);
+    # Get the contents of the first (only) comment inside the first <code>
+    # block. Believe it or not, this comment contains the post markup below.
+    first_code_comment = page$('code').eq(0).contents().toArray()[0]?.data
+    if not first_code_comment?
+      @log "failed to find proof markup comment in Facebook response"
+      return cb null, v_codes.TEXT_NOT_FOUND
+    # Facebook escapes "--" as "-\-\" and "\" as "\\" when inserting text into
+    # comments. Unescape these. (Use split-join instead of replace to get all
+    # occurrences without worrying about regex metacharacters.)
+    unescaped_comment = first_code_comment.split("-\\-\\").join("--").split("\\\\").join("\\")
+    # Re-parse the result as more HTML. This is the markup for the proof post.
+    proof$ = @libs.cheerio.load(unescaped_comment)
+    # This is the selector for the post attachment link. It's the "text of the
+    # first <a> tag inside the div that's the immediate *sibling* of the
+    # 'userContet' div".
+    link_text = proof$('div.userContent+div a').text()
 
-    # See http://stackoverflow.com/a/6969486
-    regex_escaped_proof_text = proof_text_check.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
-
-    # We require a tiny bit of structure, which is that the proof must appear
-    # as the exact contents of an <a> tag. Again, this is just a textual search
-    # -- the <a> tag in question is actually expected to be in a comment.
-    proof_text_regex = new RegExp("<a[^>]*>\\s*#{regex_escaped_proof_text}\\s*</a[^>]*>")
-
-    if not raw.match(proof_text_regex)?
-      @log "failed to find proof text '#{proof_text_check}' in Facebook response"
+    if link_text != proof_text_check
+      @log "failed to find attachment title '#{proof_text_check}' in Facebook post #{desktop_url}"
       return cb null, v_codes.TEXT_NOT_FOUND
 
     cb null, v_codes.OK

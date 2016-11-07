@@ -101,7 +101,7 @@ exports.FacebookScraper = class FacebookScraper extends BaseScraper
     # 'userContet' div".
     link_text = proof$('div.userContent+div a').text()
 
-    if link_text != proof_text_check
+    if link_text.trim() != proof_text_check.trim()
       @log "failed to find attachment title '#{proof_text_check}' in Facebook post #{desktop_url}"
       return cb null, v_codes.TEXT_NOT_FOUND
 

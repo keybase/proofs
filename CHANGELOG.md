@@ -1,3 +1,8 @@
+## 2.0.58 (2016-11-07)
+
+Bufixes:
+ - Handle -- decoding properly in Facebook proofs.
+
 ## 2.0.57 (2016-11-04)
 
 Bufixes:

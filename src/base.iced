@@ -269,7 +269,7 @@ class Base
       return new Error "no uid given, but was was required"
 
     if (v = @user.local.emails)? and (e = json?.body?.key?.email)?
-      if e.toLowerCase() in (x.toLowerCase() for x in v)
+      if e.toLowerCase() in (x.toLowerCase() for x in v when x?)
         has_user_id = true
       else
         return new Error "given email '#{e}' doesn't match"

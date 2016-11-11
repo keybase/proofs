@@ -1,3 +1,8 @@
+## 2.0.59 (2016-11-11)
+
+Bugfixes:
+  - Handle crasher in logins with null email addresses
+
 ## 2.0.58 (2016-11-07)
 
 Bufixes:

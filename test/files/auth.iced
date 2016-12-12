@@ -1,7 +1,7 @@
 
 {KeyManager} = require('kbpgp').kb
 {prng} = require 'crypto'
-{alloc,Auth} = require '../../'
+{errors,alloc,Auth} = require '../../'
 
 new_uid = () -> prng(16).toString('hex')
 new_username = () -> "u_" + prng(5).toString('hex')
@@ -112,4 +112,13 @@ exports.test_auth_failure_no_host = (T,cb) ->
       delete garg.host
     err_hook : (err) ->
       T.assert err?, "errored out on no host"
+  }, cb
+
+exports.test_bad_ctime = (T,cb) ->
+  test_auth T, {
+    gen_hook : (garg, carg) ->
+      garg.ctime = ~~(Date.now() / 1000) + 1000000
+    err_hook : (err) ->
+      T.assert err?, "errored out bad ctime"
+      T.assert (err instanceof errors.ClockSkewError), "the right kind of error"
   }, cb

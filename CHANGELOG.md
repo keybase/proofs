@@ -1,3 +1,9 @@
+## 2.0.60
+
+Feature:
+  - Disallow sigs that were created too far in the past or the future, i.e., if the user's
+    clock is skewed.
+
 ## 2.0.59 (2016-11-11)
 
 Bugfixes:

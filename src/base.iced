@@ -8,6 +8,7 @@ kbpgp = require 'kbpgp'
 {make_esc} = require 'iced-error'
 util = require 'util'
 {base64_extract} = require './b64extract'
+{errors} = require './errors'
 
 #==========================================================================
 
@@ -54,7 +55,7 @@ exports.cieq = cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase(
 
 class Verifier
 
-  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict}, @sig_eng, @base) ->
+  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now}, @sig_eng, @base) ->
 
   #---------------
 
@@ -73,6 +74,7 @@ class Verifier
     await @_parse_and_process esc defer()
     await @_check_json esc defer json_obj, json_str
     await @_check_expired esc defer()
+    await @_check_ctime esc defer()
     cb null, json_obj, json_str
 
   #---------------
@@ -84,6 +86,24 @@ class Verifier
     else if not (@short_id? and streq_secure short_id, @short_id)
       new Error "Short IDs aren't equal: wanted #{short_id} but got #{@short_id}"
     else null
+    cb err
+
+  #---------------
+
+  _get_now : () -> @now or unix_time()
+
+  #---------------
+
+  _check_ctime : (cb) ->
+    now = @_get_now()
+    unless @json.ctime?
+      err = new Error "no ctime given"
+    else
+      diff = Math.abs(now - @json.ctime)
+      if Math.abs(diff) > constants.critical_clock_skew_secs
+        epoch = if now > @json.ctime then "past" else "future"
+        err = new errors.ClockSkewError "your computer's clock is wrong: signature is dated #{diff} seconds in the #{epoch}"
+        err.diff = diff
     cb err
 
   #---------------

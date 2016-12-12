@@ -21,6 +21,7 @@ $(BUILD_STAMP): \
 	lib/cryptocurrency.js \
 	lib/device.js \
 	lib/eldest.js \
+	lib/errors.js \
 	lib/main.js \
 	lib/revoke.js \
 	lib/sibkey.js \

@@ -1,4 +1,4 @@
-## 2.0.60
+## 2.0.60 (2016-12-13)
 
 Feature:
   - Disallow sigs that were created too far in the past or the future, i.e., if the user's

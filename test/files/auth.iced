@@ -115,9 +115,17 @@ exports.test_auth_failure_no_host = (T,cb) ->
   }, cb
 
 exports.test_bad_ctime = (T,cb) ->
+  now = 100000000
+  ctime = now + 800
+  ccs = 400
   test_auth T, {
     gen_hook : (garg, carg) ->
-      garg.ctime = ~~(Date.now() / 1000) + 1000000
+      garg.ctime = ctime
+      garg.now   = now
+    verify_hook : (varg, carg) ->
+      varg.ctime = ctime
+      varg.now   = now
+      varg.critical_clock_skew_secs = ccs
     err_hook : (err) ->
       T.assert err?, "errored out bad ctime"
       T.assert (err instanceof errors.ClockSkewError), "the right kind of error"

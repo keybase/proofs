@@ -28,6 +28,7 @@ mods = [
   require('./scrapers/coinbase')
   require('./scrapers/hackernews')
   require('./scrapers/bitbucket')
+  require('./errors')
 ]
 
 for m in mods

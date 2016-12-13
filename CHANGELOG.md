@@ -1,13 +1,18 @@
+## 2.0.61 (2016-12-13)
+
+Bugfix:
+ - Check that ctime is valid before checking etime
+
 ## 2.0.60 (2016-12-13)
 
 Feature:
-  - Disallow sigs that were created too far in the past or the future, i.e., if the user's
+ - Disallow sigs that were created too far in the past or the future, i.e., if the user's
     clock is skewed.
 
 ## 2.0.59 (2016-11-11)
 
 Bugfixes:
-  - Handle crasher in logins with null email addresses
+ - Handle crasher in logins with null email addresses
 
 ## 2.0.58 (2016-11-07)
 

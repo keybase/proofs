@@ -73,8 +73,8 @@ class Verifier
     esc = make_esc cb, "Verifier::verfiy"
     await @_parse_and_process esc defer()
     await @_check_json esc defer json_obj, json_str
-    await @_check_expired esc defer()
     await @_check_ctime esc defer()
+    await @_check_expired esc defer()
     cb null, json_obj, json_str
 
   #---------------

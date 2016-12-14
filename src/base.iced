@@ -55,7 +55,7 @@ exports.cieq = cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase(
 
 class Verifier
 
-  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs}, @sig_eng, @base) ->
+  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check}, @sig_eng, @base) ->
 
   #---------------
 
@@ -73,7 +73,7 @@ class Verifier
     esc = make_esc cb, "Verifier::verfiy"
     await @_parse_and_process esc defer()
     await @_check_json esc defer json_obj, json_str
-    await @_check_ctime esc defer()
+    await @_check_ctime esc defer() unless @skip_clock_skew_check
     await @_check_expired esc defer()
     cb null, json_obj, json_str
 

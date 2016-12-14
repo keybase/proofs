@@ -1,3 +1,8 @@
+## 2.0.62 (2016-12-13)
+
+Feature:
+  - Flag to skip critical clock skew check in C/I
+
 ## 2.0.61 (2016-12-13)
 
 Bugfix:

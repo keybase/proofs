@@ -1,3 +1,8 @@
+## 2.0.63 (2016-12-16)
+
+Bugfix:
+  - The minimum username length for Facebook was too high.
+
 ## 2.0.62 (2016-12-13)
 
 Feature:

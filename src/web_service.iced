@@ -223,13 +223,13 @@ class FacebookBinding extends SocialNetworkBinding
     # Technically Facebook doesn't count dots in the character count, and also
     # prohibits leading/trailing/consecutive dots.
     ret = if not n? or not (n = n.toLowerCase())? then false
-    else if n.match /^[a-z0-9.]{5,50}$/ then true
+    else if n.match /^[a-z0-9.]{1,50}$/ then true
     else false
     return ret
 
   check_name : (n) -> FacebookBinding.check_name(n)
 
-  @name_hint : () -> "alphanumerics and dots, between 5 and 50 characters long"
+  @name_hint : () -> "alphanumerics and dots, between 1 and 50 characters long"
 
 #==========================================================================
 

@@ -99,7 +99,7 @@ exports.FacebookScraper = class FacebookScraper extends BaseScraper
     # This is the selector for the post attachment link. It's the "text of the
     # first <a> tag inside the div that's the immediate *sibling* of the
     # 'userContet' div".
-    link_text = proof$('div.userContent+div a').text()
+    link_text = proof$('div.userContent+div a').eq(1).text()
 
     if link_text.trim() != proof_text_check.trim()
       @log "failed to find attachment title '#{proof_text_check}' in Facebook post #{desktop_url}"

@@ -1,3 +1,8 @@
+## 2.0.64 (2017-01-17)
+
+Bugfix:
+  - Facebook proof parsing got confused by names that looked like links.
+
 ## 2.0.63 (2016-12-16)
 
 Bugfix:

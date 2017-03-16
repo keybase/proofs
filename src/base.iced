@@ -44,6 +44,16 @@ sig_id_to_short_id = (sig_id) ->
 
 #================================================================================
 
+has_revoke = (o) ->
+  if not o?.revoke? then false
+  else if o.revoke.sig_id? then true
+  else if (o.revoke.sig_ids?.length > 0) then true
+  else if o.revoke.kid? then true
+  else if (o.revoke.kids?.length > 0) then true
+  else false
+
+#================================================================================
+
 proof_text_check_to_med_id = (proof_text_check) ->
   {med_id} = make_ids(new Buffer proof_text_check, 'base64')
   med_id
@@ -106,7 +116,7 @@ class Verifier
   _check_inner_outer_match : ({outer_raw, inner_obj, inner_buf}, cb) ->
     esc = make_esc cb, "_check_inner_outer_match"
     await OuterLink.parse { raw : outer_raw }, esc defer outer
-    err = if (a = outer.type) isnt (b = @base._type_v2(inner_obj.body?.revoke?))
+    err = if (a = outer.type) isnt (b = @base._type_v2(has_revoke(inner_obj.body)))
       new Error "Type mismatch: #{a} != #{b}"
     else if (a = outer.version) isnt (b = constants.versions.sig_v2)
       new Error "Bad version: #{a} != #{b}"
@@ -409,13 +419,8 @@ class Base
 
   #------
 
-  has_revoke : () ->
-    if not @revoke? then false
-    else if @revoke.sig_id? then true
-    else if (@revoke.sig_ids?.length > 0) then true
-    else if @revoke.kid? then true
-    else if (@revoke.kids?.length > 0) then true
-    else false
+  has_revoke : () -> has_revoke @
+
 
   #------
 

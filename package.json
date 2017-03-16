@@ -29,6 +29,7 @@
     "iced-runtime": ">=0.0.1",
     "kbpgp": ">=2.0.58",
     "pgp-utils": ">=0.0.22",
+    "purepack": "^1.0.4",
     "triplesec": ">=3.0.16"
   },
   "devDependencies": {

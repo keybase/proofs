@@ -35,6 +35,12 @@ class WebServiceBinding extends Base
 
   #---------------
 
+  _type_v2 : (revoke_flag) ->
+    if @revoke? or revoke_flag then constants.sig_types_v2.web_service_binding_with_revoke
+    else constants.sig_types_v2.web_service_binding_with_revoke
+
+  #---------------
+
   _v_check : ({json}, cb) ->
     await super { json }, defer err
     if not(err?) and not(@_service_obj_check(json?.body?.service))

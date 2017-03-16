@@ -95,6 +95,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
 exports.Subkey = class Subkey extends SubkeyBase
 
   get_field : () -> "subkey"
+  _type_v2 : () -> constants.sig_types_v2.subkey
 
   get_new_key_section : () -> @subkey
   set_new_key_section : (s) -> @subkey = s

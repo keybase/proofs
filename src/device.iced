@@ -17,4 +17,6 @@ exports.Device = class Device extends Base
   _v_customize_json : (ret) ->
     ret.body.device = @device
 
+  _type_v2 : () -> constants.sig_types_v2.device
+
 #==========================================================================

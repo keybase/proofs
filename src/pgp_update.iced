@@ -17,5 +17,6 @@ exports.PGPUpdate = class PGPUpdate extends Base
       kid: @pgpkm.get_ekid().toString 'hex'
 
   _type : () -> constants.sig_types.pgp_update
+  _type_v2 : () -> constants.sig_types_v2.pgp_update
 
   constructor : ({@pgpkm}) -> super

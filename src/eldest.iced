@@ -14,6 +14,7 @@ exports.Eldest = class Eldest extends Base
     super obj
 
   _type : () -> constants.sig_types.eldest
+  _type_v2 : () -> constants.sig_types_v2.eldest
 
   _optional_sections : () -> super().concat(["device"])
 

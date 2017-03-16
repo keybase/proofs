@@ -4,6 +4,7 @@ exports.constants = constants =
     sig : "signature"
   versions :
     sig : 1
+    sig_v2 : 2
   sig_types :
     generic_binding : "generic_binding"
     web_service_binding : "web_service_binding"
@@ -20,6 +21,20 @@ exports.constants = constants =
     sibkey : "sibkey"
     device : "device"
     eldest : "eldest"
+  sig_types_v2:
+    eldest : 1
+    web_service_binding : 2
+    track : 3
+    untrack : 4
+    revoke : 5
+    cryptocurrency : 6
+    announcement : 7
+    device : 8
+    web_service_binding_with_revoke : 9
+    cryptocurrency_with_revoke : 10
+    sibkey : 11
+    subkey : 12
+    pgp_update : 13
   proof_types :
     none : 0
     keybase : 1

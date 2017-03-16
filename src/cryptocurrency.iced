@@ -14,6 +14,10 @@ exports.Cryptocurrency = class Cryptocurrency extends Base
 
   _type : () -> constants.sig_types.cryptocurrency
 
+  _type_v2 : (revoke_flag) ->
+    if @revoke? or revoke_flag then constants.sig_types_v2.cryptocurrency_with_revoke
+    else constants.sig_types_v2.cryptocurrency
+
   _required_sections : () -> super().concat(["cryptocurrency"])
   _optional_sections : () -> super().concat(["revoke"])
 

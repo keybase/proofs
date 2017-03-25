@@ -12,7 +12,7 @@ exports.Sibkey = class Sibkey extends SubkeyBase
   set_new_key_section : (s) -> @sibkey = s
   get_new_km : () -> @sibkm
   _type : () -> constants.sig_types.sibkey
-  _type_v2 : () -> constants.sig_types_v2.subkey
+  _type_v2 : () -> constants.sig_types_v2.sibkey
   need_reverse_sig : () -> true
 
   _v_include_pgp_details : () -> true

@@ -584,6 +584,13 @@ class Base
     else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, outer }
     cb err, out
 
+  #-------
+
+  # @param {Object} obj with options as in verify and verify_v2. If obj.inner?
+  #  is specified separately, then assume v2.
+  verify_all_versions : (obj, cb) ->
+    if obj.inner? then @verify_v2 obj, cb
+    else @verify obj, cb
 
   #-------
 

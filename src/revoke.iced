@@ -11,6 +11,7 @@ exports.Revoke = class Revoke extends Base
     super obj
 
   _type : () -> constants.sig_types.revoke
+  _type_v2 : () -> constants.sig_types_v2.revoke
 
   _required_sections : () -> super().concat(["revoke"])
   _optional_sections : () -> super().concat(["device"])

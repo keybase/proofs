@@ -9,6 +9,7 @@ kbpgp = require 'kbpgp'
 util = require 'util'
 {base64_extract} = require './b64extract'
 {errors} = require './errors'
+purepack = require 'purepack'
 
 #==========================================================================
 
@@ -27,7 +28,7 @@ add_ids = (sig_body, out) ->
 
 #------
 
-make_ids = (sig_body) ->
+exports.make_ids = make_ids = (sig_body) ->
   out = {}
   add_ids sig_body, out
   return out
@@ -43,6 +44,16 @@ sig_id_to_short_id = (sig_id) ->
 
 #================================================================================
 
+has_revoke = (o) ->
+  if not o?.revoke? then false
+  else if o.revoke.sig_id? then true
+  else if (o.revoke.sig_ids?.length > 0) then true
+  else if o.revoke.kid? then true
+  else if (o.revoke.kids?.length > 0) then true
+  else false
+
+#================================================================================
+
 proof_text_check_to_med_id = (proof_text_check) ->
   {med_id} = make_ids(new Buffer proof_text_check, 'base64')
   med_id
@@ -53,9 +64,20 @@ exports.cieq = cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase(
 
 #==========================================================================
 
+bufferify = (b) -> if Buffer.isBuffer(b) then b else (new Buffer b, 'utf8')
+
+#==========================================================================
+
+compare_hash_buf_to_str = (b, s) ->
+  if not(b)? and not(s)? then true
+  else if not(b)? or not(s)? then false
+  else bufeq_secure b, (new Buffer s, 'hex')
+
+#==========================================================================
+
 class Verifier
 
-  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check}, @sig_eng, @base) ->
+  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check, @inner, @outer}, @sig_eng, @base) ->
 
   #---------------
 
@@ -71,11 +93,42 @@ class Verifier
 
   verify : (cb) ->
     esc = make_esc cb, "Verifier::verfiy"
-    await @_parse_and_process esc defer()
-    await @_check_json esc defer json_obj, json_str
+    await @_parse_and_process {@armored}, esc defer payload
+    await @_check_json {payload}, esc defer json_obj, json_str
     await @_check_ctime esc defer() unless @skip_clock_skew_check
     await @_check_expired esc defer()
     cb null, json_obj, json_str
+
+  #---------------
+
+  verify_v2 : (cb) ->
+    esc = make_esc cb, "Verifier::verfiy"
+    await @_parse_and_process {@armored}, esc defer outer_raw
+    inner_buf = new Buffer @inner, 'utf8'
+    await @_check_json {payload : inner_buf}, esc defer json_obj, json_str
+    await @_check_inner_outer_match { outer_raw, inner_obj : json_obj, inner_buf }, esc defer()
+    await @_check_ctime esc defer() unless @skip_clock_skew_check
+    await @_check_expired esc defer()
+    cb null, json_obj, json_str
+
+  #---------------
+
+  _check_inner_outer_match : ({outer_raw, inner_obj, inner_buf}, cb) ->
+    esc = make_esc cb, "_check_inner_outer_match"
+    await OuterLink.parse { raw : outer_raw }, esc defer outer
+    err = if (a = outer.type) isnt (b = @base._type_v2(has_revoke(inner_obj.body)))
+      new Error "Type mismatch: #{a} != #{b}"
+    else if (a = outer.version) isnt (b = constants.versions.sig_v2)
+      new Error "Bad version: #{a} != #{b}"
+    else if not bufeq_secure (a = outer.hash), (b = hash_sig(inner_buf))
+      new Error "hash mismatch: #{a.toString('hex')} != #{b.toString('hex')}"
+    else if (a = outer.seqno) isnt (b = inner_obj.seqno)
+      new Error "wrong seqno: #{a} != #{b}"
+    else if not compare_hash_buf_to_str (a = outer.prev), (b = inner_obj.prev)
+      new Error "wrong prev: #{a.toString('hex')} != #{b}"
+    else
+      null
+    cb err
 
   #---------------
 
@@ -123,19 +176,19 @@ class Verifier
 
   #---------------
 
-  _parse_and_process : (cb) ->
+  _parse_and_process : ({armored}, cb) ->
     err = null
-    await @sig_eng.unbox @armored, defer err, @payload, body
+    await @sig_eng.unbox armored, defer err, payload, body
     if not err? and not @skip_ids
       await @_check_ids body, defer err
     if not err? and @make_ids
       {@short_id, @id} = make_ids body
-    cb err
+    cb err, payload
 
   #---------------
 
-  _check_json : (cb) ->
-    json_str_buf = @payload
+  _check_json : ({payload}, cb) ->
+    json_str_buf = payload
 
     # Before we run any checks on the input json, let's trim any leading
     # or trailing whitespace.
@@ -366,13 +419,8 @@ class Base
 
   #------
 
-  has_revoke : () ->
-    if not @revoke? then false
-    else if @revoke.sig_id? then true
-    else if (@revoke.sig_ids?.length > 0) then true
-    else if @revoke.kid? then true
-    else if (@revoke.kids?.length > 0) then true
-    else false
+  has_revoke : () -> has_revoke @
+
 
   #------
 
@@ -438,7 +486,7 @@ class Base
 
     await @_add_pgp_details {body: ret.body}, defer err
 
-    cb err, json_stringify_sorted ret
+    cb err, json_stringify_sorted(ret), ret
 
   #------
 
@@ -458,8 +506,47 @@ class Base
 
   #------
 
+  generate_v2 : (cb) ->
+    esc = make_esc cb, "generate"
+    out = null
+    await @_v_generate {}, esc defer()
+    await @generate_json {}, esc defer s, o
+    inner = { str : s, obj : o }
+    await @generate_outer {inner }, esc defer outer
+    await @sig_eng.box outer, esc defer {pgp, raw, armored}
+    {short_id, id} = make_ids raw
+    out = { pgp, id, short_id, raw, armored, inner, outer}
+    cb null, out
+
+  #------
+
+  generate_outer : ({inner}, cb) ->
+    ret = prev_buf = err = null
+
+    if (p = inner.obj.prev)?
+      try
+        prev_buf = new Buffer(p, 'hex')
+      catch e
+        err = new Error "failed to read #{p} as a hex string"
+      if not err? and prev_buf.length isnt 32 # expect a SHA256 hash
+        err = new Error "bad hash length: #{prev_buf.length}"
+
+    unless err?
+      ret = (new OuterLink {
+        version : constants.versions.sig_v2
+        type : @_type_v2()
+        seqno : (inner.obj.seqno or 0)
+        prev : prev_buf
+        hash : hash_sig(new Buffer inner.str, 'utf8')
+      }).pack()
+
+    cb err, ret
+
+  #------
+
   # @param {Object} obj with options as specified:
   # @option obj {string} pgp The PGP signature that's being uploaded
+  # @option obj {string} armored The signature that's being uploaded (either PGP or KB NaCl)
   # @option obj {string} id The keybase-appropriate ID that's the PGP signature's hash
   # @option obj {string} short_id The shortened sig ID that's for the tweet (or similar)
   # @option obj {bool} skip_ids Don't bother checking IDs
@@ -475,6 +562,28 @@ class Base
     out = if err? then {}
     else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid }
     cb err, out
+
+  #-------
+
+  # @param {Object} obj with options as specified:
+  # @option obj {string} armored The signature that's being uploaded (either PGP or KB NaCl)
+  # options obj {string} inner The inner payload
+  # @option obj {string} id The keybase-appropriate ID that's the PGP signature's hash
+  # @option obj {string} short_id The shortened sig ID that's for the tweet (or similar)
+  # @option obj {bool} skip_ids Don't bother checking IDs
+  # @option obj {bool} make_ids Make Ids when verifying
+  # @option obj {bool} strict Turn on all strict-mode checks
+  verify_v2 : (obj, cb) ->
+    verifier = new Verifier obj, @sig_eng, @
+    await verifier.verify_v2 defer err, outer, json_obj, json_str
+    id = short_id = null
+    if obj.make_ids
+      id = obj.id = verifier.id
+      short_id = obj.short_id = verifier.short_id
+    out = if err? then {}
+    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, outer }
+    cb err, out
+
 
   #-------
 
@@ -519,6 +628,25 @@ class Base
           err = new Error "Found a bad signature in proof text: #{b[0...60]} != #{check_for[0...60]} (slack=#{s})"
           break
     cb err
+
+#==========================================================================
+
+class OuterLink
+
+  constructor : ({@version, @seqno, @prev, @hash, @type}) ->
+
+  @parse : ({raw}, cb) ->
+    esc = make_esc cb, "OuterLink.parse"
+    await akatch (() -> purepack.unpack raw), esc defer arr
+    err = ret = null
+    if arr.length isnt 5
+      err = new Error "expected 5 fields; got #{arr.length}"
+    else
+      ret = new OuterLink { version : arr[0], seqno : arr[1], prev : arr[2], hash : arr[3], type : arr[4] }
+    cb err, ret
+
+  pack : () ->
+    purepack.pack [ @version, @seqno, @prev, @hash, @type ]
 
 #==========================================================================
 

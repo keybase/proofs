@@ -11,6 +11,7 @@ exports.Track = class Track extends Base
     super obj
 
   _type : () -> constants.sig_types.track
+  _type_v2 : () -> constants.sig_types_v2.track
 
   _required_sections : () -> super().concat(["track"])
 
@@ -26,6 +27,7 @@ exports.Untrack = class Untrack extends Base
     super obj
 
   _type : () -> constants.sig_types.untrack
+  _type_v2 : () -> constants.sig_types_v2.untrack
 
   _required_sections : () -> super().concat(["untrack"])
 

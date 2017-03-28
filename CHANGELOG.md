@@ -1,3 +1,8 @@
+## 2.1.0 
+
+Feature:
+  - Support for V2 chainlinks
+
 ## 2.0.64 (2017-01-17)
 
 Bugfix:

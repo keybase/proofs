@@ -106,10 +106,10 @@ class Verifier
     await @_parse_and_process {@armored}, esc defer outer_raw
     inner_buf = new Buffer @inner, 'utf8'
     await @_check_json {payload : inner_buf}, esc defer json_obj, json_str
-    await @_check_inner_outer_match { outer_raw, inner_obj : json_obj, inner_buf }, esc defer()
+    await @_check_inner_outer_match { outer_raw, inner_obj : json_obj, inner_buf }, esc defer outer_obj
     await @_check_ctime esc defer() unless @skip_clock_skew_check
     await @_check_expired esc defer()
-    cb null, json_obj, json_str
+    cb null, outer_obj, json_obj, json_str
 
   #---------------
 
@@ -128,7 +128,7 @@ class Verifier
       new Error "wrong prev: #{a.toString('hex')} != #{b}"
     else
       null
-    cb err
+    cb err, outer
 
   #---------------
 

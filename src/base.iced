@@ -520,6 +520,12 @@ class Base
 
   #------
 
+  generate_versioned : ({version}, cb) ->
+    if version is 2 then @generate_v2 cb
+    else @generate cb
+
+  #------
+
   generate_outer : ({inner}, cb) ->
     ret = prev_buf = err = null
 

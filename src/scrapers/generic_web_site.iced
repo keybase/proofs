@@ -72,8 +72,10 @@ exports.GenericWebSiteScraper = class GenericWebSiteScraper extends BaseScraper
             human_url : url
             remote_id : url
           break
-        else if rc in [ v_codes.HTTP_400,  v_codes.HTTP_500,
+        else if rc in [ v_codes.HTTP_400,  v_codes.HTTP_500, v_codes.HTTP_300
                         v_codes.NOT_FOUND, v_codes.PERMISSION_DENIED ]
+          # In the rc list above X00 means any in the X00 family
+          # because _get_url_body collapses the status code ranges.
           continue
         else
           break

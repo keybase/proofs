@@ -1,3 +1,8 @@
+## 2.1.1
+
+Bugfix:
+ - Wrong proof type for sibkeys in v2
+
 ## 2.1.0 
 
 Feature:

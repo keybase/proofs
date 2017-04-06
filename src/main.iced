@@ -15,6 +15,7 @@ mods = [
   require('./cryptocurrency')
   require('./subkey')
   require('./sibkey')
+  require('./masterkey')
   require('./eldest')
   require('./pgp_update')
   require('./announcement')

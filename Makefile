@@ -23,6 +23,7 @@ $(BUILD_STAMP): \
 	lib/eldest.js \
 	lib/errors.js \
 	lib/main.js \
+	lib/masterkey.js \
 	lib/revoke.js \
 	lib/sibkey.js \
 	lib/subkey.js \

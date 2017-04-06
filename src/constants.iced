@@ -21,6 +21,7 @@ exports.constants = constants =
     sibkey : "sibkey"
     device : "device"
     eldest : "eldest"
+    shared_dh_key : "shared_dh_key"
   sig_types_v2:
     eldest : 1
     web_service_binding : 2
@@ -35,6 +36,7 @@ exports.constants = constants =
     sibkey : 11
     subkey : 12
     pgp_update : 13
+    shared_dh_key : 14
   proof_types :
     none : 0
     keybase : 1

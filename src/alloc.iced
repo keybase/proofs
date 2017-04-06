@@ -8,6 +8,7 @@ base = require './base'
 {Announcement} = require './announcement'
 {Subkey} = require './subkey'
 {Sibkey} = require './sibkey'
+{SharedDHKey} = require './shared_dh_key'
 {Device} = require './device'
 {Eldest} = require './eldest'
 {PGPUpdate} = require './pgp_update'
@@ -36,6 +37,7 @@ lookup_tab = {
   "announcement"                   : Announcement,
   "subkey"                         : Subkey,
   "sibkey"                         : Sibkey
+  "shared_dh_key"                  : SharedDHKey
   "device"                         : Device
   "eldest"                         : Eldest
   "pgp_update"                     : PGPUpdate

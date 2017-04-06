@@ -23,6 +23,7 @@ $(BUILD_STAMP): \
 	lib/eldest.js \
 	lib/errors.js \
 	lib/main.js \
+	lib/masterkey.js \
 	lib/revoke.js \
 	lib/sibkey.js \
 	lib/subkey.js \
@@ -37,6 +38,7 @@ $(BUILD_STAMP): \
 	lib/scrapers/hackernews.js \
 	lib/scrapers/reddit.js \
 	lib/scrapers/twitter.js \
+	lib/shared_dh_key.js \
 	lib/track.js \
 	lib/web_service.js \
 	lib/update_passphrase_hash.js \

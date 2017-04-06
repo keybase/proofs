@@ -17,6 +17,13 @@ exports.Masterkey = class Masterkey extends SubkeyBase
 
   _v_include_pgp_details : () -> true
   _required_sections : () -> super().concat(["masterkey"])
+  _v_check : ({json}, cb) ->
+    err = null
+    if typeof (v = json?.body?.masterkey?.generation) isnt 'number'
+      err = new Error "Need masterkey.generation to be an integer"
+    else
+      await super { json }, defer err
+    cb err
 
   constructor : (obj) ->
     @masterkey = obj.masterkey

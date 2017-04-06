@@ -498,10 +498,11 @@ class Base
     esc = make_esc cb, "generate"
     out = null
     await @_v_generate {}, esc defer()
-    await @generate_json {}, esc defer json
+    await @generate_json {}, esc defer json, json_obj
+    inner = { str : json, obj : json_obj }
     await @sig_eng.box json, esc defer {pgp, raw, armored}
     {short_id, id} = make_ids raw
-    out = { pgp, json, id, short_id, raw, armored }
+    out = { pgp, json, id, short_id, raw, armored, inner }
     cb null, out
 
   #------

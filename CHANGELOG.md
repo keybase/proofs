@@ -1,3 +1,8 @@
+## 2.1.2
+
+New Features:
+ - Shared DH key support
+
 ## 2.1.1
 
 Bugfix:

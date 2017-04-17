@@ -35,3 +35,6 @@ mods = [
 for m in mods
   for k,v of m
     exports[k] = v
+
+# Leave it namespaced; don't poke into namespace for teams
+exports.team = require('./team')

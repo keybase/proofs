@@ -11,10 +11,12 @@
       "name" : "acme",
       "id" : "3399881122994004422",
       "members" : {
-        "owner+"  : [ "max", "chris", "cr@10" ],
-        "admin+"  : [ "jack" ],
-        "writer+" : [ "jinyang" ],
-        "reader+" : [ "robert@33" ],
+        "add" : {
+          "owner"  : [ "max", "chris", "cr@10" ],
+          "admin"  : [ "jack" ],
+          "writer" : [ "jinyang" ],
+          "reader" : [ "robert@33" ],
+        }
       },
       "shared_key" : {
         # Epemeral DH public key
@@ -60,9 +62,10 @@
       "name" : "acme.board",
       "id" : "3399881122eeff4422",
       "members" : {
-        "owner+"  : [ "chris", "cr@10" ],
-        "admin+"  : [ "jack" ],
-        "writer+" : [ "jinyang" ],
+        "add" : {
+          "admin"  : [ "jack" ],
+          "writer" : [ "jinyang" ]
+        }
       }
     },
     "type": "team.new_subteam",
@@ -95,7 +98,9 @@
     "team" : {
       "id" : "3399881122eeff4422",
       "members" : {
-        "reader-" : [ "jinyang" ]
+        "rm" : {
+          "reader" : [ "jinyang" ]
+        }
       },
       "shared_key" : {
         # Epemeral DH public key
@@ -110,7 +115,7 @@
         },
         "prev" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU="
     },
-    "type": "team.members",
+    "type": "team.change_membership",
     "version": 1
   },
   "client": {
@@ -184,6 +189,7 @@
       "index" : {
         "root" : "44aabb343344555",
         "subteams" : {
+          # Map of Team ID -> [ tail seqno, tail hash ] pairs
           "1123499eee334" : [ 10, "3349955000293945" ],
           "3344993440059" : [ 30, "3349950029945902" ],
           "4499928834552" : [ 40, "3399488592993949" ]

@@ -1,3 +1,8 @@
+## 2.12
+
+New features:
+ - Basic and rough teams support
+
 ## 2.1.2
 
 New Features:

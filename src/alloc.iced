@@ -14,6 +14,7 @@ base = require './base'
 {PGPUpdate} = require './pgp_update'
 {UpdatePassphraseHash} = require './update_passphrase_hash'
 {UpdateSettings} = require './update_settings'
+team = require './team'
 
 #=======================================================
 
@@ -43,6 +44,12 @@ lookup_tab = {
   "pgp_update"                     : PGPUpdate
   "update_passphrase_hash"         : UpdatePassphraseHash
   "update_settings"                : UpdateSettings
+  "team.index"                     : team.Index
+  "team.root"                      : team.Root
+  "team.new_subteam"               : team.NewSubteam
+  "team.change_membership"         : team.ChangeMembership
+  "team.rotate_key"                : team.RotateKey
+  "team.leave"                     : team.Leave
 }
 
 #--------------------------------------------

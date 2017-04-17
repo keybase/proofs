@@ -1,0 +1,211 @@
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01013ef90b4c4e62121d12a51d18569b57996002c8bdccc9b2740935c9e4a07d20b40a",
+      "host": "keybase.io",
+      "kid": "0120bd7350508b78d8be24a04789dc88f409c9fe607713dbc685215091b7a37aec130a",
+      "uid": "dbb165b7879fe7b1174df73bed0b9500",
+      "username": "max"
+    },
+    "team" : {
+      "name" : "acme",
+      "id" : "3399881122994004422",
+      "members" : {
+        "owner+"  : [ "max", "chris", "cr@10" ],
+        "admin+"  : [ "jack" ],
+        "writer+" : [ "jinyang" ],
+        "reader+" : [ "robert@33" ],
+      },
+      "shared_key" : {
+        # Epemeral DH public key
+        "E" : "012030034004023059902834028430f",
+        "gen" : 1,
+        "boxes" : {
+          # pack [ version, chain-link-of-shared-dh-key, box ]
+          "max" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU=",
+          "chris" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU=",
+          "cr" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU=",
+          "jack" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU="
+        },
+      }
+    },
+    "type": "team.root",
+    "version": 1
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "1.0.18"
+  },
+  "ctime": 1488484752,
+  "expire_in": 504576000,
+  "merkle_root": {
+    "ctime": 1488484733,
+    "hash": "cfd761cb7bd98478137e9a2e65a4b8e5e7c443348894d76a6f2a68f65c52c73cc69c8b633a4851ecd29671b3390e0a0b03af3d28adc3b18626b8d7cbbd4914bd",
+    "seqno": 935116
+  },
+  "prev": "f9562b567b87d1093431fa134bf1555106c5c32011480f06cf25e17f22b928bb",
+  "seqno": 282,
+  "tag": "signature"
+},
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01013ef90b4c4e62121d12a51d18569b57996002c8bdccc9b2740935c9e4a07d20b40a",
+      "host": "keybase.io",
+      "kid": "0120bd7350508b78d8be24a04789dc88f409c9fe607713dbc685215091b7a37aec130a",
+      "uid": "dbb165b7879fe7b1174df73bed0b9500",
+      "username": "max"
+    },
+    "team" : {
+      "name" : "acme.board",
+      "id" : "3399881122eeff4422",
+      "members" : {
+        "owner+"  : [ "chris", "cr@10" ],
+        "admin+"  : [ "jack" ],
+        "writer+" : [ "jinyang" ],
+      }
+    },
+    "type": "team.new_subteam",
+    "version": 1
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "1.0.18"
+  },
+  "ctime": 1488484752,
+  "expire_in": 504576000,
+  "merkle_root": {
+    "ctime": 1488484733,
+    "hash": "cfd761cb7bd98478137e9a2e65a4b8e5e7c443348894d76a6f2a68f65c52c73cc69c8b633a4851ecd29671b3390e0a0b03af3d28adc3b18626b8d7cbbd4914bd",
+    "seqno": 935116
+  },
+  "prev": "f9562b567b87d1093431fa134bf1555106c5c32011480f06cf25e17f22b928bb",
+  "seqno": 282,
+  "tag": "signature"
+},
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01013ef90b4c4e62121d12a51d18569b57996002c8bdccc9b2740935c9e4a07d20b40a",
+      "host": "keybase.io",
+      "kid": "0120bd7350508b78d8be24a04789dc88f409c9fe607713dbc685215091b7a37aec130a",
+      "uid": "dbb165b7879fe7b1174df73bed0b9500",
+      "username": "max"
+    },
+    "team" : {
+      "id" : "3399881122eeff4422",
+      "members" : {
+        "reader-" : [ "jinyang" ]
+      },
+      "shared_key" : {
+        # Epemeral DH public key
+        "E" : "012030034004023059902834028430f",
+        "gen" : 2,
+        "boxes" : {
+          # pack [ version, chain-link-of-shared-dh-key, box ]
+          "max" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU=",
+          "chris" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU=",
+          "cr" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU=",
+          "jack" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU="
+        },
+        "prev" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU="
+    },
+    "type": "team.members",
+    "version": 1
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "1.0.18"
+  },
+  "ctime": 1488484752,
+  "expire_in": 504576000,
+  "merkle_root": {
+    "ctime": 1488484733,
+    "hash": "cfd761cb7bd98478137e9a2e65a4b8e5e7c443348894d76a6f2a68f65c52c73cc69c8b633a4851ecd29671b3390e0a0b03af3d28adc3b18626b8d7cbbd4914bd",
+    "seqno": 935116
+  },
+  "prev": "f9562b567b87d1093431fa134bf1555106c5c32011480f06cf25e17f22b928bb",
+  "seqno": 282,
+  "tag": "signature"
+},
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01013ef90b4c4e62121d12a51d18569b57996002c8bdccc9b2740935c9e4a07d20b40a",
+      "host": "keybase.io",
+      "kid": "0120bd7350508b78d8be24a04789dc88f409c9fe607713dbc685215091b7a37aec130a",
+      "uid": "dbb165b7879fe7b1174df73bed0b9500",
+      "username": "max"
+    },
+    "team" : {
+      "id" : "3399881122eeff4422",
+      "shared_key" : {
+        # Epemeral DH public key
+        "E" : "012030034004023059902834028430f",
+        "gen" : 3,
+        "boxes" : {
+          # pack [ version, chain-link-of-shared-dh-key, box ]
+          "max" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU=",
+          "chris" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU=",
+          "cr" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU=",
+          "jack" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU="
+        },
+        "prev" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU="
+    },
+    "type": "team.rotate",
+    "version": 1
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "1.0.18"
+  },
+  "ctime": 1488484752,
+  "expire_in": 504576000,
+  "merkle_root": {
+    "ctime": 1488484733,
+    "hash": "cfd761cb7bd98478137e9a2e65a4b8e5e7c443348894d76a6f2a68f65c52c73cc69c8b633a4851ecd29671b3390e0a0b03af3d28adc3b18626b8d7cbbd4914bd",
+    "seqno": 935116
+  },
+  "prev": "f9562b567b87d1093431fa134bf1555106c5c32011480f06cf25e17f22b928bb",
+  "seqno": 282,
+  "tag": "signature"
+},
+{
+  "body": {
+    "key": {
+      "eldest_kid": "01013ef90b4c4e62121d12a51d18569b57996002c8bdccc9b2740935c9e4a07d20b40a",
+      "host": "keybase.io",
+      "kid": "0120bd7350508b78d8be24a04789dc88f409c9fe607713dbc685215091b7a37aec130a",
+      "uid": "dbb165b7879fe7b1174df73bed0b9500",
+      "username": "max"
+    },
+    "team" : {
+      "id" : "3399881122eeff4422",
+      "index" : {
+        "root" : "44aabb343344555",
+        "subteams" : {
+          "1123499eee334" : [ 10, "3349955000293945" ],
+          "3344993440059" : [ 30, "3349950029945902" ],
+          "4499928834552" : [ 40, "3399488592993949" ]
+        }
+      }
+    },
+    "type": "team.index",
+    "version": 1
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "1.0.18"
+  },
+  "ctime": 1488484752,
+  "expire_in": 504576000,
+  "merkle_root": {
+    "ctime": 1488484733,
+    "hash": "cfd761cb7bd98478137e9a2e65a4b8e5e7c443348894d76a6f2a68f65c52c73cc69c8b633a4851ecd29671b3390e0a0b03af3d28adc3b18626b8d7cbbd4914bd",
+    "seqno": 935116
+  },
+  "prev": "f9562b567b87d1093431fa134bf1555106c5c32011480f06cf25e17f22b928bb",
+  "seqno": 282,
+  "tag": "signature"
+}
+

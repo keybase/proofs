@@ -28,8 +28,6 @@ exports.constants = constants =
       new_subteam : "team.new_subteam"
       change_membership : "team.change_membership"
       rotate_key : "team.rotate_key"
-      leave : "team.leave"
-
   sig_types_v2:
     eldest : 1
     web_service_binding : 2
@@ -51,7 +49,6 @@ exports.constants = constants =
       new_subteam : 34
       change_membership : 35
       rotate_key : 36
-      leave : 37
   proof_types :
     none : 0
     keybase : 1

@@ -42,6 +42,12 @@ exports.RotateKey = class RotateKey extends TeamBase
 
 #--------------
 
+exports.Leave = class Leave extends TeamBase
+  _type : () -> constants.sig_types.team.leave
+  _type_v2 : () -> constants.sig_types_v2.team.leave
+
+#--------------
+
 exports.NewSubteam = class NewSubteam extends TeamBase
   _type : () -> constants.sig_types.team.new_subteam
   _type_v2 : () -> constants.sig_types_v2.team.new_subteam

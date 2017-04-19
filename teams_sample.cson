@@ -11,19 +11,17 @@
       "name" : "acme",
       "id" : "3399881122994004422",
       "members" : {
-        "add" : {
-          "owner"  : [ "max", "chris", "cr@10" ],
-          "admin"  : [ "jack" ],
-          "writer" : [ "jinyang" ],
-          "reader" : [ "robert@33" ],
-        }
+        "owner"  : [ "max", "chris", "cr#10" ],
+        "admin"  : [ "jack" ],
+        "writer" : [ "jinyang" ],
+        "reader" : [ "robert#33" ],
       },
       "shared_key" : {
         # Epemeral DH public key
         "E" : "012030034004023059902834028430f",
         "gen" : 1,
         "boxes" : {
-          # pack [ version, chain-link-of-shared-dh-key, box ]
+          # pack [ version=1, chain-link-of-shared-dh-key, box ]
           "max" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU=",
           "chris" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU=",
           "cr" : "kwFkxDAqZQTm+aLnRUc7YDZUFGdE95Rj8fXe/I5B0d1Y+aRQVtbkVb96PwNPtxZp0GQPUFU=",
@@ -62,10 +60,8 @@
       "name" : "acme.board",
       "id" : "3399881122eeff4422",
       "members" : {
-        "add" : {
-          "admin"  : [ "jack" ],
-          "writer" : [ "jinyang" ]
-        }
+        "admin"  : [ "jack" ],
+        "writer" : [ "jinyang" ]
       }
     },
     "type": "team.new_subteam",
@@ -98,9 +94,7 @@
     "team" : {
       "id" : "3399881122eeff4422",
       "members" : {
-        "rm" : {
-          "reader" : [ "jinyang" ]
-        }
+        "none" : [ "jinyang" ]
       },
       "shared_key" : {
         # Epemeral DH public key

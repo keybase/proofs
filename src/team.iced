@@ -30,7 +30,7 @@ exports.Root = class Root extends TeamBase
 
 #--------------
 
-exports.ChangeMembership = class ChangeMemberhip extends TeamBase
+exports.ChangeMembership = class ChangeMembership extends TeamBase
   _type : () -> constants.sig_types.team.change_membership
   _type_v2 : () -> constants.sig_types_v2.team.change_membership
 

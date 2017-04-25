@@ -54,3 +54,9 @@ exports.NewSubteam = class NewSubteam extends TeamBase
 
 #--------------
 
+exports.SubteamHead = class SubteamHead extends TeamBase
+  _type : () -> constants.sig_types.team.subteam_head
+  _type_v2 : () -> constants.sig_types_v2.team.subteam_head
+
+#--------------
+

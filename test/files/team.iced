@@ -8,7 +8,7 @@ new_username = () -> "u_" + prng(5).toString('hex')
 
 exports.test_all_classes = (T,cb) ->
   esc = make_esc cb, "test_all_classes"
-  klasses = [team.Index, team.Root, team.ChangeMembership, team.RotateKey, team.NewSubteam, team.Leave]
+  klasses = [team.Index, team.Root, team.ChangeMembership, team.RotateKey, team.NewSubteam, team.Leave, team.SubteamHead ]
   await KeyManager.generate {}, esc defer km
   arg =
     user :

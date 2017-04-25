@@ -50,6 +50,7 @@ lookup_tab = {
   "team.change_membership"         : team.ChangeMembership
   "team.rotate_key"                : team.RotateKey
   "team.leave"                     : team.Leave
+  "team.subteam_head"              : team.SubteamHead
 }
 
 #--------------------------------------------

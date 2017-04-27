@@ -30,6 +30,7 @@ exports.constants = constants =
       rotate_key : "team.rotate_key"
       leave : "team.leave"
       subteam_head : "team.subteam_head"
+      rename_subteam : "team.rename_subteam"
 
   sig_types_v2:
     eldest : 1
@@ -54,6 +55,7 @@ exports.constants = constants =
       rotate_key : 36
       leave : 37
       subteam_head : 38
+      rename_subteam : 39
   proof_types :
     none : 0
     keybase : 1

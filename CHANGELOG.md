@@ -1,3 +1,7 @@
+## 2.1.5 (2017-04-27)
+
+Support for team.rename_subteam
+
 ## 2.1.4
 
 Various team fixes

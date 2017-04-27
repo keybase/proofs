@@ -51,6 +51,7 @@ lookup_tab = {
   "team.rotate_key"                : team.RotateKey
   "team.leave"                     : team.Leave
   "team.subteam_head"              : team.SubteamHead
+  "team.rename_subteam"            : team.RenameSubteam
 }
 
 #--------------------------------------------

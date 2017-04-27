@@ -60,3 +60,9 @@ exports.SubteamHead = class SubteamHead extends TeamBase
 
 #--------------
 
+exports.RenameSubteam = class RenameSubteam extends TeamBase
+  _type : () -> constants.sig_types.team.rename_subteam
+  _type_v2 : () -> constants.sig_types_v2.team.rename_subteam
+
+#--------------
+

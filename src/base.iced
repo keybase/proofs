@@ -433,7 +433,7 @@ class Base
   generate_json : ({expire_in, version} = {}, cb) ->
     err = null
 
-    version or= constants.versions.sig
+    version or= constants.versions.sig_v1
 
     # Cache the unix_time() we generate in case we need to call @generate_json()
     # twice.  This happens for reverse signatures!
@@ -526,7 +526,7 @@ class Base
   #------
 
   generate_versioned : ({version}, cb) ->
-    if version is 2 then @generate_v2 cb
+    if version is constants.versions.sig_v2 then @generate_v2 cb
     else @generate cb
 
   #------
@@ -571,7 +571,7 @@ class Base
       id = obj.id = verifier.id
       short_id = obj.short_id = verifier.short_id
     out = if err? then {}
-    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, version : 1 }
+    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, version : constants.versions.sig_v1 }
     cb err, out
 
   #-------
@@ -592,7 +592,7 @@ class Base
       id = obj.id = verifier.id
       short_id = obj.short_id = verifier.short_id
     out = if err? then {}
-    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, outer, version : 2 }
+    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, outer, version : constants.versions.sig_v2 }
     cb err, out
 
   #-------

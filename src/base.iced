@@ -659,8 +659,8 @@ class OuterLink
       ret = new OuterLink { version : arr[0], seqno : arr[1], prev : arr[2], hash : arr[3], type : arr[4] }
     cb err, ret
 
-  pack : () ->
-    purepack.pack [ @version, @seqno, @prev, @hash, @type ]
+  pack : () -> purepack.pack [ @version, @seqno, @prev, @hash, @type ]
+  outer_link_hash : () -> hash_sig(@pack())
 
 #==========================================================================
 

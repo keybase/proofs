@@ -39,7 +39,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
       @set_new_key_section obj
       if @get_new_km().can_sign()
         eng = @get_new_km().make_sig_eng()
-        await @generate_json {}, esc defer msg
+        await @generate_json { version : opts.version }, esc defer msg
         await eng.box msg, esc defer { armored, type }
         obj.reverse_sig = armored
     cb null

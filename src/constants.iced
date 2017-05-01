@@ -3,7 +3,7 @@ exports.constants = constants =
   tags :
     sig : "signature"
   versions :
-    sig : 1
+    sig_v1 : 1
     sig_v2 : 2
   sig_types :
     generic_binding : "generic_binding"

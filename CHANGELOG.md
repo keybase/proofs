@@ -1,3 +1,8 @@
+## 2.1.6 (2017-05-01)
+
+- Inner links now have version:2
+- Check that the version out the outer matches the inner
+
 ## 2.1.5 (2017-04-27)
 
 Support for team.rename_subteam

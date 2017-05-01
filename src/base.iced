@@ -120,6 +120,8 @@ class Verifier
       new Error "Type mismatch: #{a} != #{b}"
     else if (a = outer.version) isnt (b = constants.versions.sig_v2)
       new Error "Bad version: #{a} != #{b}"
+    else if (a = outer.version) isnt (b = inner_obj.body.version)
+      new Error "Version mismatch: #{a} != #{b}"
     else if not bufeq_secure (a = outer.hash), (b = hash_sig(inner_buf))
       new Error "hash mismatch: #{a?.toString('hex')} != #{b?.toString('hex')}"
     else if (a = outer.seqno) isnt (b = inner_obj.seqno)
@@ -428,8 +430,10 @@ class Base
 
   #------
 
-  generate_json : ({expire_in} = {}, cb) ->
+  generate_json : ({expire_in, version} = {}, cb) ->
     err = null
+
+    version or= constants.versions.sig_v1
 
     # Cache the unix_time() we generate in case we need to call @generate_json()
     # twice.  This happens for reverse signatures!
@@ -447,7 +451,7 @@ class Base
       tag : constants.tags.sig
       expire_in : pick(expire_in, @expire_in, constants.expire_in)
       body :
-        version : constants.versions.sig
+        version : version
         type : @_type()
         key :
           host : @host
@@ -497,8 +501,9 @@ class Base
   generate : (cb) ->
     esc = make_esc cb, "generate"
     out = null
-    await @_v_generate {}, esc defer()
-    await @generate_json {}, esc defer json, json_obj
+    opts = version : constants.versions.sig_v1
+    await @_v_generate opts, esc defer()
+    await @generate_json opts, esc defer json, json_obj
     inner = { str : json, obj : json_obj }
     await @sig_eng.box json, esc defer {pgp, raw, armored}
     {short_id, id} = make_ids raw
@@ -510,10 +515,11 @@ class Base
   generate_v2 : (cb) ->
     esc = make_esc cb, "generate"
     out = null
-    await @_v_generate {}, esc defer()
-    await @generate_json {}, esc defer s, o
+    opts = { version : constants.versions.sig_v2 }
+    await @_v_generate opts, esc defer()
+    await @generate_json opts, esc defer s, o
     inner = { str : s, obj : o }
-    await @generate_outer {inner }, esc defer outer
+    await @generate_outer { inner }, esc defer outer
     await @sig_eng.box outer, esc defer {pgp, raw, armored}
     {short_id, id} = make_ids raw
     out = { pgp, id, short_id, raw, armored, inner, outer}
@@ -522,7 +528,7 @@ class Base
   #------
 
   generate_versioned : ({version}, cb) ->
-    if version is 2 then @generate_v2 cb
+    if version is constants.versions.sig_v2 then @generate_v2 cb
     else @generate cb
 
   #------
@@ -567,7 +573,7 @@ class Base
       id = obj.id = verifier.id
       short_id = obj.short_id = verifier.short_id
     out = if err? then {}
-    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, version : 1 }
+    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, version : constants.versions.sig_v1 }
     cb err, out
 
   #-------
@@ -588,7 +594,7 @@ class Base
       id = obj.id = verifier.id
       short_id = obj.short_id = verifier.short_id
     out = if err? then {}
-    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, outer, version : 2 }
+    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, outer, version : constants.versions.sig_v2 }
     cb err, out
 
   #-------

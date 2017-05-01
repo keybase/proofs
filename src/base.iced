@@ -501,8 +501,9 @@ class Base
   generate : (cb) ->
     esc = make_esc cb, "generate"
     out = null
-    await @_v_generate {}, esc defer()
-    await @generate_json {}, esc defer json, json_obj
+    opts = version : constants.versions.sig_v1
+    await @_v_generate opts, esc defer()
+    await @generate_json opts, esc defer json, json_obj
     inner = { str : json, obj : json_obj }
     await @sig_eng.box json, esc defer {pgp, raw, armored}
     {short_id, id} = make_ids raw
@@ -514,8 +515,9 @@ class Base
   generate_v2 : (cb) ->
     esc = make_esc cb, "generate"
     out = null
-    await @_v_generate {}, esc defer()
-    await @generate_json { version : constants.versions.sig_v2 }, esc defer s, o
+    opts = { version : constants.versions.sig_v2 }
+    await @_v_generate opts, esc defer()
+    await @generate_json opts, esc defer s, o
     inner = { str : s, obj : o }
     await @generate_outer { inner }, esc defer outer
     await @sig_eng.box outer, esc defer {pgp, raw, armored}

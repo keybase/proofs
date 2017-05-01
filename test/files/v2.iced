@@ -161,7 +161,7 @@ exports.check_chain_3 = (T,cb) ->
 forge_bad_link = ({link,h1,h2}, cb) ->
   esc = make_esc cb, "forge_bad_link"
   await link._v_generate {}, esc defer()
-  await link.generate_json {}, esc defer s, o
+  await link.generate_json { version : 2}, esc defer s, o
   inner = { str : s, obj : o }
   if h1? then h1 { inner }
   await link.generate_outer {inner }, esc defer outer

@@ -121,11 +121,11 @@ class Verifier
     else if (a = outer.version) isnt (b = constants.versions.sig_v2)
       new Error "Bad version: #{a} != #{b}"
     else if not bufeq_secure (a = outer.hash), (b = hash_sig(inner_buf))
-      new Error "hash mismatch: #{a.toString('hex')} != #{b.toString('hex')}"
+      new Error "hash mismatch: #{a?.toString('hex')} != #{b?.toString('hex')}"
     else if (a = outer.seqno) isnt (b = inner_obj.seqno)
       new Error "wrong seqno: #{a} != #{b}"
     else if not compare_hash_buf_to_str (a = outer.prev), (b = inner_obj.prev)
-      new Error "wrong prev: #{a.toString('hex')} != #{b}"
+      new Error "wrong prev: #{a?.toString('hex')} != #{b}"
     else
       null
     cb err, outer

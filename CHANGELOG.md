@@ -2,6 +2,7 @@
 
 - Inner links now have version:2
 - Check that the version out the outer matches the inner
+- Fix bug in chainlink v2 verification
 
 ## 2.1.5 (2017-04-27)
 

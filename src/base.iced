@@ -534,7 +534,7 @@ class Base
   #------
 
   generate_outer : ({inner}, cb) ->
-    ret = prev_buf = err = null
+    ret = prev_buf = err = unpacked = null
 
     if (p = inner.obj.prev)?
       try
@@ -545,15 +545,16 @@ class Base
         err = new Error "bad hash length: #{prev_buf.length}"
 
     unless err?
-      ret = (new OuterLink {
+      unpacked = new OuterLink {
         version : constants.versions.sig_v2
         type : @_type_v2()
         seqno : (inner.obj.seqno or 0)
         prev : prev_buf
         hash : hash_sig(new Buffer inner.str, 'utf8')
-      }).pack()
+      }
+      ret = unpacked.pack()
 
-    cb err, ret
+    cb err, ret, unpacked
 
   #------
 

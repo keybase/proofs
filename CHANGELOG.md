@@ -1,3 +1,7 @@
+## 2.1.7 (2017-05-02)
+
+- expose unpacked outer also from proofs
+
 ## 2.1.6 (2017-05-01)
 
 - Inner links now have version:2

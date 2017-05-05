@@ -1,13 +1,13 @@
 {alloc,team} = require '../../'
 {KeyManager} = require('kbpgp').kb
 {make_esc} = require 'iced-error'
-{new_arg} = require './util'
+{new_sig_arg} = require './util'
 
 exports.test_all_classes = (T,cb) ->
   esc = make_esc cb, "test_all_classes"
   klasses = [team.Index, team.Root, team.ChangeMembership, team.RotateKey, team.NewSubteam, team.Leave, team.SubteamHead, team.RenameSubteam ]
   await KeyManager.generate {}, esc defer km
-  arg = new_arg { km }
+  arg = new_sig_arg { km }
   arg.team = "test"
 
   for klass in klasses

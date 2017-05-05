@@ -6,7 +6,7 @@ exports.new_username = new_username = () -> "u_" + prng(5).toString('hex')
 
 exports.skip = 1
 
-exports.new_arg = new_arg = ({km}) ->
+exports.new_sig_arg = new_sig_arg = ({km}) ->
   arg =
     user :
       local :

@@ -24,8 +24,8 @@ exports.PerUserKey = class PerUserKey extends SubkeyBase
   _required_sections : () -> super().concat(["per_user_key"])
 
   _find_fields : ({json}) ->
-    if typeof (v = json?.body?.per_user_key?.generation) isnt 'number'
-      new Error "Need per_user_key.generation to be an integer"
+    if (typeof(v = json?.body?.per_user_key?.generation) isnt 'number') or (parseInt(v) <= 0)
+      new Error "Need per_user_key.generation to be an integer > 0 (got #{v})"
     else if not json?.body?.per_user_key?.signing_kid?
       new Error "need a signing kid"
     else if not json?.body?.per_user_key?.encryption_kid?

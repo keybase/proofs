@@ -1,3 +1,8 @@
+## 2.1.8 (2017-05-05)
+
+- rename shared_dh -> per_user_key
+- in PUK, above, include 2 types of keys: signing and encryption
+
 ## 2.1.7 (2017-05-02)
 
 - expose unpacked outer also from proofs

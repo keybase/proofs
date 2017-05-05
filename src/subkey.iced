@@ -32,9 +32,8 @@ exports.SubkeyBase = class SubkeyBase extends Base
   _v_generate : (opts, cb) ->
     esc = make_esc cb, "_v_generate"
     if not @get_new_key_section()? and @get_new_km()?
-      obj =
-        kid : @get_new_km().get_ekid().toString('hex')
-        reverse_sig: null
+      obj = { reverse_sig: null }
+      obj[@sibkid_slot()] = @get_new_km().get_ekid().toString('hex')
       obj.parent_kid = @parent_kid if @parent_kid?
       @set_new_key_section obj
       if @get_new_km().can_sign()
@@ -47,6 +46,8 @@ exports.SubkeyBase = class SubkeyBase extends Base
   _v_customize_json : (ret) ->
     ret.body[@get_field()] = @get_new_key_section()
     ret.body.device = @device if @device?
+
+  sibkid_slot : () -> "kid"
 
   _match_json : (outer, inner) ->
     outer = json_cp outer
@@ -78,7 +79,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
       await a_json_parse raw, esc defer payload
       rsk = new_km.get_ekid().toString('hex')
       if (err = @_match_json json, payload)? then # noop
-      else if not streq_secure (a = json?.body?[@get_field()]?.kid), (b = rsk)
+      else if not streq_secure (a = json?.body?[@get_field()]?[@sibkid_slot()]), (b = rsk)
         err = new Error "Sibkey KID mismatch: #{a} != #{b}"
       else
         @reverse_sig_kid = rsk

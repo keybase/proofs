@@ -1,25 +1,14 @@
 {alloc,team} = require '../../'
 {KeyManager} = require('kbpgp').kb
 {make_esc} = require 'iced-error'
-{prng} = require 'crypto'
-
-new_uid = () -> prng(16).toString('hex')
-new_username = () -> "u_" + prng(5).toString('hex')
+{new_sig_arg} = require './util'
 
 exports.test_all_classes = (T,cb) ->
   esc = make_esc cb, "test_all_classes"
   klasses = [team.Index, team.Root, team.ChangeMembership, team.RotateKey, team.NewSubteam, team.Leave, team.SubteamHead, team.RenameSubteam ]
   await KeyManager.generate {}, esc defer km
-  arg =
-    user :
-      local :
-        uid : new_uid()
-        username : new_username()
-    host : "keybase.io"
-    team : "test"
-    sig_eng : km.make_sig_eng()
-    seqno : 0
-    prev : null
+  arg = new_sig_arg { km }
+  arg.team = "test"
 
   for klass in klasses
     obj = new klass arg

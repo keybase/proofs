@@ -5,13 +5,13 @@
 
 test_klass = ({T,arg, klass, keys}, cb) ->
   esc = make_esc cb, "test_klass"
+  delete arg.kms
+  delete arg.team.per_team_key
   if keys
     arg.kms = {}
     await EncKeyManager.generate {}, esc defer arg.kms.encryption
     await KeyManager.generate {}, esc defer arg.kms.signing
     arg.kms.generation = 10
-  else
-    delete arg.kms
   obj = new klass arg
   await obj.generate_v2 esc defer out
   typ = out.inner.obj.body.type

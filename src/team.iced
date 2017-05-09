@@ -28,15 +28,18 @@ class TeamBase extends SubkeyBase
       await super opts, defer err
     cb err
 
-  get_field : () -> "per_team_key"
   get_new_key_section : () -> @per_team_key
   set_new_key_section : (m) ->
     m.generation = @kms.generation
     m.encryption_kid = @kms.encryption.get_ekid().toString('hex')
+    m.signing_kid = @kms.signing.get_ekid().toString('hex')
     @per_team_key = m
   get_new_km : () -> @kms?.signing # use the signing KM
-  sibkid_slot : () -> "signing_kid"
-  need_reverse_sig : (json) -> json?.body?.per_team_key?
+  need_reverse_sig : (json) -> json?.body?.team?.per_team_key?
+
+  _get_reverse_sig : (json) -> json?.body?.team?.per_team_key?.reverse_sig
+  _get_new_sibkid : (json) -> json?.body?.team?.per_team_key?.signing_kid
+  _clear_reverse_sig : (json) -> json.body.team.per_team_key.reverse_sig = null
 
   _v_include_pgp_details : () -> false
 

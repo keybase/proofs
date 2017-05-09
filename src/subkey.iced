@@ -33,7 +33,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
     esc = make_esc cb, "_v_generate"
     if not @get_new_key_section()? and @get_new_km()?
       obj = { reverse_sig: null }
-      obj[@sibkid_slot()] = @get_new_km().get_ekid().toString('hex')
+      obj[@sibkid_slot()] = @get_new_km().get_ekid().toString('hex') if @sibkid_slot()?
       obj.parent_kid = @parent_kid if @parent_kid?
       @set_new_key_section obj
       if @get_new_km().can_sign()
@@ -51,8 +51,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
 
   _match_json : (outer, inner) ->
     outer = json_cp outer
-    # body.sibkey.reverse_sig should be the only field different between the two
-    outer?.body?[@get_field()].reverse_sig = null
+    @_clear_reverse_sig(outer)
     a = json_stringify_sorted outer
     b = json_stringify_sorted inner
     err = null
@@ -66,6 +65,14 @@ exports.SubkeyBase = class SubkeyBase extends Base
     await @reverse_sig_check { json, new_km: @get_new_km() }, esc defer()
     cb null
 
+  _get_reverse_sig : (json) ->
+    json?.body?[@get_field()]?.reverse_sig
+  _get_new_sibkid : (json) ->
+    json?.body?[@get_field()]?[@sibkid_slot()]
+  _clear_reverse_sig : (outer) ->
+    # body.sibkey.reverse_sig should be the only field different between the two
+    outer?.body?[@get_field()].reverse_sig = null
+
   reverse_sig_check : ({json, new_km, subkm}, cb) ->
 
     # For historical reasons, some people call 'new_km' 'subkm'
@@ -73,13 +80,13 @@ exports.SubkeyBase = class SubkeyBase extends Base
 
     esc = make_esc cb, "SubkeyBase::reverse_sig_check"
     err = null
-    if (sig = json?.body?[@get_field()]?.reverse_sig)? and new_km?
+    if (sig = @_get_reverse_sig(json))? and new_km?
       eng = new_km.make_sig_eng()
       await eng.unbox sig, esc defer raw
       await a_json_parse raw, esc defer payload
       rsk = new_km.get_ekid().toString('hex')
       if (err = @_match_json json, payload)? then # noop
-      else if not streq_secure (a = json?.body?[@get_field()]?[@sibkid_slot()]), (b = rsk)
+      else if not streq_secure (a = @_get_new_sibkid(json)), (b = rsk)
         err = new Error "Sibkey KID mismatch: #{a} != #{b}"
       else
         @reverse_sig_kid = rsk

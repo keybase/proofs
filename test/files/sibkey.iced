@@ -31,6 +31,7 @@ round_trip_with_corrupted_reverse_sig = ({T, corrupt}, cb) ->
     esc = make_esc cb, "_v_generate"
     x = { reverse_sig: null }
     @set_new_key_section x
+    x.kid = @get_new_km().get_ekid().toString('hex')
     eng = @get_new_km().make_sig_eng()
     await @generate_json { version : opts.version }, esc defer msg
     msg2 = JSON.parse msg
@@ -48,6 +49,8 @@ round_trip_with_corrupted_reverse_sig = ({T, corrupt}, cb) ->
   if corrupt
     T.assert err?, "got an error back"
     T.assert (err.message.indexOf('Reverse sig json mismatch') >= 0), "found right error message"
+  else
+    T.no_error err, "in the success case, don't expect an error"
   cb null
 
 exports.test_corruption_mechanism = (T,cb) ->

@@ -84,6 +84,8 @@ round_trip_with_corrupted_reverse_sig = ({T, corrupt}, cb) ->
   if corrupt
     T.assert err?, "got an error back"
     T.assert (err.message.indexOf('Reverse sig json mismatch') >= 0), "found right error message"
+  else
+    T.no_error err, "in the success case, don't expect an error"
   cb null
 
 exports.test_corruption_mechanism = (T,cb) ->

@@ -22,11 +22,11 @@ exports.SubkeyBase = class SubkeyBase extends Base
   get_new_key_section : () -> null
   set_new_key_section : (s) ->
   get_new_km : () -> null
-  get_field : () -> null
+  get_key_field : () -> null
   need_reverse_sig : () -> false
   _optional_sections : () -> super().concat(["device"])
 
-  _v_pgp_details_dest : (body) -> body[@get_field()]
+  _v_pgp_details_dest : (body) -> body[@get_key_field()]
   _v_pgp_km : -> @get_new_km()
 
   _v_generate : (opts, cb) ->
@@ -44,7 +44,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
     cb null
 
   _v_customize_json : (ret) ->
-    ret.body[@get_field()] = @get_new_key_section()
+    ret.body[@get_key_field()] = @get_new_key_section()
     ret.body.device = @device if @device?
 
   sibkid_slot : () -> "kid"
@@ -66,12 +66,12 @@ exports.SubkeyBase = class SubkeyBase extends Base
     cb null
 
   _get_reverse_sig : (json) ->
-    json?.body?[@get_field()]?.reverse_sig
+    json?.body?[@get_key_field()]?.reverse_sig
   _get_new_sibkid : (json) ->
-    json?.body?[@get_field()]?[@sibkid_slot()]
+    json?.body?[@get_key_field()]?[@sibkid_slot()]
   _clear_reverse_sig : (outer) ->
     # body.sibkey.reverse_sig should be the only field different between the two
-    outer?.body?[@get_field()].reverse_sig = null
+    outer.body[@get_key_field()].reverse_sig = null
 
   reverse_sig_check : ({json, new_km, subkm}, cb) ->
 
@@ -102,7 +102,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
 
 exports.Subkey = class Subkey extends SubkeyBase
 
-  get_field : () -> "subkey"
+  get_key_field : () -> "subkey"
   _type_v2 : () -> constants.sig_types_v2.subkey
 
   get_new_key_section : () -> @subkey

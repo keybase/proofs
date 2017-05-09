@@ -16,6 +16,11 @@ class TeamBase extends SubkeyBase
     @kms = obj.kms
     super obj
 
+  # Not needed since we override the methods that were calling these
+  # helpers.
+  sibkid_slot : () -> null
+  get_key_field : () -> null
+
   _required_sections : () -> super().concat [ "team" ]
   _v_customize_json : (ret) ->
     ret.body.team = @team

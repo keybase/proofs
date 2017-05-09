@@ -9,7 +9,7 @@
 
 exports.PerUserKey = class PerUserKey extends SubkeyBase
 
-  get_field : () -> "per_user_key"
+  get_key_field : () -> "per_user_key"
   get_new_key_section : () -> @per_user_key
   set_new_key_section : (m) ->
     m.generation = @generation

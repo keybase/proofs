@@ -17,6 +17,7 @@ exports.PerUserKey = class PerUserKey extends SubkeyBase
     @per_user_key = m
   get_new_km : () -> @kms.signing # use the signing KM
   sibkid_slot : () -> "signing_kid"
+  need_reverse_sig : () -> true
   _type : () -> constants.sig_types.per_user_key
   _type_v2 : () -> constants.sig_types_v2.per_user_key
 

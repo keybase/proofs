@@ -31,6 +31,7 @@ exports.constants = constants =
       leave : "team.leave"
       subteam_head : "team.subteam_head"
       rename_subteam : "team.rename_subteam"
+      invite : "team.invite"
 
   sig_types_v2:
     eldest : 1
@@ -56,6 +57,7 @@ exports.constants = constants =
       leave : 37
       subteam_head : 38
       rename_subteam : 39
+      invite : 40
   proof_types :
     none : 0
     keybase : 1

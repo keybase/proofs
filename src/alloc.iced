@@ -52,6 +52,7 @@ lookup_tab = {
   "team.leave"                     : team.Leave
   "team.subteam_head"              : team.SubteamHead
   "team.rename_subteam"            : team.RenameSubteam
+  "team.invite"                    : team.Invite
 }
 
 #--------------------------------------------

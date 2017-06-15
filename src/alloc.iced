@@ -53,6 +53,7 @@ lookup_tab = {
   "team.subteam_head"              : team.SubteamHead
   "team.rename_subteam"            : team.RenameSubteam
   "team.invite"                    : team.Invite
+  "team.rename_up_pointer"         : team.RenameUpPointer
 }
 
 #--------------------------------------------

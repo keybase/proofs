@@ -1,3 +1,7 @@
+## 2.1.14 (2017-06-14)
+
+- team.rename_up_pointer
+
 ## 2.1.8 (2017-05-05)
 
 - rename shared_dh -> per_user_key

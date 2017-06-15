@@ -119,6 +119,12 @@ exports.RenameSubteam = class RenameSubteam extends TeamBase
 
 #--------------
 
+exports.RenameUpPointer = class RenameUpPointer extends TeamBase
+  _type : () -> constants.sig_types.team.rename_up_pointer
+  _type_v2 : () -> constants.sig_types_v2.team.rename_up_pointer
+
+#--------------
+
 exports.Invite = class Invite extends TeamBase
   _type : () -> constants.sig_types.team.invite
   _type_v2 : () -> constants.sig_types_v2.team.invite

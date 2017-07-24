@@ -33,6 +33,8 @@ exports.constants = constants =
       rename_subteam : "team.rename_subteam"
       invite : "team.invite"
       rename_up_pointer : "team.rename_up_pointer"
+      delete : "team.delete"
+      delete_up_pointer : "team.delete_up_pointer"
 
   sig_types_v2:
     eldest : 1
@@ -60,6 +62,8 @@ exports.constants = constants =
       rename_subteam : 39
       invite : 40
       rename_up_pointer : 41
+      delete : 42
+      delete_up_pointer : 43
   proof_types :
     none : 0
     keybase : 1

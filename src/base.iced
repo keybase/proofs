@@ -204,7 +204,7 @@ class Verifier
       err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?
       if not err?
         if @strict and ((ours = trim(json_stringify_sorted(@json))) isnt json_str_utf8_trimmed)
-          err = new Error "non-canonlical JSON found in strict mode (#{ours} v #{json_str_utf8_trimmed})"
+          err = new Error "non-canonical JSON found in strict mode (#{ours} v #{json_str_utf8_trimmed})"
         else
           await @base._v_check {@json}, defer err
     cb err, @json, json_str_utf8
@@ -377,7 +377,7 @@ class Base
     else if (a = @seqno) and (a isnt (b = json?.seqno))
       new Error "Wrong seqno; wanted '#{a}' but got '#{b}"
     else if @seqno and (a = seq_type(json?.seq_type)) isnt (b = seq_type(@seq_type))
-      new Error "Wrong seq_type: wanted '#{a}' but got '#{b}'"
+      new Error "Wrong seq_type: wanted '#{b}' but got '#{a}'"
     else if not (key = json?.body?.key)?
       new Error "no 'body.key' block in signature"
     else if (section_error = @_check_sections(json))?

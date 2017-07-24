@@ -125,6 +125,18 @@ exports.RenameUpPointer = class RenameUpPointer extends TeamBase
 
 #--------------
 
+exports.Delete  = class Delete extends TeamBase
+  _type : () -> constants.sig_types.team.delete
+  _type_v2 : () -> constants.sig_types_v2.team.delete
+
+#--------------
+
+exports.DeleteUpPointer = class DeleteUpPointer extends TeamBase
+  _type : () -> constants.sig_types.team.delete_up_pointer
+  _type_v2 : () -> constants.sig_types_v2.team.delete_up_pointer
+
+#--------------
+
 exports.Invite = class Invite extends TeamBase
   _type : () -> constants.sig_types.team.invite
   _type_v2 : () -> constants.sig_types_v2.team.invite

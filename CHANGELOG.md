@@ -1,3 +1,7 @@
+## 2.1.15 (2017-07-24)
+
+- team.delete and team.delete_up_pointer
+
 ## 2.1.14 (2017-06-14)
 
 - team.rename_up_pointer

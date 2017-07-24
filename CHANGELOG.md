@@ -1,3 +1,7 @@
+## 2.1.16 (2017-07
+
+- change team.delete to team.delete_root and team.delete_subteam
+
 ## 2.1.15 (2017-07-24)
 
 - team.delete and team.delete_up_pointer

@@ -1,4 +1,8 @@
-## 2.1.16 (2017-07
+## 2.1.17 (2017-09-05)
+
+- legacy TLF upgrade links
+
+## 2.1.16 (2017-07)
 
 - change team.delete to team.delete_root and team.delete_subteam
 

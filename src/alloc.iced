@@ -57,6 +57,7 @@ lookup_tab = {
   "team.delete_root"               : team.DeleteRoot
   "team.delete_subteam"            : team.DeleteSubteam
   "team.delete_up_pointer"         : team.DeleteUpPointer
+  "team.legacy_tlf_upgrade"        : team.LegacyTLFUpgrade
 }
 
 #--------------------------------------------

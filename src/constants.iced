@@ -36,6 +36,7 @@ exports.constants = constants =
       delete_root : "team.delete_root"
       delete_subteam : "team.delete_subteam"
       delete_up_pointer : "team.delete_up_pointer"
+      legacy_tlf_upgrade : "team.legacy_tlf_upgrade"
 
   sig_types_v2:
     eldest : 1
@@ -66,6 +67,7 @@ exports.constants = constants =
       delete_root : 42
       delete_subteam : 43
       delete_up_pointer : 44
+      legacy_tlf_upgrade : 45
   proof_types :
     none : 0
     keybase : 1

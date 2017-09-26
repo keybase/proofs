@@ -154,3 +154,9 @@ exports.LegacyTLFUpgrade = class LegacyTLFUpgrade extends TeamBase
   _type_v2 : () -> constants.sig_types_v2.team.legacy_tlf_upgrade
 
 #--------------
+
+exports.Settings = class Settings extends TeamBase
+  _type : () -> constants.sig_types.team.settings
+  _type_v2 : () -> constants.sig_types_v2.team.settings
+
+#--------------

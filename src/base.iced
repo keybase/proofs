@@ -128,6 +128,8 @@ class Verifier
       new Error "wrong seqno: #{a} != #{b}"
     else if not compare_hash_buf_to_str (a = outer.prev), (b = inner_obj.prev)
       new Error "wrong prev: #{a?.toString('hex')} != #{b}"
+    else if (a = outer.seq_type) isnt (b = (inner_obj.seq_type or constants.seq_types.PUBLIC))
+      new Error "wrong seq type: #{a} != #{b}"
     else
       null
     cb err, outer
@@ -551,6 +553,7 @@ class Base
         seqno : (inner.obj.seqno or 0)
         prev : prev_buf
         hash : hash_sig(new Buffer inner.str, 'utf8')
+        seq_type : (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
       }
       ret = unpacked.pack()
 
@@ -654,19 +657,20 @@ class Base
 
 class OuterLink
 
-  constructor : ({@version, @seqno, @prev, @hash, @type}) ->
+  constructor : ({@version, @seqno, @prev, @hash, @type, @seq_type}) ->
+    @seq_type or= constants.seq_types.SEMIPRIVATE
 
   @parse : ({raw}, cb) ->
     esc = make_esc cb, "OuterLink.parse"
     await akatch (() -> purepack.unpack raw), esc defer arr
     err = ret = null
-    if arr.length isnt 5
-      err = new Error "expected 5 fields; got #{arr.length}"
+    if arr.length not in [5, 6]
+      err = new Error "expected 5 or 6 fields; got #{arr.length}"
     else
-      ret = new OuterLink { version : arr[0], seqno : arr[1], prev : arr[2], hash : arr[3], type : arr[4] }
+      ret = new OuterLink { version : arr[0], seqno : arr[1], prev : arr[2], hash : arr[3], type : arr[4], seq_type : arr[5] }
     cb err, ret
 
-  pack : () -> purepack.pack [ @version, @seqno, @prev, @hash, @type ]
+  pack : () -> purepack.pack [ @version, @seqno, @prev, @hash, @type, @seq_type ]
   outer_link_hash : () -> hash_sig(@pack())
 
 #==========================================================================

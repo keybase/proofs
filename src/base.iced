@@ -128,7 +128,7 @@ class Verifier
       new Error "wrong seqno: #{a} != #{b}"
     else if not compare_hash_buf_to_str (a = outer.prev), (b = inner_obj.prev)
       new Error "wrong prev: #{a?.toString('hex')} != #{b}"
-    else if (a = outer.seq_type) isnt (b = (inner_obj.seq_type or constants.seq_types.PUBLIC))
+    else if (a = outer.get_seq_type()) isnt (b = (inner_obj.seq_type or constants.seq_types.PUBLIC))
       new Error "wrong seq type: #{a} != #{b}"
     else
       null
@@ -661,7 +661,6 @@ class Base
 class OuterLink
 
   constructor : ({@version, @seqno, @prev, @hash, @type, @seq_type}) ->
-    @seq_type or= constants.seq_types.SEMIPRIVATE
 
   @parse : ({raw}, cb) ->
     esc = make_esc cb, "OuterLink.parse"
@@ -673,7 +672,18 @@ class OuterLink
       ret = new OuterLink { version : arr[0], seqno : arr[1], prev : arr[2], hash : arr[3], type : arr[4], seq_type : arr[5] }
     cb err, ret
 
-  pack : () -> purepack.pack [ @version, @seqno, @prev, @hash, @type, @seq_type ]
+  get_seq_type : () -> if @seq_type then @seq_type else constants.seq_types.SEMIPRIVATE
+
+  pack : () ->
+    # For backwards-compatibility, if the incoming chainlink doesn't have a
+    # seq_type, we don't push a null or a defaut value (3), we just leave it as
+    # a 5-value array
+    arr = [ @version, @seqno, @prev, @hash, @type ]
+
+    # For newer clients that push an explicit seq_type value, we push it onto the array here
+    arr.push @seq_type if @seq_type?
+    purepack.pack arr
+
   outer_link_hash : () -> hash_sig(@pack())
 
 #==========================================================================

@@ -24,13 +24,14 @@ class User
     username = new_username()
     cb null, new User { uid, username, km }
   to_json : () -> { @uid, @username }
-  to_constructor_arg : () -> {
+  to_constructor_arg : ({seq_type} = {}) -> {
     user :
       local :
         username : @username
         uid : @uid
     host : 'keybase.io'
     sig_eng : @km.make_sig_eng()
+    seq_type : (seq_type or constants.seq_types.PUBLIC)
   }
 
 
@@ -42,16 +43,16 @@ class Chain
   push : (l) -> @links.push l
   copy : () -> new Chain { @user, links : [].concat(@links) }
 
-  to_constructor_arg : () ->
-    arg = @user.to_constructor_arg()
+  to_constructor_arg : (opts = {}) ->
+    arg = @user.to_constructor_arg(opts)
     if (p = @prev())? then p.populate_next arg
     else
       arg.seqno = 0
       arg.prev = null
     arg
 
-  to_btc_constructor_arg : () ->
-    ret = @to_constructor_arg()
+  to_btc_constructor_arg : (opts) ->
+    ret = @to_constructor_arg(opts)
     ret.cryptocurrency = {
       address: "1BjgMvwVkpmmJ5HFGZ3L3H1G6fcKLNGT5h"
       type: "bitcoin"
@@ -69,8 +70,8 @@ class LinkV2
   full_type : () -> @inner.obj.body.type
   prev : () -> @inner.obj.prev
 
-  verify : ({chain}, cb) ->
-    carg = chain.user.to_constructor_arg()
+  verify : ({chain, opts}, cb) ->
+    carg = chain.user.to_constructor_arg(opts)
     verifier = alloc @full_type(), carg
     varg = { @armored, skip_ids : true, make_ids : true, inner : @inner.str }
     await verifier.verify_v2 varg, defer err
@@ -245,6 +246,13 @@ exports.check_bad_seqno = (T,cb) ->
 
 #-------------
 
+exports.check_bad_seq_type = (T,cb) ->
+  f = (o) -> o[5] = constants.seq_types.SEMIPRIVATE
+  msg = "Error: wrong seq type: 3 != 1"
+  check_bad_link T, null, f, msg, cb
+
+#-------------
+
 exports.check_bad_prev = (T,cb) ->
   msg = null
   f = (o) ->
@@ -252,5 +260,20 @@ exports.check_bad_prev = (T,cb) ->
     o[2] = o[3]
   msg_fn = () -> msg
   check_bad_link T, null, f, msg_fn, cb
+
+#-------------
+
+exports.semiprivate_link = (T,cb) ->
+  esc = make_esc cb, "semiprivate_link"
+  semipriv_chain = new Chain { user }
+  arg = semipriv_chain.to_constructor_arg({seq_type : constants.seq_types.SEMIPRIVATE})
+  eldest = new Eldest arg
+  await eldest.generate_v2 esc defer out
+  T.equal out.inner.obj.seq_type, constants.seq_types.SEMIPRIVATE, "right inner seqtype"
+  T.equal unpack(out.outer)[5], constants.seq_types.SEMIPRIVATE, "right outer seqtype"
+  link = new LinkV2 out
+  semipriv_chain.push link
+  await check_valid_chain {T, chain: semipriv_chain}, esc defer()
+  cb null
 
 #-------------

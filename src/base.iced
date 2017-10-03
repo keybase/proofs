@@ -515,6 +515,9 @@ class Base
   #------
 
   generate_v2 : (cb) ->
+    # If @seq_type isn't specified, then default to public
+    @seq_type or= constants.seq_types.PUBLIC
+
     esc = make_esc cb, "generate"
     out = null
     opts = { version : constants.versions.sig_v2 }

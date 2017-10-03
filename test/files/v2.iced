@@ -31,7 +31,7 @@ class User
         uid : @uid
     host : 'keybase.io'
     sig_eng : @km.make_sig_eng()
-    seq_type : (seq_type or constants.seq_types.PUBLIC)
+    seq_type : seq_type
   }
 
 

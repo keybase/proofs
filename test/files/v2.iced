@@ -241,7 +241,7 @@ exports.check_bad_hash = (T,cb) ->
 
 exports.check_bad_seqno = (T,cb) ->
   f = (o) -> o[1]++
-  msg = "Error: wrong seqno: 4 != 3"
+  msg = "WrongSeqnoError: wrong seqno: 4 != 3"
   check_bad_link T, null, f, msg, cb
 
 #-------------

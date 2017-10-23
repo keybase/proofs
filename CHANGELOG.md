@@ -1,3 +1,7 @@
+## 2.1.22 (2017-10-23)
+
+- Better error message for sequence number violations
+
 ## 2.1.17 (2017-09-05)
 
 - legacy TLF upgrade links

@@ -125,7 +125,9 @@ class Verifier
     else if not bufeq_secure (a = outer.hash), (b = hash_sig(inner_buf))
       new Error "hash mismatch: #{a?.toString('hex')} != #{b?.toString('hex')}"
     else if (a = outer.seqno) isnt (b = inner_obj.seqno)
-      new Error "wrong seqno: #{a} != #{b}"
+      err = new errors.WrongSeqnoError "wrong seqno: #{a} != #{b}"
+      err.seqno = b
+      err
     else if not compare_hash_buf_to_str (a = outer.prev), (b = inner_obj.prev)
       new Error "wrong prev: #{a?.toString('hex')} != #{b}"
     else if (a = outer.get_seq_type()) isnt (b = (inner_obj.seq_type or constants.seq_types.PUBLIC))
@@ -374,10 +376,12 @@ class Base
       # care what the signature type is.  Imagine the case of just trying to
       # get the user's keybinding.  Then any signature will do.
       new Error "Wrong signature type; got '#{a}' but wanted '#{b}'"
+    else if (a = @seqno) and (a isnt (b = json?.seqno))
+      err = new errors.WrongSeqnoError "Wrong seqno; wanted '#{a}' but got '#{b}"
+      err.seqno = b
+      err
     else if (a = @prev) and (a isnt (b = json?.prev))
       new Error "Wrong previous hash; wanted '#{a}' but got '#{b}'"
-    else if (a = @seqno) and (a isnt (b = json?.seqno))
-      new Error "Wrong seqno; wanted '#{a}' but got '#{b}"
     else if @seqno and (a = seq_type(json?.seq_type)) isnt (b = seq_type(@seq_type))
       new Error "Wrong seq_type: wanted '#{b}' but got '#{a}'"
     else if not (key = json?.body?.key)?

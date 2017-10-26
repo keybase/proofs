@@ -575,6 +575,7 @@ class Base
         prev : prev_buf
         hash : hash_sig(new Buffer inner.str, 'utf8')
         seq_type : (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
+        ignore_if_unsupported : !!(@_ignore_if_unsupported?())
       }
       ret = unpacked.pack()
 
@@ -678,16 +679,21 @@ class Base
 
 class OuterLink
 
-  constructor : ({@version, @seqno, @prev, @hash, @type, @seq_type}) ->
+  # Fields after `type` were added later. Fields must be filled in order. Valid combinations:
+  # - first 5 filled
+  # - first 6 filled
+  # - first 7 filled
+  # It is invalid to fill ignore_if_unsupported by not seq_type.
+  constructor : ({@version, @seqno, @prev, @hash, @type, @seq_type, @ignore_if_unsupported}) ->
 
   @parse : ({raw}, cb) ->
     esc = make_esc cb, "OuterLink.parse"
     await akatch (() -> purepack.unpack raw), esc defer arr
     err = ret = null
-    if arr.length not in [5, 6]
-      err = new Error "expected 5 or 6 fields; got #{arr.length}"
+    if arr.length not in [5, 6, 7]
+      err = new Error "expected 5, 6, or 7 fields; got #{arr.length}"
     else
-      ret = new OuterLink { version : arr[0], seqno : arr[1], prev : arr[2], hash : arr[3], type : arr[4], seq_type : arr[5] }
+      ret = new OuterLink { version : arr[0], seqno : arr[1], prev : arr[2], hash : arr[3], type : arr[4], seq_type : arr[5], ignore_if_unsupported : arr[6] }
     cb err, ret
 
   get_seq_type : () -> if @seq_type then @seq_type else constants.seq_types.SEMIPRIVATE
@@ -700,6 +706,9 @@ class OuterLink
 
     # For newer clients that push an explicit seq_type value, we push it onto the array here
     arr.push @seq_type if @seq_type?
+
+    arr.push (!!@ignore_if_unsupported) if @ignore_if_unsupported?
+
     purepack.pack arr
 
   outer_link_hash : () -> hash_sig(@pack())

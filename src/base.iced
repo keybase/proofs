@@ -42,6 +42,20 @@ sig_id_to_med_id = (sig_id) -> base64u.encode sig_id
 sig_id_to_short_id = (sig_id) ->
   base64u.encode sig_id[0...constants.short_id_bytes]
 
+exports.errsan = errsan = (s) ->
+  if typeof(s) is 'number' then return s
+  if not s? then return s
+  map = {
+    "&" : "&amp;"
+    "<" : "&lt;"
+    ">" : "&gt;"
+    '"' : "&quot;"
+    "'" : "&#x27;"
+    "/" : "&#x2F;"
+  }
+  re = new RegExp("[" + Object.keys(map) + "]", "g")
+  s.replace re, (c) -> (map[c] or c)
+
 #================================================================================
 
 has_revoke = (o) ->
@@ -117,21 +131,21 @@ class Verifier
     esc = make_esc cb, "_check_inner_outer_match"
     await OuterLink.parse { raw : outer_raw }, esc defer outer
     err = if (a = outer.type) isnt (b = @base._type_v2(has_revoke(inner_obj.body)))
-      new Error "Type mismatch: #{a} != #{b}"
+      new Error "Type mismatch: #{errsan a} != #{errsan b}"
     else if (a = outer.version) isnt (b = constants.versions.sig_v2)
-      new Error "Bad version: #{a} != #{b}"
+      new Error "Bad version: #{errsan a} != #{errsan b}"
     else if (a = outer.version) isnt (b = inner_obj.body.version)
-      new Error "Version mismatch: #{a} != #{b}"
+      new Error "Version mismatch: #{errsan a} != #{errsan b}"
     else if not bufeq_secure (a = outer.hash), (b = hash_sig(inner_buf))
       new Error "hash mismatch: #{a?.toString('hex')} != #{b?.toString('hex')}"
     else if (a = outer.seqno) isnt (b = inner_obj.seqno)
-      err = new errors.WrongSeqnoError "wrong seqno: #{a} != #{b}"
+      err = new errors.WrongSeqnoError "wrong seqno: #{errsan a} != #{errsan b}"
       err.seqno = b
       err
     else if not compare_hash_buf_to_str (a = outer.prev), (b = inner_obj.prev)
-      new Error "wrong prev: #{a?.toString('hex')} != #{b}"
+      new Error "wrong prev: #{a?.toString('hex')} != #{errsan b}"
     else if (a = outer.get_seq_type()) isnt (b = (inner_obj.seq_type or constants.seq_types.PUBLIC))
-      new Error "wrong seq type: #{a} != #{b}"
+      new Error "wrong seq type: #{errsan a} != #{errsan b}"
     else
       null
     cb err, outer
@@ -141,9 +155,9 @@ class Verifier
   _check_ids : (body, cb) ->
     {short_id, id} = make_ids body
     err = if not (@id? and streq_secure id, @id)
-      new Error "Long IDs aren't equal; wanted #{id} but got #{@id}"
+      new Error "Long IDs aren't equal; wanted #{errsan id} but got #{errsan @id}"
     else if not (@short_id? and streq_secure short_id, @short_id)
-      new Error "Short IDs aren't equal: wanted #{short_id} but got #{@short_id}"
+      new Error "Short IDs aren't equal: wanted #{errsan short_id} but got #{errsan @short_id}"
     else null
     cb err
 
@@ -208,7 +222,7 @@ class Verifier
       err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?
       if not err?
         if @strict and ((ours = trim(json_stringify_sorted(@json))) isnt json_str_utf8_trimmed)
-          err = new Error "non-canonical JSON found in strict mode (#{ours} v #{json_str_utf8_trimmed})"
+          err = new Error "non-canonical JSON found in strict mode (#{errsan ours} v #{errsan json_str_utf8_trimmed})"
         else
           await @base._v_check {@json}, defer err
     cb err, @json, json_str_utf8
@@ -245,7 +259,7 @@ class Base
 
   _v_check_kid : (kid) ->
     if not bufeq_secure (a = @km().get_ekid()), (new Buffer kid, "hex")
-      err = new Error "Verification key doesn't match packet (via kid): #{a.toString('hex')} != #{kid}"
+      err = new Error "Verification key doesn't match packet (via kid): #{errsan a.toString('hex')} != #{errsan kid}"
     else
       null
 
@@ -255,7 +269,7 @@ class Base
     if not (key_id = key?.key_id)?
       new Error "Needed a body.key.key_id but none given"
     else if not bufeq_secure (a = @km().get_pgp_key_id()), (new Buffer key_id, "hex")
-      new Error "Verification key doesn't match packet (via key ID): #{a.toString('hex')} != #{key_id}"
+      new Error "Verification key doesn't match packet (via key ID): #{errsan a.toString('hex')} != #{errsan key_id}"
     else if not (fp = key?.fingerprint)?
       new Error "Needed a body.key.fingerprint but none given"
     else if not bufeq_secure @km().get_pgp_fingerprint(), (new Buffer fp, "hex")
@@ -334,7 +348,7 @@ class Base
 
     if json?.body?.key?.username
       if not cieq (a = json?.body?.key?.username), (b = @user.local.username)
-        return new Error "Wrong local user: got '#{a}' but wanted '#{b}'"
+        return new Error "Wrong local user: got '#{errsan a}' but wanted '#{errsan b}'"
       else
         has_user_id = true
     else if @_v_require_username()
@@ -342,7 +356,7 @@ class Base
 
     if json?.body?.key?.uid
       if (a = json?.body?.key?.uid) isnt (b = @user.local.uid)
-        return new Error "Wrong local uid: got '#{a}' but wanted '#{b}'"
+        return new Error "Wrong local uid: got '#{errsan a}' but wanted '#{errsan b}'"
       else
         has_user_id = true
     else if @_v_require_uid()
@@ -352,7 +366,7 @@ class Base
       if e.toLowerCase() in (x.toLowerCase() for x in v when x?)
         has_user_id = true
       else
-        return new Error "given email '#{e}' doesn't match"
+        return new Error "given email '#{errsan e}' doesn't match"
 
     if not has_user_id
       return new Error "no UID or username given for signature"
@@ -370,20 +384,20 @@ class Base
 
     err = if err? then err
     else if not cieq (a = json?.body?.key?.host), (b = @host)
-      new Error "Wrong host: got '#{a}' but wanted '#{b}'"
+      new Error "Wrong host: got '#{errsan a}' but wanted '#{errsan b}'"
     else if (a = @_type())? and ((b = json?.body?.type) isnt a)
       # Don't check if it's a "generic_binding", which doesn't much
       # care what the signature type is.  Imagine the case of just trying to
       # get the user's keybinding.  Then any signature will do.
-      new Error "Wrong signature type; got '#{a}' but wanted '#{b}'"
+      new Error "Wrong signature type; got '#{errsan a}' but wanted '#{errsan b}'"
     else if (a = @seqno) and (a isnt (b = json?.seqno))
-      err = new errors.WrongSeqnoError "Wrong seqno; wanted '#{a}' but got '#{b}"
+      err = new errors.WrongSeqnoError "Wrong seqno; wanted '#{errsan a}' but got '#{errsan b}"
       err.seqno = b
       err
     else if (a = @prev) and (a isnt (b = json?.prev))
-      new Error "Wrong previous hash; wanted '#{a}' but got '#{b}'"
+      new Error "Wrong previous hash; wanted '#{errsan a}' but got '#{errsan b}'"
     else if @seqno and (a = seq_type(json?.seq_type)) isnt (b = seq_type(@seq_type))
-      new Error "Wrong seq_type: wanted '#{b}' but got '#{a}'"
+      new Error "Wrong seq_type: wanted '#{errsan b}' but got '#{errsan a}'"
     else if not (key = json?.body?.key)?
       new Error "no 'body.key' block in signature"
     else if (section_error = @_check_sections(json))?
@@ -411,13 +425,13 @@ class Base
   _check_sections : (json) ->
     for section in @_required_sections()
       unless json?.body?[section]
-        return new Error "Missing '#{section}' section #{if json.seqno? then "in seqno " + json.seqno else ""}, required for #{json.body.type} signatures"
+        return new Error "Missing '#{section}' section #{if json.seqno? then "in seqno " + json.seqno else ""}, required for #{errsan json.body.type} signatures"
 
     # Sometimes we don't really need to check, we just need a "key" section
     unless @_is_wildcard_link()
       for section, _ of json?.body
         unless (section in @_required_sections()) or (section in @_optional_sections())
-          return new Error "'#{section}' section #{if json.seqno? then "in seqno " + json.seqno else ""} is not allowed for #{json.body.type} signatures"
+          return new Error "'#{section}' section #{if json.seqno? then "in seqno " + json.seqno else ""} is not allowed for #{errsan json.body.type} signatures"
 
     null
 
@@ -549,7 +563,7 @@ class Base
       try
         prev_buf = new Buffer(p, 'hex')
       catch e
-        err = new Error "failed to read #{p} as a hex string"
+        err = new Error "failed to read #{errsan p} as a hex string"
       if not err? and prev_buf.length isnt 32 # expect a SHA256 hash
         err = new Error "bad hash length: #{prev_buf.length}"
 
@@ -647,7 +661,7 @@ class Base
     else
       [ err, msg ] = kbpgp.ukm.decode_sig { armored: args.sig }
       if not err? and (msg.type isnt kbpgp.const.openpgp.message_types.generic)
-        err = new Error "wrong message type; expected a generic message; got #{msg.type}"
+        err = new Error "wrong message type; expected a generic message; got #{errsan msg.type}"
       if not err?
         check_for = msg.body.toString('base64')
         len_floor = constants.shortest_pgp_signature

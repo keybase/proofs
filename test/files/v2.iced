@@ -229,6 +229,12 @@ exports.check_bad_version = (T,cb) ->
 
 #-------------
 
+exports.check_bad_xss = (T,cb) ->
+  f = (o) -> o[0] = "<script>alert()</script>"
+  check_bad_link T, null, f, "Error: Bad version: &lt;script&gt;alert()&lt;&#x2F;script&gt; != 2", cb
+
+#-------------
+
 exports.check_bad_hash = (T,cb) ->
   msg = null
   f = (o) ->

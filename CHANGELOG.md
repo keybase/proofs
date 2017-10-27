@@ -1,3 +1,7 @@
+## 2.1.23 (2017-10-27)
+
+- Be more paranoid about error strings, in case they ever wind up in HTML
+
 ## 2.1.22 (2017-10-23)
 
 - Better error message for sequence number violations

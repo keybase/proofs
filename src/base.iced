@@ -146,6 +146,8 @@ class Verifier
       new Error "wrong prev: #{a?.toString('hex')} != #{errsan b}"
     else if (a = outer.get_seq_type()) isnt (b = (inner_obj.seq_type or constants.seq_types.PUBLIC))
       new Error "wrong seq type: #{errsan a} != #{errsan b}"
+    else if (a = outer.get_ignore_if_unsupported()) isnt (b = (inner_obj.ignore_if_unsupported or false))
+      new Error "wrong ignore_if_unsupported value: #{errsan a} != #{errsan b}"
     else
       null
     cb err, outer
@@ -233,7 +235,7 @@ class Base
 
   #------
 
-  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @eldest_kid, @expire_in, @ctime}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @ignore_if_unsupported, @eldest_kid, @expire_in, @ctime}) ->
 
   #------
 
@@ -502,6 +504,8 @@ class Base
     #
     ret.seq_type = @seq_type if @seq_type?
 
+    ret.ignore_if_unsupported = !!@ignore_if_unsupported if @ignore_if_unsupported?
+
     ret.body.client = @client if @client?
     ret.body.merkle_root = @merkle_root if @merkle_root?
     ret.body.revoke = @revoke if @has_revoke()
@@ -574,8 +578,8 @@ class Base
         seqno : (inner.obj.seqno or 0)
         prev : prev_buf
         hash : hash_sig(new Buffer inner.str, 'utf8')
-        seq_type : (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
-        ignore_if_unsupported : !!(@_ignore_if_unsupported?())
+        seq_type : if (x = inner.obj.seq_type_for_testing)? then x else (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
+        ignore_if_unsupported : if (x = inner.obj.ignore_if_unsupported_for_testing)? then x else !!(inner.obj.ignore_if_unsupported or false)
       }
       ret = unpacked.pack()
 
@@ -697,6 +701,8 @@ class OuterLink
     cb err, ret
 
   get_seq_type : () -> if @seq_type then @seq_type else constants.seq_types.SEMIPRIVATE
+
+  get_ignore_if_unsupported : () -> if @ignore_if_unsupported then @ignore_if_unsupported else false
 
   pack : () ->
     # For backwards-compatibility, if the incoming chainlink doesn't have a

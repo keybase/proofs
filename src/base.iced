@@ -44,7 +44,10 @@ sig_id_to_short_id = (sig_id) ->
 
 exports.errsan = errsan = (s) ->
   if typeof(s) is 'number' then return s
+  if typeof(s) is 'boolean' then return s
   if not s? then return s
+  if typeof(s) isnt 'string'
+    s = s.toString()
   map = {
     "&" : "&amp;"
     "<" : "&lt;"

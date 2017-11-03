@@ -709,8 +709,10 @@ class OuterLink
 
   pack : () ->
     # For backwards-compatibility, if the incoming chainlink doesn't have a
-    # seq_type, we don't push a null or a defaut value (3), we just leave it as
-    # a 5-value array
+    # values for seq_type and ignore_if_unsupported then we don't push null or
+    # default values, we just leave it as a 5-value array.
+    # If it has seq_type but not ignore_if_unsupported, then we leave a 6-value array.
+    # It is invalid but not detected here to have a ignore_if_unsupported value but not seq_type.
     arr = [ @version, @seqno, @prev, @hash, @type ]
 
     # For newer clients that push an explicit seq_type value, we push it onto the array here

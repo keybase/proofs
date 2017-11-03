@@ -1,3 +1,7 @@
+## 2.1.24 (2017-11-03)
+
+- Add `ignore_if_unsupported` bool for backwards compatible links
+
 ## 2.1.23 (2017-10-27)
 
 - Be more paranoid about error strings, in case they ever wind up in HTML

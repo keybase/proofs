@@ -44,7 +44,10 @@ sig_id_to_short_id = (sig_id) ->
 
 exports.errsan = errsan = (s) ->
   if typeof(s) is 'number' then return s
+  if typeof(s) is 'boolean' then return s
   if not s? then return s
+  if typeof(s) isnt 'string'
+    s = s.toString()
   map = {
     "&" : "&amp;"
     "<" : "&lt;"
@@ -146,6 +149,8 @@ class Verifier
       new Error "wrong prev: #{a?.toString('hex')} != #{errsan b}"
     else if (a = outer.get_seq_type()) isnt (b = (inner_obj.seq_type or constants.seq_types.PUBLIC))
       new Error "wrong seq type: #{errsan a} != #{errsan b}"
+    else if (a = outer.get_ignore_if_unsupported()) isnt (b = (inner_obj.ignore_if_unsupported or false))
+      new Error "wrong ignore_if_unsupported value: #{errsan a} != #{errsan b}"
     else
       null
     cb err, outer
@@ -233,7 +238,7 @@ class Base
 
   #------
 
-  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @eldest_kid, @expire_in, @ctime}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @ignore_if_unsupported, @eldest_kid, @expire_in, @ctime}) ->
 
   #------
 
@@ -502,6 +507,8 @@ class Base
     #
     ret.seq_type = @seq_type if @seq_type?
 
+    ret.ignore_if_unsupported = !!@ignore_if_unsupported if @ignore_if_unsupported?
+
     ret.body.client = @client if @client?
     ret.body.merkle_root = @merkle_root if @merkle_root?
     ret.body.revoke = @revoke if @has_revoke()
@@ -574,7 +581,8 @@ class Base
         seqno : (inner.obj.seqno or 0)
         prev : prev_buf
         hash : hash_sig(new Buffer inner.str, 'utf8')
-        seq_type : (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
+        seq_type : if (x = inner.obj.seq_type_for_testing)? then x else (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
+        ignore_if_unsupported : if (x = inner.obj.ignore_if_unsupported_for_testing)? then x else !!(inner.obj.ignore_if_unsupported or false)
       }
       ret = unpacked.pack()
 
@@ -678,28 +686,40 @@ class Base
 
 class OuterLink
 
-  constructor : ({@version, @seqno, @prev, @hash, @type, @seq_type}) ->
+  # Fields after `type` were added later. Fields must be filled in order. Valid combinations:
+  # - first 5 filled
+  # - first 6 filled
+  # - first 7 filled
+  # It is invalid to fill ignore_if_unsupported by not seq_type.
+  constructor : ({@version, @seqno, @prev, @hash, @type, @seq_type, @ignore_if_unsupported}) ->
 
   @parse : ({raw}, cb) ->
     esc = make_esc cb, "OuterLink.parse"
     await akatch (() -> purepack.unpack raw), esc defer arr
     err = ret = null
-    if arr.length not in [5, 6]
-      err = new Error "expected 5 or 6 fields; got #{arr.length}"
+    if arr.length not in [5, 6, 7]
+      err = new Error "expected 5, 6, or 7 fields; got #{arr.length}"
     else
-      ret = new OuterLink { version : arr[0], seqno : arr[1], prev : arr[2], hash : arr[3], type : arr[4], seq_type : arr[5] }
+      ret = new OuterLink { version : arr[0], seqno : arr[1], prev : arr[2], hash : arr[3], type : arr[4], seq_type : arr[5], ignore_if_unsupported : arr[6] }
     cb err, ret
 
   get_seq_type : () -> if @seq_type then @seq_type else constants.seq_types.SEMIPRIVATE
 
+  get_ignore_if_unsupported : () -> if @ignore_if_unsupported then @ignore_if_unsupported else false
+
   pack : () ->
     # For backwards-compatibility, if the incoming chainlink doesn't have a
-    # seq_type, we don't push a null or a defaut value (3), we just leave it as
-    # a 5-value array
+    # values for seq_type and ignore_if_unsupported then we don't push null or
+    # default values, we just leave it as a 5-value array.
+    # If it has seq_type but not ignore_if_unsupported, then we leave a 6-value array.
+    # It is invalid but not detected here to have a ignore_if_unsupported value but not seq_type.
     arr = [ @version, @seqno, @prev, @hash, @type ]
 
     # For newer clients that push an explicit seq_type value, we push it onto the array here
     arr.push @seq_type if @seq_type?
+
+    arr.push (!!@ignore_if_unsupported) if @ignore_if_unsupported?
+
     purepack.pack arr
 
   outer_link_hash : () -> hash_sig(@pack())

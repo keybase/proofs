@@ -9,7 +9,7 @@ pgp_utils = require('pgp-utils')
 
 #==========================================================================
 
-class TeamBase extends SubkeyBase
+exports.TeamBase = class TeamBase extends SubkeyBase
 
   constructor : (obj) ->
     @team = obj.team

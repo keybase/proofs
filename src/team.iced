@@ -149,9 +149,9 @@ exports.Invite = class Invite extends TeamBase
 
 #--------------
 
-exports.LegacyTLFUpgrade = class LegacyTLFUpgrade extends TeamBase
-  _type : () -> constants.sig_types.team.legacy_tlf_upgrade
-  _type_v2 : () -> constants.sig_types_v2.team.legacy_tlf_upgrade
+exports.KBFS = class KBFS extends TeamBase
+  _type : () -> constants.sig_types.team.kbfs
+  _type_v2 : () -> constants.sig_types_v2.team.kbfs
 
 #--------------
 

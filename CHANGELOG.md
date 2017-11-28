@@ -1,4 +1,4 @@
-## 2.1.25 (2017-11-28)
+## 2.1.26 (2017-11-28)
 
 - Legacy TLF upgrade -> KBFS in general (since we're also going to use it for TLF ID bindings)
 

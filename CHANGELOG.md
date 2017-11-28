@@ -1,3 +1,7 @@
+## 2.1.25 (2017-11-28)
+
+- Legacy TLF upgrade -> KBFS in general (since we're also going to use it for TLF ID bindings)
+
 ## 2.1.24 (2017-11-03)
 
 - Add `ignore_if_unsupported` bool for backwards compatible links

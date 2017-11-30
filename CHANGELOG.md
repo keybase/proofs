@@ -1,3 +1,7 @@
+## 2.1.27 (2017-11-30)
+
+- Retire code=45, from legacy_tlf_upgrade, and change kbfs settings to code=47
+
 ## 2.1.26 (2017-11-28)
 
 - Legacy TLF upgrade -> KBFS in general (since we're also going to use it for TLF ID bindings)

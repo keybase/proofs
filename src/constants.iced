@@ -68,8 +68,9 @@ exports.constants = constants =
       delete_root : 42
       delete_subteam : 43
       delete_up_pointer : 44
-      kbfs : 45
+      # Note that 45 is retired; it used to be legacy_tlf_upgrade
       settings : 46
+      kbfs : 47
   proof_types :
     none : 0
     keybase : 1

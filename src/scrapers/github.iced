@@ -36,7 +36,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
     if rc is v_codes.OK
       rc = v_codes.NOT_FOUND
       for gist in json
-        await @_search_gist { gist, proof_text_check }, defer out
+        await @_search_gist { gist, proof_text_check, gh_username: username }, defer out
         break if out.rc is v_codes.OK
     out.rc or= rc
     cb err, out
@@ -49,7 +49,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  _search_gist : ({gist, proof_text_check}, cb) ->
+  _search_gist : ({gist, proof_text_check, gh_username}, cb) ->
     out = {}
     if not (u = gist.url)?
       @log "| gist didn't have a URL"
@@ -61,6 +61,19 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
       else
         rc = v_codes.NOT_FOUND
         for filename, file of json.files when (content = file.content)?
+          content_norm = replace_all_whitespace(content).trim()
+          escaped_gh_username = regex_escape(gh_username)
+          # The common header.
+          header1 = new RegExp("^### Keybase proof I hereby claim: \\* I am #{escaped_gh_username} on github\\. \\* I am \\w+ \\(https://keybase\\.io/\\w+\\) on keybase\\. ", "i")
+          # The old header, possibly only used by Max :p
+          header2 = new RegExp("^### Verifying myself: I am (https://keybase\\.io/)?\\w+ As part of this verification process, I am signing this object and posting as a gist as github user \\*#{escaped_gh_username}\\* ", "i")
+          if not content_norm.match(header1) and not content_norm.match(header2)
+            @log "| search #{filename} -> no claim"
+            continue
+          image_regex = new RegExp("!\\[", "i")
+          if content.match(image_regex)
+            @log "| search #{filename} -> gist contains an image"
+            continue
           if @_find_sig_in_raw(proof_text_check, content)
             @log "| search #{filename} -> found"
             rc = v_codes.OK
@@ -100,3 +113,11 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
 #================================================================================
 
+# Make it easier to match multi-line strings, by just replacing all whitespace
+# runs (including newlines) with a single space.
+replace_all_whitespace = (s) ->
+  s.replace(/\s+/g, " ")
+
+# https://stackoverflow.com/a/3561711/823869
+regex_escape = (s) ->
+    s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');

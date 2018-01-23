@@ -1,3 +1,11 @@
+## 2.1.29 (2018-01-23)
+
+- liberalize twitter hunt/scrape since now they emlinkify Keybase.io
+
+## 2.1.28 (2018-01-22)
+
+- tighten up GH regex
+
 ## 2.1.27 (2017-11-30)
 
 - Retire code=45, from legacy_tlf_upgrade, and change kbfs settings to code=47

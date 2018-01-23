@@ -280,7 +280,11 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
     inside = ws_normalize inside
     proof_text_check = ws_normalize proof_text_check
 
-    @log "+ Checking tweet '#{inside}' for signature '#{proof_text_check}'"
+    rxx_text = proof_text_check.replace(" on Keybase.io.", " on (Keybase.io|https://t\\.co/\\S*|http://Keybase\\.io\\s)\\.")
+    rxx = new RegExp ("^" + rxx_text + ".*")
+
+    @log "+ Checking tweet '#{inside}' for signature '#{rxx}'"
+    @log "| Incoming check text: #{proof_text_check}"
     @log "| html is: #{html}" if html?
 
     x = /^(@[a-zA-Z0-9_-]+\s+)/
@@ -288,7 +292,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       p = m[1]
       inside = inside[p.length...]
       @log "| Stripping off @prefix: #{p}"
-    rc = if inside.indexOf(proof_text_check) is 0 then v_codes.OK else v_codes.DELETED
+    rc = if inside.match(rxx)? then v_codes.OK else v_codes.DELETED
     @log "- Result -> #{rc}"
     return rc
 

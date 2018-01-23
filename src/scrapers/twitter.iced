@@ -280,6 +280,11 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
     inside = ws_normalize inside
     proof_text_check = ws_normalize proof_text_check
 
+    # Oh boy what's going on here? Twitter changed their tweet formatting
+    # sometime in January 2018, so where old tweets have just "Keybase.io"
+    # text, new tweets make it a link. We need to expect both. Also the hunter
+    # and the scraper see two slightly different things, so we actually need to
+    # handle 3 cases.
     rxx_text = proof_text_check.replace(" on Keybase.io.", " on (Keybase.io|https://t\\.co/\\S*|http://Keybase\\.io\\s)\\.")
     rxx = new RegExp ("^" + rxx_text + ".*")
 

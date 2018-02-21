@@ -1,3 +1,7 @@
+## 2.1.30 (2018-02-21)
+
+- Bugfix in sigchainv2.
+
 ## 2.1.29 (2018-01-23)
 
 - liberalize twitter hunt/scrape since now they emlinkify Keybase.io

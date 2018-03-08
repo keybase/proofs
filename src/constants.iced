@@ -22,6 +22,7 @@ exports.constants = constants =
     device : "device"
     eldest : "eldest"
     per_user_key : "per_user_key"
+    wallet_key : "wallet_key"
     team :
       index : "team.index"
       root : "team.root"
@@ -54,6 +55,7 @@ exports.constants = constants =
     subkey : 12
     pgp_update : 13
     per_user_key : 14
+    wallet_key : 15
     team :
       index : 32
       root : 33

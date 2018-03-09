@@ -40,7 +40,7 @@ $(BUILD_STAMP): \
 	lib/scrapers/twitter.js \
 	lib/team.js \
 	lib/track.js \
-	lib/wallet_key.js \
+	lib/wallet.js \
 	lib/web_service.js \
 	lib/update_passphrase_hash.js \
 	lib/update_settings.js \

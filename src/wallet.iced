@@ -7,7 +7,7 @@
 
 exports.Wallet = class Wallet extends SubkeyBase
 
-  get_key_field : () -> "wallet"
+  get_key_field : () -> "wallet_key"
   get_new_key_section : () -> @wallet_key
   set_new_key_section : (m) -> @wallet_key = m
   get_new_km : () -> @wallet.km

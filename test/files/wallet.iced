@@ -13,7 +13,7 @@ exports.test_wallet_key_happy_path = (T,cb) ->
   arg.wallet =
     km : stellar
     network : "stellar"
-    account_name : "default"
+    name : "default"
   obj = new Wallet arg
   await obj.generate esc defer out
   typ = out.inner.obj.body.type
@@ -30,7 +30,7 @@ round_trip_with_corrupted_reverse_sig = ({T, corrupt}, cb) ->
   arg.wallet =
     km : stellar
     network : "stellar"
-    account_name : "foo"
+    name : "foo"
   obj = new Wallet arg
 
   obj._v_generate = (opts, cb) ->

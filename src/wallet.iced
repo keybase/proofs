@@ -23,7 +23,7 @@ exports.Wallet = class Wallet extends SubkeyBase
     assert stellar.public_key.is_valid wallet_address
     ret.body.wallet =
       network : @wallet.network
-      account_name : @wallet.account_name
+      name : @wallet.name
       address : wallet_address
 
   _required_sections : () -> super().concat(["wallet", "wallet_key"])

@@ -3,6 +3,7 @@
 {constants} = require './constants'
 {Subkey,SubkeyBase} = require './subkey'
 {stellar} = require 'bitcoyne'
+assert = require 'assert'
 
 #==========================================================================
 
@@ -18,10 +19,12 @@ exports.Wallet = class Wallet extends SubkeyBase
 
   _v_customize_json : (ret) ->
     super ret
+    wallet_address = stellar.public_key.encode @wallet.km.get_ekid()[2...-1]
+    assert stellar.public_key.is_valid wallet_address
     ret.body.wallet =
       network : @wallet.network
       account_name : @wallet.account_name
-      address : stellar.public_key.encode @wallet.km.get_ekid()[2...-1]
+      address : wallet_address
 
   _required_sections : () -> super().concat(["wallet", "wallet_key"])
   _optional_sections : () -> super().concat(["revoke"])

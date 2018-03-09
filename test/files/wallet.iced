@@ -16,7 +16,6 @@ exports.test_wallet_key_happy_path = (T,cb) ->
     account_name : "default"
   obj = new Wallet arg
   await obj.generate esc defer out
-  console.log out.inner.str
   typ = out.inner.obj.body.type
   obj2 = alloc typ, arg
   varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str }

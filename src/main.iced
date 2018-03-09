@@ -14,6 +14,7 @@ mods = [
   require('./revoke')
   require('./cryptocurrency')
   require('./per_user_key')
+  require('./wallet')
   require('./subkey')
   require('./sibkey')
   require('./eldest')

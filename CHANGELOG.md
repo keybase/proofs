@@ -1,3 +1,7 @@
+## 2.1.31 (2018-03-08)
+
+- Add support for wallet keys
+
 ## 2.1.30 (2018-02-21)
 
 - Bugfix in sigchainv2.

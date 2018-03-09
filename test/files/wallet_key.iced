@@ -1,4 +1,4 @@
-{alloc,WalletKey} = require '../../'
+{alloc,Wallet} = require '../../'
 {EncKeyManager,KeyManager} = require('kbpgp').kb
 {make_esc} = require 'iced-error'
 {new_sig_arg} = require './util'
@@ -12,8 +12,9 @@ exports.test_wallet_key_happy_path = (T,cb) ->
   arg = new_sig_arg { km : device }
   arg.wallet =
     km : stellar
-    currency : "stellar"
-  obj = new WalletKey arg
+    network : "stellar"
+    account_name : "default"
+  obj = new Wallet arg
   await obj.generate esc defer out
   typ = out.inner.obj.body.type
   obj2 = alloc typ, arg
@@ -28,8 +29,9 @@ round_trip_with_corrupted_reverse_sig = ({T, corrupt}, cb) ->
   arg = new_sig_arg { km : device }
   arg.wallet =
     km : stellar
-    currency : "stellar"
-  obj = new WalletKey arg
+    network : "stellar"
+    account_name : "foo"
+  obj = new Wallet arg
 
   obj._v_generate = (opts, cb) ->
     esc = make_esc cb, "_v_generate"

@@ -23,7 +23,7 @@
     "url": "https://github.com/keybase/proofs/issues"
   },
   "dependencies": {
-    "bitcoyne": "^1.0.2",
+    "bitcoyne": "^1.0.4",
     "iced-error": ">=0.0.9",
     "iced-lock": "^1.0.1",
     "iced-runtime": ">=0.0.1",

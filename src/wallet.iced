@@ -2,6 +2,7 @@
 {Base} = require './base'
 {constants} = require './constants'
 {Subkey,SubkeyBase} = require './subkey'
+{stellar} = require 'bitcoyne'
 
 #==========================================================================
 
@@ -20,6 +21,7 @@ exports.Wallet = class Wallet extends SubkeyBase
     ret.body.wallet =
       network : @wallet.network
       account_name : @wallet.account_name
+      address : stellar.public_key.encode @wallet.km.get_ekid()[2...-1]
 
   _required_sections : () -> super().concat(["wallet", "wallet_key"])
   _optional_sections : () -> super().concat(["revoke"])

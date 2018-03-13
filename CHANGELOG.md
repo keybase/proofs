@@ -1,3 +1,7 @@
+## 2.1.32 (2018-03-13)
+
+- Add support for DoNotReset signatures.
+
 ## 2.1.31 (2018-03-08)
 
 - Add support for wallet keys

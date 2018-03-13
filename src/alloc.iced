@@ -11,6 +11,7 @@ base = require './base'
 {Wallet} = require './wallet'
 {PerUserKey} = require './per_user_key'
 {Device} = require './device'
+{DoNotReset} = require './do_not_reset'
 {Eldest} = require './eldest'
 {PGPUpdate} = require './pgp_update'
 {UpdatePassphraseHash} = require './update_passphrase_hash'
@@ -42,6 +43,7 @@ lookup_tab = {
   "per_user_key"                   : PerUserKey
   "wallet"                         : Wallet
   "device"                         : Device
+  "do_not_reset"                   : DoNotReset
   "eldest"                         : Eldest
   "pgp_update"                     : PGPUpdate
   "update_passphrase_hash"         : UpdatePassphraseHash

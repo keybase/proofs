@@ -11,6 +11,7 @@ mods = [
   require('./update_passphrase_hash')
   require('./update_settings')
   require('./device')
+  require('./do_not_reset')
   require('./revoke')
   require('./cryptocurrency')
   require('./per_user_key')

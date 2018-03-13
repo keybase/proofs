@@ -20,6 +20,7 @@ $(BUILD_STAMP): \
 	lib/constants.js \
 	lib/cryptocurrency.js \
 	lib/device.js \
+	lib/do_not_reset.js \
 	lib/eldest.js \
 	lib/errors.js \
 	lib/main.js \

@@ -1,3 +1,7 @@
+## 2.1.32 (2018-03-20)
+
+- Check that the stellar account ID matches the signing wallet key
+
 ## 2.1.31 (2018-03-08)
 
 - Add support for wallet keys

@@ -12,14 +12,14 @@ pgp_utils = require('pgp-utils')
 
 km_to_base = (k) -> k.get_ekid()[2...-1]
 
-exports.Wallet = class Wallet extends SubkeyBase
+exports.Stellar = class Stellar extends SubkeyBase
 
   get_key_field : () -> "wallet_key"
   get_new_key_section : () -> @wallet_key
   set_new_key_section : (m) -> @wallet_key = m
   get_new_km : () -> @wallet.km
-  _type : () -> constants.sig_types.wallet
-  _type_v2 : () -> constants.sig_types_v2.wallet
+  _type : () -> constants.sig_types.wallet.stellar
+  _type_v2 : () -> constants.sig_types_v2.wallet.stellar
   need_reverse_sig : () -> true
 
   _v_customize_json : (ret) ->

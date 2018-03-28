@@ -22,7 +22,8 @@ exports.constants = constants =
     device : "device"
     eldest : "eldest"
     per_user_key : "per_user_key"
-    wallet : "wallet"
+    wallet :
+      stellar : "wallet.stellar"
     team :
       index : "team.index"
       root : "team.root"
@@ -55,7 +56,6 @@ exports.constants = constants =
     subkey : 12
     pgp_update : 13
     per_user_key : 14
-    wallet : 15
     team :
       index : 32
       root : 33
@@ -73,6 +73,8 @@ exports.constants = constants =
       # Note that 45 is retired; it used to be legacy_tlf_upgrade
       settings : 46
       kbfs : 47
+    wallet :
+      stellar : 15
   proof_types :
     none : 0
     keybase : 1

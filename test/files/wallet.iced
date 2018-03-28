@@ -1,4 +1,4 @@
-{alloc,Wallet} = require '../../'
+{alloc,Stellar} = require '../../'
 {EncKeyManager,KeyManager} = require('kbpgp').kb
 {make_esc} = require 'iced-error'
 {new_sig_arg} = require './util'
@@ -15,7 +15,7 @@ exports.test_wallet_key_happy_path = (T,cb) ->
     km : stellar
     network : "stellar"
     name : "default"
-  obj = new Wallet arg
+  obj = new Stellar arg
   await obj.generate esc defer out
   typ = out.inner.obj.body.type
   obj2 = alloc typ, arg
@@ -32,7 +32,7 @@ round_trip_with_corrupted_reverse_sig = ({T, corrupt}, cb) ->
     km : stellar
     network : "stellar"
     name : "foo"
-  obj = new Wallet arg
+  obj = new Stellar arg
 
   obj._v_generate = (opts, cb) ->
     esc = make_esc cb, "_v_generate"
@@ -76,7 +76,7 @@ round_trip_with_dropped_accountID = ({T, corrupt}, cb) ->
     km : stellar
     network : "stellar"
     name : "foo"
-  obj = new Wallet arg
+  obj = new Stellar arg
 
   km_to_base = (k) -> k.get_ekid()[2...-1]
 

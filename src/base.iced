@@ -114,6 +114,7 @@ class Verifier
     await @_check_json {payload}, esc defer json_obj, json_str
     await @_check_ctime esc defer() unless @skip_clock_skew_check
     await @_check_expired esc defer()
+    await @_check_version { v : 1 }, esc defer()
     cb null, json_obj, json_str
 
   #---------------
@@ -183,6 +184,13 @@ class Verifier
         epoch = if now > @json.ctime then "past" else "future"
         err = new errors.ClockSkewError "your computer's clock is wrong: signature is dated #{diff} seconds in the #{epoch}"
         err.diff = diff
+    cb err
+
+  #---------------
+
+  _check_version : ({v}, cb) ->
+    err = if (x = @json.body.version) is v then null
+    else new Error "Expected inner signature version #{v} but got #{errsan x}"
     cb err
 
   #---------------

@@ -1,3 +1,8 @@
+## 2.1.33 (2018-03-26)
+
+- Rename wallet -> wallet.stellar
+- Check that { "version" : 1 } is correct for V1 links (and we're not lying about it)
+
 ## 2.1.32 (2018-03-20)
 
 - Check that the stellar account ID matches the signing wallet key

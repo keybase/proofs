@@ -6,6 +6,8 @@
 {createHash} = require 'crypto'
 {make_ids} = require '../../lib/base'
 {pack,unpack} = require 'purepack'
+pgp_utils = require('pgp-utils')
+{json_stringify_sorted} = pgp_utils.util
 
 new_uid = () -> prng(16).toString('hex')
 new_username = () -> "u_" + prng(5).toString('hex')
@@ -77,6 +79,13 @@ class LinkV2
     await verifier.verify_v2 varg, defer err
     cb err
 
+  verify_v1 : ({chain, opts}, cb) ->
+    carg = chain.user.to_constructor_arg(opts)
+    verifier = alloc @full_type(), carg
+    varg = { @armored, skip_ids : true, make_ids : true, inner : @inner.str }
+    await verifier.verify varg, defer err
+    cb err
+
 #-------------
 
 chain = null
@@ -104,6 +113,9 @@ exports.gen_1 = (T,cb) ->
 
 check_valid_link = ({T, chain, link, i}, cb) ->
   link.verify { chain }, cb
+
+check_valid_link_v1 = ({T, chain, link, i}, cb) ->
+  link.verify_v1 { chain }, cb
 
 check_valid_linkage = ({T, curr, prev}, cb) ->
   err = if not(prev) and not curr.prev() then null
@@ -188,6 +200,41 @@ exports.check_bad_type_1 = (T,cb) ->
 
 #-------------
 
+exports.check_v2_link_with_inner_version_v1 = (T,cb) ->
+  arg = chain.to_btc_constructor_arg()
+
+  btc = new Cryptocurrency arg
+  h1 = ({inner}) ->
+    inner.obj.body.version = 1
+    inner.str = json_stringify_sorted inner.obj
+  await forge_bad_link { link : btc, h1 }, T.esc(defer(out), cb)
+  link = new LinkV2 out
+  await check_valid_link { T, chain, link }, defer err
+  T.assert err?, "should get a version failure"
+  T.equal err.toString(), "Error: Version mismatch: 2 != 1"
+  cb()
+
+#-------------
+
+exports.check_v1_link_with_inner_version_v2 = (T,cb) ->
+  esc = make_esc cb, "check_v1_link_with_inner_version_v2"
+  arg = chain.to_btc_constructor_arg()
+  btc = new Cryptocurrency arg
+  await btc._v_generate {}, esc defer()
+  await btc.generate_json { version : 2}, esc defer _, obj
+  obj.body.version = 2
+  json = json_stringify_sorted obj
+  inner = { str : json, obj : obj }
+  await btc.sig_eng.box json, esc defer {pgp, raw, armored}
+  out = { pgp, json, raw, armored, inner }
+  link = new LinkV2 out
+  await check_valid_link_v1 { T, chain, link }, defer err
+  T.assert err?, "should get a version failure"
+  T.equal err.toString(), "Error: Expected inner signature version 1 but got 2"
+  cb()
+
+#-------------
+
 check_bad_link = (T,arg,f,msg,cb) ->
   arg or= chain.to_btc_constructor_arg()
   btc = new Cryptocurrency arg
@@ -223,7 +270,7 @@ exports.check_bad_type_3 = (T,cb) ->
 
 #-------------
 
-exports.check_bad_version = (T,cb) ->
+exports.check_bad_version_outer = (T,cb) ->
   f = (o) -> o[0] = 1
   check_bad_link T, null, f, "Error: Bad version: 1 != 2", cb
 

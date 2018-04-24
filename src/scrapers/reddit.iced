@@ -107,8 +107,7 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
     else if (post.title.indexOf(med_id) < 0)
       v_codes.TITLE_NOT_FOUND
     else
-      if @_find_sig_in_raw(proof_text_check, post.selftext) then v_codes.OK
-      else v_codes.TEXT_NOT_FOUND
+      v_codes.OK
 
   # ---------------------------------------------------------------------------
 

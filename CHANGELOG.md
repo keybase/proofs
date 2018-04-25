@@ -1,3 +1,7 @@
+## 2.1.34 (2018-04-24)
+
+- Ignore post body in reddit proofs
+
 ## 2.1.33 (2018-03-26)
 
 - Rename wallet -> wallet.stellar

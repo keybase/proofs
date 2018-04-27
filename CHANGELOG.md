@@ -1,3 +1,7 @@
+## 2.1.35 (2018-04-27)
+
+- Do not ignore post body in reddit proofs
+
 ## 2.1.34 (2018-04-24)
 
 - Ignore post body in reddit proofs

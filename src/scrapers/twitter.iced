@@ -305,6 +305,12 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   check_status: ({username, api_url, proof_text_check, remote_id}, cb) ->
 
+    if not api_url?.length
+      rc = v_codes.FAILED_PARSE
+      err = new Error "null api_url API for #{remote_id}/#{username}"
+      @log "null api_url for #{remote_id}/#{username}"
+      return cb err, rc
+
     u = urlmod.parse api_url
     u.host = u.hostname = 'mobile.twitter.com'
     new_api_url = urlmod.format u

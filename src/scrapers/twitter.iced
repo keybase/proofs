@@ -308,8 +308,8 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
     u = urlmod.parse api_url
     u.host = u.hostname = 'mobile.twitter.com'
     new_api_url = urlmod.format u
-    @log "| rewrite #{u} -> #{new_api_url}"
-    new_api_url = u
+    @log "| rewrite #{api_url} -> #{new_api_url} (since twitter was going to redirect us anyways)"
+    api_url = new_api_url
 
     # calls back with a v_code or null if it was ok
     await @_get_url_body { url : api_url }, defer err, rc, html

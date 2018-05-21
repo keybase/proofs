@@ -1,3 +1,7 @@
+## 2.1.36 (2018-05-21)
+
+- Twitter change, so fix it
+
 ## 2.1.35 (2018-04-27)
 
 - Do not ignore post body in reddit proofs

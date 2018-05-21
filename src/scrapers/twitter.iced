@@ -290,7 +290,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
     @log "+ Checking tweet '#{inside}' for signature '#{rxx}'"
     @log "| Incoming check text: #{proof_text_check}"
-    @log "| html is: #{html.replace( /\n/g, ' ')}" if html?
+    @log "| html is: #{html.replace( /\n/g, ' ').trim()}" if html?
 
     x = /^(@[a-zA-Z0-9_-]+\s+)/
     while (m = inside.match(x))?

@@ -1,3 +1,7 @@
+## 2.1.37 (2018-05-21)
+
+- Twitter URI rewrite to mobile.twitter.com
+
 ## 2.1.36 (2018-05-21)
 
 - Twitter change, so fix it

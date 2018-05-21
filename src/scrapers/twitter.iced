@@ -304,6 +304,13 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   check_status: ({username, api_url, proof_text_check, remote_id}, cb) ->
+
+    u = urlmod.parse api_url
+    u.host = u.hostname = 'mobile.twitter.com'
+    new_api_url = urlmod.format u
+    @log "| rewrite #{u} -> #{new_api_url}"
+    new_api_url = u
+
     # calls back with a v_code or null if it was ok
     await @_get_url_body { url : api_url }, defer err, rc, html
 

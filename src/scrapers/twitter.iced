@@ -313,21 +313,20 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       #
       # only look inside the permalink tweet container
       #
-      div = $('.permalink-tweet-container .permalink-tweet')
-      if not div.length
+      div = $('.main-tweet .tweet-text')
+      if div.length isnt 1
         rc = v_codes.FAILED_PARSE
       else
-        div = div.first()
-
         #
         # make sure both the username and tweet id match our query,
         # in case twitter printed other tweets into the page
         # inside this container
         #
-        rc = if not(sncmp(username, div.data('screenName'))) then v_codes.BAD_USERNAME
-        else if (("" + remote_id) isnt ("" + div.data('tweetId'))) then v_codes.BAD_REMOTE_ID
-        else if not (p = div.find('p.tweet-text'))? or not p.length then v_codes.MISSING
-        else @find_sig_in_tweet { tweet_p : p.first(), proof_text_check }
+        found_username = $('.main-tweet .username').text()?.trim().replace( /^@/g , '')
+        found_tweet_id = "#{div.data('id')}"
+        rc = if not(sncmp(username, found_username)) then v_codes.BAD_USERNAME
+        else if (("" + remote_id) isnt (found_tweet_id)) then v_codes.BAD_REMOTE_ID
+        else @find_sig_in_tweet { tweet_p : div, proof_text_check }
 
     cb err, rc
 

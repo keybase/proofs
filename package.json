@@ -1,6 +1,6 @@
 {
   "name": "keybase-proofs",
-  "version": "2.1.36",
+  "version": "2.1.37",
   "description": "Publicly-verifiable proofs of identity",
   "main": "lib/main.js",
   "scripts": {

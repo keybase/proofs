@@ -84,7 +84,7 @@ class BaseScraper
     opts.ca = @ca if @ca?
     opts.timeout = constants.http_timeout unless opts.timeout?
     opts.headers or= {}
-    opts.headers["User-Agent"] = user_agent
+    opts.headers["User-Agent"] = (opts.user_agent or user_agent)
     await @libs.request opts, defer err, response, body
     rc = if err?
       if err.code is 'ETIMEDOUT' then               v_codes.TIMEOUT

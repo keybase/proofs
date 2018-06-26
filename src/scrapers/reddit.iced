@@ -116,7 +116,10 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
 
     # calls back with a v_code or null if it was ok
     await @_get_url_body {
-      url : api_url , json : true, qs: { cachebust: Math.random() }
+      url : api_url
+      json : true
+      qs: { cachebust: Math.random() }
+      user_agent : "linux:com.github/keybase/proofs:v2.1.41 (by /r/maxtaco)"
     }, defer err, rc, json
 
     rc = if rc isnt v_codes.OK then rc

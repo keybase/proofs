@@ -119,7 +119,7 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
       url : api_url
       json : true
       qs: { cachebust: Math.random() }
-      user_agent : "linux:com.github/keybase/proofs:v2.1.41 (by /r/maxtaco)"
+      user_agent : "linux:com.github/keybase/proofs:v2.1.41 (by /u/maxtaco)"
     }, defer err, rc, json
 
     rc = if rc isnt v_codes.OK then rc

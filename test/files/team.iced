@@ -34,7 +34,7 @@ exports.test_all_classes = (T,cb) ->
     await test_klass { T, arg, klass, keys : false }, esc defer()
   cb()
 
-exports.test_bad_key_section = (T,cb) ->
+exports.test_key_section_bad_and_good = (T,cb) ->
   esc = make_esc cb, "test_bad_key_section"
   await KeyManager.generate {}, esc defer km
   arg = new_sig_arg { km }
@@ -42,14 +42,34 @@ exports.test_bad_key_section = (T,cb) ->
   arg.kms = {}
   await EncKeyManager.generate {}, esc defer arg.kms.encryption
   await KeyManager.generate {}, esc defer arg.kms.signing
-  obj = new team.RotateKey arg
-  await obj.generate_v2 esc defer out
-  typ = out.inner.obj.body.type
-  obj2 = alloc typ, arg
-  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str }
-  await obj2.verify_v2 varg, defer err
+
+  verify_from_arg = ({arg}, cb) ->
+    obj = new team.RotateKey arg
+    await obj.generate_v2 esc defer out
+    typ = out.inner.obj.body.type
+    obj2 = alloc typ, arg
+    varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str }
+    await obj2.verify_v2 varg, defer err
+    cb err
+  await verify_from_arg { arg }, defer err
   T.assert err?, "we got an error back"
   T.equal err.message, "Need per_team_key.generation to be an integer > 0 (got undefined)", "right message"
+
+  arg.kms.generation = 10
+  arg.kms.appkey_derivation_version = "foo"
+  await verify_from_arg { arg }, defer err
+  T.assert err?, "we got an error back"
+  T.equal err.message, "Need per_team_key.appkey_derivation_version to be an integer >= 1 (got foo)", "right message"
+
+  arg.kms.appkey_derivation_version = 1
+  await verify_from_arg { arg }, defer err
+  T.assert err?, "we got an error back"
+  T.equal err.message, "Need per_team_key.appkey_derivation_version to be an integer >= 1 (got 1)", "right message"
+
+  arg.kms.appkey_derivation_version = 2
+  await verify_from_arg { arg }, defer err
+  T.no_error err, "should work"
+
   cb null
 
 round_trip_with_corrupted_reverse_sig = ({T, corrupt}, cb) ->

@@ -61,10 +61,10 @@ exports.test_key_section_bad_and_good = (T,cb) ->
   T.assert err?, "we got an error back"
   T.equal err.message, "Need per_team_key.appkey_derivation_version to be an integer >= 1 (got foo)", "right message"
 
-  arg.kms.appkey_derivation_version = 1
+  arg.kms.appkey_derivation_version = 0
   await verify_from_arg { arg }, defer err
   T.assert err?, "we got an error back"
-  T.equal err.message, "Need per_team_key.appkey_derivation_version to be an integer >= 1 (got 1)", "right message"
+  T.equal err.message, "Need per_team_key.appkey_derivation_version to be an integer >= 1 (got 0)", "right message"
 
   arg.kms.appkey_derivation_version = 2
   await verify_from_arg { arg }, defer err

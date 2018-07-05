@@ -52,7 +52,7 @@ exports.TeamBase = class TeamBase extends SubkeyBase
   _find_fields : ({json}) ->
     if (typeof(v = json?.generation) isnt 'number') or (parseInt(v) <= 0)
       new Error "Need per_team_key.generation to be an integer > 0 (got #{v})"
-    else if (v = json.appkey_derivation_version)? and (typeof(v) isnt 'number' or parseInt(v) <= 1)
+    else if (v = json.appkey_derivation_version)? and (typeof(v) isnt 'number' or parseInt(v) < 1)
       new Error "Need per_team_key.appkey_derivation_version to be an integer >= 1 (got #{v})"
     else if not json?.signing_kid?
       new Error "need a signing kid"

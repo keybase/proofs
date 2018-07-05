@@ -38,6 +38,7 @@ exports.TeamBase = class TeamBase extends SubkeyBase
     m.generation = @kms.generation
     m.encryption_kid = @kms.encryption.get_ekid().toString('hex')
     m.signing_kid = @kms.signing.get_ekid().toString('hex')
+    m.appkey_derivation_version = v if (v = @kms.appkey_derivation_version)?
     @per_team_key = m
   get_new_km : () -> @kms?.signing # use the signing KM
   need_reverse_sig : (json) -> json?.body?.team?.per_team_key?
@@ -51,6 +52,8 @@ exports.TeamBase = class TeamBase extends SubkeyBase
   _find_fields : ({json}) ->
     if (typeof(v = json?.generation) isnt 'number') or (parseInt(v) <= 0)
       new Error "Need per_team_key.generation to be an integer > 0 (got #{v})"
+    else if (v = json.appkey_derivation_version)? and (typeof(v) isnt 'number' or parseInt(v) <= 1)
+      new Error "Need per_team_key.appkey_derivation_version to be an integer >= 1 (got #{v})"
     else if not json?.signing_kid?
       new Error "need a signing kid"
     else if not json?.encryption_kid?

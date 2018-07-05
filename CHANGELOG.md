@@ -1,3 +1,7 @@
+## 2.1.44
+
+- Add an `appkey_derivation_version` field to the per_team_key section of team signatures
+
 ## 2.1.42-3 (2018-6-26)
 
 - Tweak Reddit User-Agent

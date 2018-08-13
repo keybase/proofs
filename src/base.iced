@@ -744,6 +744,7 @@ class GenericBinding extends Base
 
 exports.Base = Base
 exports.GenericBinding = GenericBinding
+exports.OuterLink = OuterLink
 exports.sig_id_to_short_id = sig_id_to_short_id
 exports.sig_id_to_med_id = sig_id_to_med_id
 exports.make_ids = make_ids

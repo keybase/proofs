@@ -1,4 +1,4 @@
-
+{constants} = require './constants'
 {json_stringify_sorted,bufeq_secure} = require('pgp-utils').util
 
 #----------
@@ -8,6 +8,16 @@ exports.json_secure_compare = json_secure_compare = (a,b) ->
   err = if bufeq_secure((new Buffer o1, 'utf8'), (new Buffer o2, 'utf8')) then null
   else new Error "Json objects differed: #{o1} != #{o2}"
   return err
+
+##-----------------------------------------------------------------------
+
+exports.v2_sig_type_from_sig_type = v2_sig_type_from_sig_type = (type) ->
+  # parse out the v2 sig type from a string. i.e. "team.settings -> 46
+  keys = type.split(".")
+  v = constants.sig_types_v2
+  for k in keys
+    v = v[k]
+  return v
 
 ##-----------------------------------------------------------------------
 

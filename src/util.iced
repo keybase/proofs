@@ -12,12 +12,12 @@ exports.json_secure_compare = json_secure_compare = (a,b) ->
 ##-----------------------------------------------------------------------
 
 exports.v2_sig_type_from_sig_type = v2_sig_type_from_sig_type = (type) ->
-    # parse out the v2 sig type from a string. i.e. "team.settings -> 46
-    keys = type.split(".")
-    v = constants.sig_types_v2
-    for k in keys
-      v = v[k]
-    return v
+  # parse out the v2 sig type from a string. i.e. "team.settings -> 46
+  keys = type.split(".")
+  v = constants.sig_types_v2
+  for k in keys
+    v = v[k]
+  return v
 
 ##-----------------------------------------------------------------------
 

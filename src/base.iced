@@ -152,6 +152,12 @@ class Verifier
       new Error "wrong seq type: #{errsan a} != #{errsan b}"
     else if (a = outer.get_ignore_if_unsupported()) isnt (b = (inner_obj.ignore_if_unsupported or false))
       new Error "wrong ignore_if_unsupported value: #{errsan a} != #{errsan b}"
+    else if (a = outer.get_hprev_seqno()) isnt (b = (inner_obj.hprev_seqno))
+      err = new errors.WrongSeqnoError "wrong hprev_seqno: #{errsan a} != #{errsan b}"
+      err.seqno = b
+      err
+    else if (a = outer.get_hprev_hash()) isnt (b = (inner_obj.hprev_hash))
+      new Error "wrong hprev_hash value: #{errsan a} != #{errsan b}"
     else
       null
     cb err, outer
@@ -246,7 +252,7 @@ class Base
 
   #------
 
-  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @ignore_if_unsupported, @eldest_kid, @expire_in, @ctime}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @ignore_if_unsupported, @eldest_kid, @expire_in, @ctime, @hprev_seqno, @hprev_hash}) ->
 
   #------
 
@@ -388,6 +394,7 @@ class Base
 
   #------
 
+  #TODO checks here?
   _v_check : ({json}, cb) ->
 
     # The default seq_type is PUBLIC
@@ -480,6 +487,8 @@ class Base
     ret = {
       seqno : @seqno
       prev : @prev
+      hprev_seqno : @hprev_seqno or null
+      hprev_hash : @hprev_hash or null
       ctime : ctime
       tag : constants.tags.sig
       expire_in : pick(expire_in, @expire_in, constants.expire_in)
@@ -591,6 +600,8 @@ class Base
         hash : hash_sig(new Buffer inner.str, 'utf8')
         seq_type : if (x = inner.obj.seq_type_for_testing)? then x else (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
         ignore_if_unsupported : if (x = inner.obj.ignore_if_unsupported_for_testing)? then x else !!(inner.obj.ignore_if_unsupported or false)
+        hprev_seqno : inner.obj.hprev_seqno
+        hprev_hash : inner.obj.hprev_hash
       }
       ret = unpacked.pack()
 
@@ -699,21 +710,36 @@ class OuterLink
   # - first 6 filled
   # - first 7 filled
   # It is invalid to fill ignore_if_unsupported by not seq_type.
-  constructor : ({@version, @seqno, @prev, @hash, @type, @seq_type, @ignore_if_unsupported}) ->
+  constructor : ({@version, @seqno, @prev, @hash, @type, @seq_type, @ignore_if_unsupported, @hprev_seqno, @hprev_hash}) ->
 
   @parse : ({raw}, cb) ->
     esc = make_esc cb, "OuterLink.parse"
     await akatch (() -> purepack.unpack raw), esc defer arr
     err = ret = null
-    if arr.length not in [5, 6, 7]
-      err = new Error "expected 5, 6, or 7 fields; got #{arr.length}"
+    if arr.length not in [5, 6, 7, 9]
+      err = new Error "expected 5, 6, 7, or 9 fields; got #{arr.length}"
     else
-      ret = new OuterLink { version : arr[0], seqno : arr[1], prev : arr[2], hash : arr[3], type : arr[4], seq_type : arr[5], ignore_if_unsupported : arr[6] }
+      ret = new OuterLink {
+        version : arr[0],
+        seqno : arr[1],
+        prev : arr[2],
+        hash : arr[3],
+        type : arr[4],
+        seq_type : arr[5],
+        ignore_if_unsupported : arr[6],
+        hprev_seqno : arr[7],
+        hprev_hash : arr[8]
+      }
     cb err, ret
 
   get_seq_type : () -> if @seq_type then @seq_type else constants.seq_types.SEMIPRIVATE
 
   get_ignore_if_unsupported : () -> if @ignore_if_unsupported then @ignore_if_unsupported else false
+
+  # TODO I think undefined instead of null is the right move here, explained in PR comment
+  get_hprev_seqno : () -> @hprev_seqno or undefined
+
+  get_hprev_hash : () -> @hprev_hash or undefined
 
   pack : () ->
     # For backwards-compatibility, if the incoming chainlink doesn't have a
@@ -727,6 +753,13 @@ class OuterLink
     arr.push @seq_type if @seq_type?
 
     arr.push (!!@ignore_if_unsupported) if @ignore_if_unsupported?
+
+    # TODO: Probably some error checking would be good, need to adjust any fn that calls this too.
+
+    # TODO: if a old client does sign up, then this would push hprev pair in the wrong place...
+    if (@seqno is 0 and @prev is null) or (@hprev_seqno? and @hprev_hash?)
+      arr.push @hprev_seqno
+      arr.push @hprev_hash
 
     purepack.pack arr
 

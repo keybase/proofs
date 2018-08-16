@@ -152,11 +152,11 @@ class Verifier
       new Error "wrong seq type: #{errsan a} != #{errsan b}"
     else if (a = outer.get_ignore_if_unsupported()) isnt (b = (inner_obj.ignore_if_unsupported or false))
       new Error "wrong ignore_if_unsupported value: #{errsan a} != #{errsan b}"
-    else if (a = outer.get_hprev_seqno()) isnt (b = (inner_obj.hprev_seqno))
+    else if (a = outer.get_hprev_seqno()) isnt (b = (inner_obj.hprev_seqno or null))
       err = new errors.WrongSeqnoError "wrong hprev_seqno: #{errsan a} != #{errsan b}"
       err.seqno = b
       err
-    else if (a = outer.get_hprev_hash()) isnt (b = (inner_obj.hprev_hash))
+    else if (a = outer.get_hprev_hash()) isnt (b = (inner_obj.hprev_hash or null))
       new Error "wrong hprev_hash value: #{errsan a} != #{errsan b}"
     else
       null
@@ -252,7 +252,7 @@ class Base
 
   #------
 
-  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @ignore_if_unsupported, @eldest_kid, @expire_in, @ctime, @hprev_seqno, @hprev_hash}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @ignore_if_unsupported, @hprev_seqno, @hprev_hash, @eldest_kid, @expire_in, @ctime}) ->
 
   #------
 
@@ -394,7 +394,6 @@ class Base
 
   #------
 
-  #TODO checks here?
   _v_check : ({json}, cb) ->
 
     # The default seq_type is PUBLIC
@@ -402,6 +401,7 @@ class Base
 
     err = @_v_check_user {json}
 
+    # TODO: I don't quite understand the flow here. Do I need to do checks for hprev here?
     err = if err? then err
     else if not cieq (a = json?.body?.key?.host), (b = @host)
       new Error "Wrong host: got '#{errsan a}' but wanted '#{errsan b}'"
@@ -487,8 +487,6 @@ class Base
     ret = {
       seqno : @seqno
       prev : @prev
-      hprev_seqno : @hprev_seqno or null
-      hprev_hash : @hprev_hash or null
       ctime : ctime
       tag : constants.tags.sig
       expire_in : pick(expire_in, @expire_in, constants.expire_in)
@@ -523,8 +521,22 @@ class Base
     #   SEMIPRIVATE : 3
     #
     ret.seq_type = @seq_type if @seq_type?
-
     ret.ignore_if_unsupported = !!@ignore_if_unsupported if @ignore_if_unsupported?
+
+    if @hprev_hash? and not @hprev_seqno?
+      err = new Error "Cannot provide hprev_hash but not hprev_seqno."
+      return cb err, null, null
+    if @seqno is 1 and @hprev_seqno? and @hprev_seqno isnt 0
+      err = new Error "First seqno must provide hprev_seqno 0, if hprev_seqno is provided"
+      return cb err, null, null
+    if @hprev_seqno is 0 and @hprev_hash?
+      err = new Error "Cannot provide hprev_hash with hprev_seqno=0."
+      return cb err, null, null
+    if @hprev_seqno > 0 and not @hprev_hash?
+      err = new Error "Must provide hprev_hash with positive hprev_seqno."
+      return cb err, null, null
+    ret.hprev_seqno = @hprev_seqno if @hprev_seqno
+    ret.hprev_hash = (@hprev_hash or null) if @hprev_seqno
 
     ret.body.client = @client if @client?
     ret.body.merkle_root = @merkle_root if @merkle_root?
@@ -600,8 +612,8 @@ class Base
         hash : hash_sig(new Buffer inner.str, 'utf8')
         seq_type : if (x = inner.obj.seq_type_for_testing)? then x else (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
         ignore_if_unsupported : if (x = inner.obj.ignore_if_unsupported_for_testing)? then x else !!(inner.obj.ignore_if_unsupported or false)
-        hprev_seqno : inner.obj.hprev_seqno
-        hprev_hash : inner.obj.hprev_hash
+        hprev_seqno : inner.obj.hprev_seqno or null
+        hprev_hash : inner.obj.hprev_hash or null
       }
       ret = unpacked.pack()
 
@@ -736,10 +748,9 @@ class OuterLink
 
   get_ignore_if_unsupported : () -> if @ignore_if_unsupported then @ignore_if_unsupported else false
 
-  # TODO I think undefined instead of null is the right move here, explained in PR comment
-  get_hprev_seqno : () -> @hprev_seqno or undefined
+  get_hprev_seqno : () -> @hprev_seqno or null
 
-  get_hprev_hash : () -> @hprev_hash or undefined
+  get_hprev_hash : () -> @hprev_hash or null
 
   pack : () ->
     # For backwards-compatibility, if the incoming chainlink doesn't have a
@@ -754,12 +765,12 @@ class OuterLink
 
     arr.push (!!@ignore_if_unsupported) if @ignore_if_unsupported?
 
-    # TODO: Probably some error checking would be good, need to adjust any fn that calls this too.
-
-    # TODO: if a old client does sign up, then this would push hprev pair in the wrong place...
-    if (@seqno is 0 and @prev is null) or (@hprev_seqno? and @hprev_hash?)
+    # If an older client wants to make an outer link, they will get null in both fields.
+    # If a newer client wants to make a first link, they should send hprev_seqno=0,
+    # a seqno which is never actually used, and leave hprev_hash as null.
+    if (@hprev_seqno is 0) or (@hprev_seqno? and @hprev_hash?)
       arr.push @hprev_seqno
-      arr.push @hprev_hash
+      arr.push @get_hprev_hash()
 
     purepack.pack arr
 

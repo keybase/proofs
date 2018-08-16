@@ -92,11 +92,6 @@ exports.ChangeMembership = class ChangeMembership extends TeamBase
 
 #--------------
 
-exports.ChangeMembershipHigh = class ChangeMembershipHigh extends TeamBase
-  _type : () -> constants.sig_types.team.change_membership_high
-  _type_v2 : () -> constants.sig_types_v2.team.change_membership_high
-
-#--------------
 exports.RotateKey = class RotateKey extends TeamBase
   _type : () -> constants.sig_types.team.rotate_key
   _type_v2 : () -> constants.sig_types_v2.team.rotate_key

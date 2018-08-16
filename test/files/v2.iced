@@ -45,13 +45,14 @@ class Chain
   push : (l) -> @links.push l
   copy : () -> new Chain { @user, links : [].concat(@links) }
 
-  to_constructor_arg : (opts = {}) ->
+  to_constructor_arg : (opts = {}, extra_params) ->
     arg = @user.to_constructor_arg(opts)
     if (p = @prev())? then p.populate_next arg
     else
-      # TODO seqno starts at 1?
-      arg.seqno = 0
+      arg.seqno = 1
       arg.prev = null
+    for k, v of extra_params
+      arg[k] = v
     arg
 
   to_btc_constructor_arg : (opts) ->
@@ -102,252 +103,281 @@ exports.init = (T,cb) ->
 
 #-------------
 
-#exports.gen_1 = (T,cb) ->
-#  arg = chain.to_constructor_arg()
-#  eldest = new Eldest arg
-#  await eldest.generate_v2 T.esc(defer(out), cb)
-#  link = new LinkV2 out
-#  chain.push link
-#  cb()
+exports.gen_1 = (T,cb) ->
+  arg = chain.to_constructor_arg()
+  eldest = new Eldest arg
+  await eldest.generate_v2 T.esc(defer(out), cb)
+  link = new LinkV2 out
+  chain.push link
+  cb()
 
-##-------------
+#-------------
 
-#check_valid_link = ({T, chain, link, i}, cb) ->
-#  link.verify { chain }, cb
+check_valid_link = ({T, chain, link, i}, cb) ->
+  link.verify { chain }, cb
 
-#check_valid_link_v1 = ({T, chain, link, i}, cb) ->
-#  link.verify_v1 { chain }, cb
+check_valid_link_v1 = ({T, chain, link, i}, cb) ->
+  link.verify_v1 { chain }, cb
 
-#check_valid_linkage = ({T, curr, prev}, cb) ->
-#  err = if not(prev) and not curr.prev() then null
-#  else if not(prev) or not curr.prev() then new Error "got nil/non-nil clash in checking for linkage"
-#  else if (a = prev.chain_link_id()) is (b = curr.prev()) then null
-#  else new Error "bad linkage: #{a} != #{b}"
-#  cb err
+check_valid_linkage = ({T, curr, prev}, cb) ->
+  err = if not(prev) and not curr.prev() then null
+  else if not(prev) or not curr.prev() then new Error "got nil/non-nil clash in checking for linkage"
+  else if (a = prev.chain_link_id()) is (b = curr.prev()) then null
+  else new Error "bad linkage: #{a} != #{b}"
+  cb err
 
-##-------------
+#-------------
 
-#check_valid_chain = ({T, chain}, cb) ->
-#  esc = make_esc cb, "check_valid_chain"
-#  for link, i in chain.links
-#    await check_valid_link {T, chain, link, i}, esc defer()
-#    await check_valid_linkage { T, curr : link, prev : chain.links[i-1] }, esc defer()
-#  cb null
+check_valid_chain = ({T, chain}, cb) ->
+  esc = make_esc cb, "check_valid_chain"
+  for link, i in chain.links
+    await check_valid_link {T, chain, link, i}, esc defer()
+    await check_valid_linkage { T, curr : link, prev : chain.links[i-1] }, esc defer()
+  cb null
 
-##-------------
+#-------------
 
-#exports.check_chain_1 = (T,cb) ->
-#  check_valid_chain {T, chain}, cb
+exports.check_chain_1 = (T,cb) ->
+  check_valid_chain {T, chain}, cb
 
-##-------------
+#-------------
 
-#exports.gen_2 = (T,cb) ->
-#  arg = chain.to_btc_constructor_arg()
-#  btc = new Cryptocurrency arg
-#  await btc.generate_v2 T.esc(defer(out), cb)
-#  link = new LinkV2 out
-#  chain.push link
-#  cb()
+exports.gen_2 = (T,cb) ->
+  arg = chain.to_btc_constructor_arg()
+  btc = new Cryptocurrency arg
+  await btc.generate_v2 T.esc(defer(out), cb)
+  link = new LinkV2 out
+  chain.push link
+  cb()
 
-##-------------
+#-------------
 
-#exports.check_chain_2 = (T,cb) ->
-#  check_valid_chain {T, chain}, cb
+exports.check_chain_2 = (T,cb) ->
+  check_valid_chain {T, chain}, cb
 
-##-------------
+#-------------
 
-#exports.gen_3 = (T,cb) ->
-#  arg = chain.to_btc_constructor_arg()
-#  arg.revoke = { sig_id :  "aabb" }
-#  btc = new Cryptocurrency arg
-#  await btc.generate_v2 T.esc(defer(out), cb)
-#  link = new LinkV2 out
-#  chain.push link
-#  cb()
+exports.gen_3 = (T,cb) ->
+  arg = chain.to_btc_constructor_arg()
+  arg.revoke = { sig_id :  "aabb" }
+  btc = new Cryptocurrency arg
+  await btc.generate_v2 T.esc(defer(out), cb)
+  link = new LinkV2 out
+  chain.push link
+  cb()
 
-##-------------
+#-------------
 
-#exports.check_chain_3 = (T,cb) ->
-#  check_valid_chain {T, chain}, cb
+exports.check_chain_3 = (T,cb) ->
+  check_valid_chain {T, chain}, cb
 
-##-------------
+#-------------
 
-#forge_bad_link = ({link,h1,h2}, cb) ->
-#  esc = make_esc cb, "forge_bad_link"
-#  await link._v_generate {}, esc defer()
-#  await link.generate_json { version : 2}, esc defer s, o
-#  inner = { str : s, obj : o }
-#  if h1? then h1 { inner }
-#  await link.generate_outer {inner }, esc defer outer
-#  if h2? then outer = h2 { inner, outer }
-#  await link.sig_eng.box outer, esc defer {pgp, raw, armored}
-#  {short_id, id} = make_ids raw
-#  out = { pgp, id, short_id, raw, armored, inner, outer}
-#  cb null, out
+forge_bad_link = ({link,h1,h2}, cb) ->
+  esc = make_esc cb, "forge_bad_link"
+  await link._v_generate {}, esc defer()
+  await link.generate_json { version : 2}, esc defer s, o
+  inner = { str : s, obj : o }
+  if h1? then h1 { inner }
+  await link.generate_outer {inner }, esc defer outer
+  if h2? then outer = h2 { inner, outer }
+  await link.sig_eng.box outer, esc defer {pgp, raw, armored}
+  {short_id, id} = make_ids raw
+  out = { pgp, id, short_id, raw, armored, inner, outer}
+  cb null, out
 
-##-------------
+#-------------
 
-#exports.check_bad_type_1 = (T,cb) ->
-#  arg = chain.to_btc_constructor_arg()
+exports.check_bad_type_1 = (T,cb) ->
+  arg = chain.to_btc_constructor_arg()
 
-#  btc = new Cryptocurrency arg
-#  h1 = ({inner}) -> inner.obj.body.type = "eldest"
-#  await forge_bad_link { link : btc, h1 }, T.esc(defer(out), cb)
-#  link = new LinkV2 out
-#  await check_valid_link { T, chain, link }, defer err
-#  T.assert err?, "should get a verification failure"
-#  T.equal err.toString(), "Error: Wrong signature type; got 'eldest' but wanted 'cryptocurrency'", "right error text"
-#  cb()
+  btc = new Cryptocurrency arg
+  h1 = ({inner}) -> inner.obj.body.type = "eldest"
+  await forge_bad_link { link : btc, h1 }, T.esc(defer(out), cb)
+  link = new LinkV2 out
+  await check_valid_link { T, chain, link }, defer err
+  T.assert err?, "should get a verification failure"
+  T.equal err.toString(), "Error: Wrong signature type; got 'eldest' but wanted 'cryptocurrency'", "right error text"
+  cb()
 
-##-------------
+#-------------
 
-#exports.check_v2_link_with_inner_version_v1 = (T,cb) ->
-#  arg = chain.to_btc_constructor_arg()
+exports.check_v2_link_with_inner_version_v1 = (T,cb) ->
+  arg = chain.to_btc_constructor_arg()
 
-#  btc = new Cryptocurrency arg
-#  h1 = ({inner}) ->
-#    inner.obj.body.version = 1
-#    inner.str = json_stringify_sorted inner.obj
-#  await forge_bad_link { link : btc, h1 }, T.esc(defer(out), cb)
-#  link = new LinkV2 out
-#  await check_valid_link { T, chain, link }, defer err
-#  T.assert err?, "should get a version failure"
-#  T.equal err.toString(), "Error: Version mismatch: 2 != 1"
-#  cb()
+  btc = new Cryptocurrency arg
+  h1 = ({inner}) ->
+    inner.obj.body.version = 1
+    inner.str = json_stringify_sorted inner.obj
+  await forge_bad_link { link : btc, h1 }, T.esc(defer(out), cb)
+  link = new LinkV2 out
+  await check_valid_link { T, chain, link }, defer err
+  T.assert err?, "should get a version failure"
+  T.equal err.toString(), "Error: Version mismatch: 2 != 1"
+  cb()
 
-##-------------
+#-------------
 
-#exports.check_v1_link_with_inner_version_v2 = (T,cb) ->
-#  esc = make_esc cb, "check_v1_link_with_inner_version_v2"
-#  arg = chain.to_btc_constructor_arg()
-#  btc = new Cryptocurrency arg
-#  await btc._v_generate {}, esc defer()
-#  await btc.generate_json { version : 2}, esc defer _, obj
-#  obj.body.version = 2
-#  json = json_stringify_sorted obj
-#  inner = { str : json, obj : obj }
-#  await btc.sig_eng.box json, esc defer {pgp, raw, armored}
-#  out = { pgp, json, raw, armored, inner }
-#  link = new LinkV2 out
-#  await check_valid_link_v1 { T, chain, link }, defer err
-#  T.assert err?, "should get a version failure"
-#  T.equal err.toString(), "Error: Expected inner signature version 1 but got 2"
-#  cb()
+exports.check_v1_link_with_inner_version_v2 = (T,cb) ->
+  esc = make_esc cb, "check_v1_link_with_inner_version_v2"
+  arg = chain.to_btc_constructor_arg()
+  btc = new Cryptocurrency arg
+  await btc._v_generate {}, esc defer()
+  await btc.generate_json { version : 2}, esc defer _, obj
+  obj.body.version = 2
+  json = json_stringify_sorted obj
+  inner = { str : json, obj : obj }
+  await btc.sig_eng.box json, esc defer {pgp, raw, armored}
+  out = { pgp, json, raw, armored, inner }
+  link = new LinkV2 out
+  await check_valid_link_v1 { T, chain, link }, defer err
+  T.assert err?, "should get a version failure"
+  T.equal err.toString(), "Error: Expected inner signature version 1 but got 2"
+  cb()
 
-##-------------
+#-------------
 
-#check_bad_link = (T,arg,f,msg,cb) ->
-#  arg or= chain.to_btc_constructor_arg()
-#  btc = new Cryptocurrency arg
-#  out = null
-#  h2 = ({outer}) ->
-#    o = unpack outer
-#    f o
-#    pack o
-#  await forge_bad_link { link : btc, h2 }, T.esc(defer(out), cb)
-#  link = new LinkV2 out
-#  await check_valid_link { T, chain, link }, defer err
-#  T.assert err?, "should get a verification failure"
-#  # Sometimes we need late binding of what the error message will be
-#  # (as a function of what f does above), so use this hack.
-#  if typeof(msg) is 'function' then msg = msg()
-#  T.equal err.toString(), msg, "right error"
+check_bad_link = (T,arg,f,msg,cb) ->
+  arg or= chain.to_btc_constructor_arg()
+  btc = new Cryptocurrency arg
+  out = null
+  h2 = ({outer}) ->
+    o = unpack outer
+    f o
+    pack o
+  await forge_bad_link { link : btc, h2 }, T.esc(defer(out), cb)
+  link = new LinkV2 out
+  await check_valid_link { T, chain, link }, defer err
+  T.assert err?, "should get a verification failure"
+  # Sometimes we need late binding of what the error message will be
+  # (as a function of what f does above), so use this hack.
+  if typeof(msg) is 'function' then msg = msg()
+  T.equal err.toString(), msg, "right error"
 
-#  cb()
+  cb()
 
-##-------------
+#-------------
 
-#exports.check_bad_type_2 = (T,cb) ->
-#  f = (o) -> o[4] = constants.sig_types_v2.subkey
-#  check_bad_link T, null, f, "Error: Type mismatch: 12 != 6", cb
+exports.check_bad_type_2 = (T,cb) ->
+  f = (o) -> o[4] = constants.sig_types_v2.subkey
+  check_bad_link T, null, f, "Error: Type mismatch: 12 != 6", cb
 
-##-------------
+#-------------
 
-#exports.check_bad_type_3 = (T,cb) ->
-#  arg = chain.to_btc_constructor_arg()
-#  arg.revoke = { sig_id : "aabb" }
-#  f = (o) -> o[4] = constants.sig_types_v2.cryptocurrency
-#  check_bad_link T, arg, f, "Error: Type mismatch: 6 != 10", cb
+exports.check_bad_type_3 = (T,cb) ->
+  arg = chain.to_btc_constructor_arg()
+  arg.revoke = { sig_id : "aabb" }
+  f = (o) -> o[4] = constants.sig_types_v2.cryptocurrency
+  check_bad_link T, arg, f, "Error: Type mismatch: 6 != 10", cb
 
-##-------------
+#-------------
 
-#exports.check_bad_version_outer = (T,cb) ->
-#  f = (o) -> o[0] = 1
-#  check_bad_link T, null, f, "Error: Bad version: 1 != 2", cb
+exports.check_bad_version_outer = (T,cb) ->
+  f = (o) -> o[0] = 1
+  check_bad_link T, null, f, "Error: Bad version: 1 != 2", cb
 
-##-------------
+#-------------
 
-#exports.check_bad_xss = (T,cb) ->
-#  f = (o) -> o[0] = "<script>alert()</script>"
-#  check_bad_link T, null, f, "Error: Bad version: &lt;script&gt;alert()&lt;&#x2F;script&gt; != 2", cb
+exports.check_bad_xss = (T,cb) ->
+  f = (o) -> o[0] = "<script>alert()</script>"
+  check_bad_link T, null, f, "Error: Bad version: &lt;script&gt;alert()&lt;&#x2F;script&gt; != 2", cb
 
-##-------------
+#-------------
 
-#exports.check_bad_hash = (T,cb) ->
-#  msg = null
-#  f = (o) ->
-#    msg = "Error: hash mismatch: #{o[2].toString('hex')} != #{o[3].toString('hex')}"
-#    o[3] = o[2]
-#  msg_fn = () -> msg
-#  check_bad_link T, null, f, msg_fn, cb
+exports.check_bad_hash = (T,cb) ->
+  msg = null
+  f = (o) ->
+    msg = "Error: hash mismatch: #{o[2].toString('hex')} != #{o[3].toString('hex')}"
+    o[3] = o[2]
+  msg_fn = () -> msg
+  check_bad_link T, null, f, msg_fn, cb
 
-##-------------
+#-------------
 
-#exports.check_bad_seqno = (T,cb) ->
-#  f = (o) -> o[1]++
-#  msg = "WrongSeqnoError: wrong seqno: 4 != 3"
-#  check_bad_link T, null, f, msg, cb
+exports.check_bad_seqno = (T,cb) ->
+  f = (o) -> o[1]++
+  msg = "WrongSeqnoError: wrong seqno: 5 != 4"
+  check_bad_link T, null, f, msg, cb
 
-##-------------
+#-------------
 
-#exports.check_bad_seq_type = (T,cb) ->
-#  f = (o) -> o[5] = constants.seq_types.SEMIPRIVATE
-#  msg = "Error: wrong seq type: 3 != 1"
-#  check_bad_link T, null, f, msg, cb
+exports.check_bad_seq_type = (T,cb) ->
+  f = (o) -> o[5] = constants.seq_types.SEMIPRIVATE
+  msg = "Error: wrong seq type: 3 != 1"
+  check_bad_link T, null, f, msg, cb
 
-##-------------
+#-------------
 
-#exports.check_bad_prev = (T,cb) ->
-#  msg = null
-#  f = (o) ->
-#    msg = "Error: wrong prev: #{o[3].toString('hex')} != #{o[2].toString('hex')}"
-#    o[2] = o[3]
-#  msg_fn = () -> msg
-#  check_bad_link T, null, f, msg_fn, cb
+exports.check_bad_prev = (T,cb) ->
+  msg = null
+  f = (o) ->
+    msg = "Error: wrong prev: #{o[3].toString('hex')} != #{o[2].toString('hex')}"
+    o[2] = o[3]
+  msg_fn = () -> msg
+  check_bad_link T, null, f, msg_fn, cb
 
-##-------------
+#-------------
 
-#exports.semiprivate_link = (T,cb) ->
-#  esc = make_esc cb, "semiprivate_link"
-#  semipriv_chain = new Chain { user }
-#  arg = semipriv_chain.to_constructor_arg({seq_type : constants.seq_types.SEMIPRIVATE})
-#  eldest = new Eldest arg
-#  await eldest.generate_v2 esc defer out
-#  T.equal out.inner.obj.seq_type, constants.seq_types.SEMIPRIVATE, "right inner seqtype"
-#  T.equal unpack(out.outer)[5], constants.seq_types.SEMIPRIVATE, "right outer seqtype"
-#  link = new LinkV2 out
-#  semipriv_chain.push link
-#  await check_valid_chain {T, chain: semipriv_chain}, esc defer()
-#  cb null
+exports.semiprivate_link = (T,cb) ->
+  esc = make_esc cb, "semiprivate_link"
+  semipriv_chain = new Chain { user }
+  arg = semipriv_chain.to_constructor_arg({seq_type : constants.seq_types.SEMIPRIVATE})
+  eldest = new Eldest arg
+  await eldest.generate_v2 esc defer out
+  T.equal out.inner.obj.seq_type, constants.seq_types.SEMIPRIVATE, "right inner seqtype"
+  T.equal unpack(out.outer)[5], constants.seq_types.SEMIPRIVATE, "right outer seqtype"
+  link = new LinkV2 out
+  semipriv_chain.push link
+  await check_valid_chain {T, chain: semipriv_chain}, esc defer()
+  cb null
 
 #-------------
 
 exports.hprev_ingest = (T, cb) ->
   esc = make_esc cb, "hprev_ingest"
 
+  await User.generate T.esc(defer(user), cb)
   hprev_chain = new Chain { user }
 
   arg = hprev_chain.to_constructor_arg({})
   eldest = new Eldest arg
   await eldest.generate_v2 esc defer out
+  outer = out.outer
+  T.assert not outer.hprev_seqno, "An older client did include hprev_seqno; should not be returned."
+  T.assert not outer.hprev_hash, "An older client did include hprev_seqno; should not be returned."
 
-  console.log out
-  console.log unpack(out.outer)
-  # T.equal out.inner.obj.seq_type, constants.seq_types.SEMIPRIVATE, "right inner seqtype"
-  # T.equal unpack(out.outer)[5], constants.seq_types.SEMIPRIVATE, "right outer seqtype"
-  # link = new LinkV2 out
-  # semipriv_chain.push link
-  # await check_valid_chain {T, chain: semipriv_chain}, esc defer()
+  new_eldest_from_params = (params, cb) ->
+    arg = hprev_chain.to_constructor_arg(null, params)
+    eldest = new Eldest arg
+    await eldest.generate_v2 defer err, out
+    cb err, out
+
+  await new_eldest_from_params {hprev_seqno: null, hprev_hash: "hello" }, defer err, out
+  T.assert err?, 'no hprev hash without hprev seqno'
+  await new_eldest_from_params {hprev_seqno: 0, hprev_hash: "hello" }, defer err, out
+  T.assert err?, 'no hprev hash with zero hprev seqno'
+  await new_eldest_from_params {hprev_seqno: 1, hprev_hash: null }, defer err, out
+  T.assert err?, 'must provide hprev_hash with positive hprev_seqno'
+  await new_eldest_from_params {hprev_seqno: 15, hprev_hash: null }, defer err, out
+  T.assert err?, 'must provide hprev_hash with positive hprev_seqno'
+
+  T.waypoint 'hprev happy path'
+  await new_eldest_from_params {hprev_seqno: 0, hprev_hash: null }, esc defer out
+  link = new LinkV2 out
+  await check_valid_link {T, chain: hprev_chain, link}, esc defer()
+  hprev_chain.push link
+
+  await new_eldest_from_params {hprev_seqno: 1, hprev_hash: "hello" }, esc defer out
+  link = new LinkV2 out
+  await check_valid_link {T, chain: hprev_chain, link}, esc defer()
+  hprev_chain.push link
+
+  # Does not check that previous hprev exists, or anything across links.
+  await new_eldest_from_params {hprev_seqno: -4, hprev_hash: "hello" }, esc defer out
+  link = new LinkV2 out
+  await check_valid_link {T, chain: hprev_chain, link}, esc defer()
+  hprev_chain.push link
+
   cb null
 
-#-------------
+#------------

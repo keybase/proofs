@@ -434,10 +434,8 @@ class Base
       new Error "Wrong seq_type: wanted '#{errsan b}' but got '#{errsan a}'"
     else if not (key = json?.body?.key)?
       new Error "no 'body.key' block in signature"
-    # Server always sends hprev_info.
-    # If it is a low link, seqno and hash will be null, else filled with correct params.
-    # It's OK if server expects but clients don't send, because it is optional for now.
-    # If they both provide, must match.
+    # It's OK if server expects but hprev_info clients don't send it, because
+    # it is optional for now. If they both provide, must match.
     else if (a = json?.hprev_info)? and (b = @hprev_info)?
       if a.seqno isnt b.seqno
         new Error "Wrong hprev seqno: wanted '#{errsan b.seqno}' but got '#{errsan a.seqno}'"
@@ -544,6 +542,7 @@ class Base
     #   SEMIPRIVATE : 3
     #
     ret.seq_type = @seq_type if @seq_type?
+
     ret.ignore_if_unsupported = !!@ignore_if_unsupported if @ignore_if_unsupported?
 
     ret.hprev_info = @hprev_info if @hprev_info?
@@ -752,10 +751,8 @@ class OuterLink
         seq_type : arr[5],
         ignore_if_unsupported : arr[6],
       }
-      # If reading a 2.3-or-later link, fill
-      # in the info, which may both be null
-      # if it's for a low link. Otherwise,
-      # don't set hprev_info for older clients.
+      # If reading a 2.3-or-later link, fill in the info, for either a high or
+      # a low link. Otherwise, don't set hprev_info for older clients.
       if arr.length >= 9
         arg.hprev_info = {
           seqno : arr[7],

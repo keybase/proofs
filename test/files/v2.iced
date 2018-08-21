@@ -363,9 +363,10 @@ exports.hprev_ingest = (T, cb) ->
   gen_params = (seqno, hash, corruptor) -> { hprev_info : { seqno, hash } }
 
   T.waypoint 'hprev sanity checking'
-  await new_eldest_from_params (gen_params "hello", null), null, defer err, link, out
+  hash_val = "7f1dbeb3db94c01b64948973c1d04a87bf6ff89eec4ae61a593f81c5a0ff1700"
+  await new_eldest_from_params (gen_params hash_val, null), null, defer err, link, out
   T.assert err?, 'no hprev hash without hprev seqno'
-  await new_eldest_from_params (gen_params 0, "hello"), null, defer err, link, out
+  await new_eldest_from_params (gen_params 0, hash_val), null, defer err, link, out
   T.assert err?, 'no hprev hash with zero hprev seqno'
   await new_eldest_from_params (gen_params 1, null), null, defer err, link, out
   T.assert err?, 'must provide hprev_hash with positive hprev_seqno'
@@ -373,22 +374,27 @@ exports.hprev_ingest = (T, cb) ->
   T.assert err?, 'must provide hprev_hash with positive hprev_seqno'
   await new_eldest_from_params (gen_params 1, null), null, defer err, link, out
   T.assert err?, 'if seqno 1, cannot set hprev seqno, part 1 (no hash).'
-  await new_eldest_from_params (gen_params 1, "hello"), null, defer err, link, out
+  await new_eldest_from_params (gen_params 1, hash_val), null, defer err, link, out
   T.assert err?, 'if seqno 1, cannot set hprev seqno, part 2 (with hash).'
-  await new_eldest_from_params (gen_params -4, "hello"), null, defer err, link, out
+  await new_eldest_from_params (gen_params -4, hash_val), null, defer err, link, out
   T.assert err?, 'no negative seqno'
+
+  unhex_hash_val = "qf1dbeb3db94c01b64948973c1d04a87bf6ff89eec4ae61a593f81c5a0ff1700"
+  await new_eldest_from_params (gen_params 5, hash_val), null, defer err, link, out
+  T.assert err?, 'hash_val must be valid hex'
 
   T.waypoint 'hprev happy path'
 
   # Note that the second link is only acceptable because seqno is greater than 1.
-  for [seqno, hash] in [[0, null], [1, "hello"], [2, "goodbye"]]
+  for [seqno, hash] in [[0, null], [1, hash_val], [2, hash_val]]
     await new_eldest_from_params (gen_params seqno, hash), null, esc defer link, out
     hprev_chain.push link
 
+  wrong_hash_val = "9e52faf4c08d21b4fa87f0561cfd415fb72ae6962b523e4b5897c3f48c5f2f97"
   corruptor = (extra_params) ->
-    extra_params.hprev_info.hash = "something else"
+    extra_params.hprev_info.hash = wrong_hash_val
     return extra_params
-  await new_eldest_from_params (gen_params 4, "ciao"), corruptor, defer err, link, out
+  await new_eldest_from_params (gen_params 4, hash_val), corruptor, defer err, link, out
   T.assert err?, "client returned unexpected hash"
 
   cb null

@@ -737,8 +737,6 @@ class OuterLink
     esc = make_esc cb, "OuterLink.parse"
     await akatch (() -> purepack.unpack raw), esc defer arr
     err = ret = null
-    # TODO I think we should be doing some basic typechecking here, right?
-    # Does messagepack let us say what we expect?
     if arr.length not in [5, 6, 7, 9]
       err = new Error "expected 5, 6, 7, or 9 fields; got #{arr.length}"
     else

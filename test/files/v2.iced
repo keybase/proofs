@@ -49,8 +49,10 @@ class Chain
     arg = @user.to_constructor_arg(opts)
     if (p = @prev())? then p.populate_next arg
     else
-      arg.seqno = 0
+      arg.seqno = 1
       arg.prev = null
+    for k, v of opts.extra_params
+      arg[k] = v
     arg
 
   to_btc_constructor_arg : (opts) ->
@@ -73,7 +75,11 @@ class LinkV2
   prev : () -> @inner.obj.prev
 
   verify : ({chain, opts}, cb) ->
+    # Client provides but server doesn't...
     carg = chain.user.to_constructor_arg(opts)
+    if (m = opts?.extra_params)?
+      for k, v of m
+        carg[k] = v
     verifier = alloc @full_type(), carg
     varg = { @armored, skip_ids : true, make_ids : true, inner : @inner.str }
     await verifier.verify_v2 varg, defer err
@@ -111,8 +117,8 @@ exports.gen_1 = (T,cb) ->
 
 #-------------
 
-check_valid_link = ({T, chain, link, i}, cb) ->
-  link.verify { chain }, cb
+check_valid_link = ({T, chain, link, i, opts}, cb) ->
+  link.verify { chain, opts }, cb
 
 check_valid_link_v1 = ({T, chain, link, i}, cb) ->
   link.verify_v1 { chain }, cb
@@ -294,7 +300,7 @@ exports.check_bad_hash = (T,cb) ->
 
 exports.check_bad_seqno = (T,cb) ->
   f = (o) -> o[1]++
-  msg = "WrongSeqnoError: wrong seqno: 4 != 3"
+  msg = "WrongSeqnoError: wrong seqno: 5 != 4"
   check_bad_link T, null, f, msg, cb
 
 #-------------
@@ -330,3 +336,61 @@ exports.semiprivate_link = (T,cb) ->
   cb null
 
 #-------------
+
+exports.hprev_ingest = (T, cb) ->
+  esc = make_esc cb, "hprev_ingest"
+
+  await User.generate T.esc(defer(user), cb)
+  hprev_chain = new Chain { user }
+
+  arg = hprev_chain.to_constructor_arg({})
+  eldest = new Eldest arg
+  await eldest.generate_v2 esc defer out
+  outer = out.outer
+  T.assert not outer.hprev_info?, "An older client did include hprev_seqno; should not be returned."
+
+  new_eldest_from_params = (extra_params, corruptor, cb) ->
+    arg = hprev_chain.to_constructor_arg({ extra_params })
+    eldest = new Eldest arg
+    await eldest.generate_v2 defer err, out
+    return cb err, null if err?
+    link = new LinkV2 out
+    if corruptor?
+      extra_params = corruptor extra_params
+    await check_valid_link {T, chain: hprev_chain, link, opts: {extra_params}}, defer err
+    cb err, link, out
+
+  gen_params = (seqno, hash, corruptor) -> { hprev_info : { seqno, hash } }
+
+  T.waypoint 'hprev sanity checking'
+  await new_eldest_from_params (gen_params "hello", null), null, defer err, link, out
+  T.assert err?, 'no hprev hash without hprev seqno'
+  await new_eldest_from_params (gen_params 0, "hello"), null, defer err, link, out
+  T.assert err?, 'no hprev hash with zero hprev seqno'
+  await new_eldest_from_params (gen_params 1, null), null, defer err, link, out
+  T.assert err?, 'must provide hprev_hash with positive hprev_seqno'
+  await new_eldest_from_params (gen_params 15, null), null, defer err, link, out
+  T.assert err?, 'must provide hprev_hash with positive hprev_seqno'
+  await new_eldest_from_params (gen_params 1, null), null, defer err, link, out
+  T.assert err?, 'if seqno 1, cannot set hprev seqno, part 1 (no hash).'
+  await new_eldest_from_params (gen_params 1, "hello"), null, defer err, link, out
+  T.assert err?, 'if seqno 1, cannot set hprev seqno, part 2 (with hash).'
+  await new_eldest_from_params (gen_params -4, "hello"), null, defer err, link, out
+  T.assert err?, 'no negative seqno'
+
+  T.waypoint 'hprev happy path'
+
+  # Note that the second link is only acceptable because seqno is greater than 1.
+  for [seqno, hash] in [[0, null], [1, "hello"], [2, "goodbye"]]
+    await new_eldest_from_params (gen_params seqno, hash), null, esc defer link, out
+    hprev_chain.push link
+
+  corruptor = (extra_params) ->
+    extra_params.hprev_info.hash = "something else"
+    return extra_params
+  await new_eldest_from_params (gen_params 4, "ciao"), corruptor, defer err, link, out
+  T.assert err?, "client returned unexpected hash"
+
+  cb null
+
+#------------

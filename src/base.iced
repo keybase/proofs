@@ -127,6 +127,7 @@ class Verifier
     await @_check_inner_outer_match { outer_raw, inner_obj : json_obj, inner_buf }, esc defer outer_obj
     await @_check_ctime esc defer() unless @skip_clock_skew_check
     await @_check_expired esc defer()
+    await @_sanity_check_hprev_info esc defer() if @json.hprev_info?
     cb null, outer_obj, json_obj, json_str
 
   #---------------
@@ -152,6 +153,10 @@ class Verifier
       new Error "wrong seq type: #{errsan a} != #{errsan b}"
     else if (a = outer.get_ignore_if_unsupported()) isnt (b = (inner_obj.ignore_if_unsupported or false))
       new Error "wrong ignore_if_unsupported value: #{errsan a} != #{errsan b}"
+    else if (a = outer.get_hprev_info()?.seqno) isnt (b = (inner_obj.hprev_info?.seqno))
+      new Error "wrong hprev seqno: #{errsan a} != #{errsan b}"
+    else if (a = outer.get_hprev_info()?.hash) isnt (b = (inner_obj.hprev_info?.hash))
+      new Error "wrong hprev hash value: #{errsan a} != #{errsan b}"
     else
       null
     cb err, outer
@@ -209,6 +214,23 @@ class Verifier
 
   #---------------
 
+  _sanity_check_hprev_info : (cb) ->
+    err = null
+    {seqno, hprev_info} = @json
+    if hprev_info.hash and not hprev_info.seqno?
+      err = new Error "Cannot provide hprev hash but not hprev seqno."
+    else if seqno is 1 and hprev_info.seqno isnt 0
+      err = new Error "First seqno must provide hprev seqno 0, if hprev_info is provided."
+    else if hprev_info.seqno is 0 and hprev_info.hash?
+      err = new Error "Cannot provide hprev hash with hprev seqno 0."
+    else if hprev_info.seqno > 0 and not hprev_info.hash?
+      err = new Error "Must provide hprev_hash with positive hprev_seqno."
+    else if hprev_info.seqno < 0
+      err = new Error "hprev seqno should be non-negative."
+    cb err
+
+  #---------------
+
   _parse_and_process : ({armored}, cb) ->
     err = null
     await @sig_eng.unbox armored, defer err, payload, body
@@ -246,7 +268,7 @@ class Base
 
   #------
 
-  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @ignore_if_unsupported, @eldest_kid, @expire_in, @ctime}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @ignore_if_unsupported, @hprev_info, @eldest_kid, @expire_in, @ctime}) ->
 
   #------
 
@@ -389,7 +411,6 @@ class Base
   #------
 
   _v_check : ({json}, cb) ->
-
     # The default seq_type is PUBLIC
     seq_type = (v) -> if v? then v else constants.seq_types.PUBLIC
 
@@ -413,6 +434,13 @@ class Base
       new Error "Wrong seq_type: wanted '#{errsan b}' but got '#{errsan a}'"
     else if not (key = json?.body?.key)?
       new Error "no 'body.key' block in signature"
+    # It's OK if server expects but hprev_info clients don't send it, because
+    # it is optional for now. If they both provide, must match.
+    else if (a = json?.hprev_info)? and (b = @hprev_info)?
+      if a.seqno isnt b.seqno
+        new Error "Wrong hprev seqno: wanted '#{errsan b.seqno}' but got '#{errsan a.seqno}'"
+      else if a.hash isnt b.hash
+        new Error "Wrong hprev hash: wanted '#{errsan b.hash}' but got '#{errsan a.hash}'"
     else if (section_error = @_check_sections(json))?
       section_error
     else
@@ -517,6 +545,8 @@ class Base
 
     ret.ignore_if_unsupported = !!@ignore_if_unsupported if @ignore_if_unsupported?
 
+    ret.hprev_info = @hprev_info if @hprev_info?
+
     ret.body.client = @client if @client?
     ret.body.merkle_root = @merkle_root if @merkle_root?
     ret.body.revoke = @revoke if @has_revoke()
@@ -591,6 +621,7 @@ class Base
         hash : hash_sig(new Buffer inner.str, 'utf8')
         seq_type : if (x = inner.obj.seq_type_for_testing)? then x else (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
         ignore_if_unsupported : if (x = inner.obj.ignore_if_unsupported_for_testing)? then x else !!(inner.obj.ignore_if_unsupported or false)
+        hprev_info : inner.obj.hprev_info or null
       }
       ret = unpacked.pack()
 
@@ -698,22 +729,41 @@ class OuterLink
   # - first 5 filled
   # - first 6 filled
   # - first 7 filled
+  # - first 9 filled
   # It is invalid to fill ignore_if_unsupported by not seq_type.
-  constructor : ({@version, @seqno, @prev, @hash, @type, @seq_type, @ignore_if_unsupported}) ->
+  constructor : ({@version, @seqno, @prev, @hash, @type, @seq_type, @ignore_if_unsupported, @hprev_info}) ->
 
   @parse : ({raw}, cb) ->
     esc = make_esc cb, "OuterLink.parse"
     await akatch (() -> purepack.unpack raw), esc defer arr
     err = ret = null
-    if arr.length not in [5, 6, 7]
-      err = new Error "expected 5, 6, or 7 fields; got #{arr.length}"
+    if arr.length not in [5, 6, 7, 9]
+      err = new Error "expected 5, 6, 7, or 9 fields; got #{arr.length}"
     else
-      ret = new OuterLink { version : arr[0], seqno : arr[1], prev : arr[2], hash : arr[3], type : arr[4], seq_type : arr[5], ignore_if_unsupported : arr[6] }
+      arg = {
+        version : arr[0],
+        seqno : arr[1],
+        prev : arr[2],
+        hash : arr[3],
+        type : arr[4],
+        seq_type : arr[5],
+        ignore_if_unsupported : arr[6],
+      }
+      # If reading a 2.3-or-later link, fill in the info, for either a high or
+      # a low link. Otherwise, don't set hprev_info for older clients.
+      if arr.length >= 9
+        arg.hprev_info = {
+          seqno : arr[7],
+          hash : arr[8]
+        }
+      ret = new OuterLink arg
     cb err, ret
 
   get_seq_type : () -> if @seq_type then @seq_type else constants.seq_types.SEMIPRIVATE
 
   get_ignore_if_unsupported : () -> if @ignore_if_unsupported then @ignore_if_unsupported else false
+
+  get_hprev_info : () -> @hprev_info or null
 
   pack : () ->
     # For backwards-compatibility, if the incoming chainlink doesn't have a
@@ -727,6 +777,13 @@ class OuterLink
     arr.push @seq_type if @seq_type?
 
     arr.push (!!@ignore_if_unsupported) if @ignore_if_unsupported?
+
+    # If an older client wants to make an outer link, they will get null in both fields.
+    # If a newer client wants to make a first link, they should send hprev_seqno=0,
+    # a seqno which is never actually used, and leave hprev_hash as null.
+    if @hprev_info?
+      arr.push @hprev_info.seqno
+      arr.push @hprev_info.hash
 
     purepack.pack arr
 

@@ -155,8 +155,8 @@ class Verifier
       new Error "wrong ignore_if_unsupported value: #{errsan a} != #{errsan b}"
     else if (a = outer.get_hprev_info()?.seqno) isnt (b = (inner_obj.hprev_info?.seqno))
       new Error "wrong hprev seqno: #{errsan a} != #{errsan b}"
-    else if (a = outer.get_hprev_info()?.hash) isnt (b = (inner_obj.hprev_info?.hash))
-      new Error "wrong hprev hash value: #{errsan a} != #{errsan b}"
+    else if not compare_hash_buf_to_str (a = outer.get_hprev_info()?.hash), (b = (inner_obj.hprev_info?.hash))
+      new Error "wrong hprev hash value: #{a?.toString('hex')} != #{errsan b}"
     else
       null
     cb err, outer
@@ -601,31 +601,52 @@ class Base
 
   #------
 
+  hex_to_buf : ({hex_str, n}, cb) ->
+    err = buf = null
+
+    if not hex_str?
+      return cb null, buf
+    # expect a SHA256 hash by default
+    n or= 32
+    try
+      buf = new Buffer(hex_str, 'hex')
+    catch e
+      err = new Error "failed to read #{errsan hex_str} as a hex string"
+    if not err? and buf.length isnt n
+      err = new Error "bad hash length: #{buf.length}"
+
+    cb err, buf
+
+  #------
+
   generate_outer : ({inner}, cb) ->
-    ret = prev_buf = err = unpacked = null
+    esc = make_esc cb, "generate_outer"
+    ret = prev_buf = unpacked = null
 
-    if (p = inner.obj.prev)?
-      try
-        prev_buf = new Buffer(p, 'hex')
-      catch e
-        err = new Error "failed to read #{errsan p} as a hex string"
-      if not err? and prev_buf.length isnt 32 # expect a SHA256 hash
-        err = new Error "bad hash length: #{prev_buf.length}"
+    await @hex_to_buf { hex_str: inner.obj?.prev }, esc defer prev_buf
+    await @hex_to_buf { hex_str: inner.obj?.hprev_info?.hash }, esc defer hprev_hash_buf
 
-    unless err?
-      unpacked = new OuterLink {
-        version : constants.versions.sig_v2
-        type : @_type_v2()
-        seqno : (inner.obj.seqno or 0)
-        prev : prev_buf
-        hash : hash_sig(new Buffer inner.str, 'utf8')
-        seq_type : if (x = inner.obj.seq_type_for_testing)? then x else (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
-        ignore_if_unsupported : if (x = inner.obj.ignore_if_unsupported_for_testing)? then x else !!(inner.obj.ignore_if_unsupported or false)
-        hprev_info : inner.obj.hprev_info or null
+    if inner.obj?.hprev_info?
+      hprev_info = {
+        seqno: inner.obj.hprev_info.seqno,
+        hash: hprev_hash_buf
       }
-      ret = unpacked.pack()
+    else
+      hprev_info = null
 
-    cb err, ret, unpacked
+    unpacked = new OuterLink {
+      version : constants.versions.sig_v2
+      type : @_type_v2()
+      seqno : (inner.obj.seqno or 0)
+      prev : prev_buf
+      hash : hash_sig(new Buffer inner.str, 'utf8')
+      seq_type : if (x = inner.obj.seq_type_for_testing)? then x else (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
+      ignore_if_unsupported : if (x = inner.obj.ignore_if_unsupported_for_testing)? then x else !!(inner.obj.ignore_if_unsupported or false)
+      hprev_info : hprev_info
+    }
+    ret = unpacked.pack()
+
+    cb null, ret, unpacked
 
   #------
 

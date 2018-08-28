@@ -602,7 +602,7 @@ class Base
   #------
 
   hex_to_buf : ({hex_str, n}, cb) ->
-    buf = null
+    err = buf = null
 
     if not hex_str?
       return cb null, buf

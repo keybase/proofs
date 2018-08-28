@@ -600,14 +600,14 @@ class Base
     else @generate cb
 
   #------
-  
-  hex_to_buf : ({hex_str, n}, cb) ->
-    if not hex_str?
-      return cb null, null
 
+  hex_to_buf : ({hex_str, n}, cb) ->
+    buf = null
+
+    if not hex_str?
+      return cb null, buf
     # expect a SHA256 hash by default
     n or= 32
-      
     try
       buf = new Buffer(hex_str, 'hex')
     catch e
@@ -615,19 +615,18 @@ class Base
     if not err? and buf.length isnt n
       err = new Error "bad hash length: #{buf.length}"
 
-    cb null, buf
+    cb err, buf
 
   #------
 
   generate_outer : ({inner}, cb) ->
-    ret = prev_buf = err = unpacked = null
+    esc = make_esc cb, "generate_outer"
+    ret = prev_buf = unpacked = null
 
-    await @hex_to_buf { hex_str: inner?.obj?.prev }, defer err, prev_buf
-    return cb err, ret, unpacked if err?
-    await @hex_to_buf { hex_str: inner.obj.hprev_info?.hash }, defer err, hprev_hash_buf
-    return cb err, ret, unpacked if err?
+    await @hex_to_buf { hex_str: inner.obj?.prev }, esc defer prev_buf
+    await @hex_to_buf { hex_str: inner.obj?.hprev_info?.hash }, esc defer hprev_hash_buf
 
-    if inner.obj.hprev_info?
+    if inner.obj?.hprev_info?
       hprev_info = {
         seqno: inner.obj.hprev_info.seqno,
         hash: hprev_hash_buf
@@ -647,7 +646,7 @@ class Base
     }
     ret = unpacked.pack()
 
-    cb err, ret, unpacked
+    cb null, ret, unpacked
 
   #------
 

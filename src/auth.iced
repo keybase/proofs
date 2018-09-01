@@ -26,4 +26,8 @@ exports.Auth = class Auth extends Base
   _v_require_username : () -> false
   _v_require_uid      : () -> false
 
+  # eldest_kid is not required. This type of proof should never appear
+  # in sigchain.
+  _v_require_eldest_kid : () -> false
+
 #==========================================================================

@@ -21,4 +21,9 @@ exports.Eldest = class Eldest extends Base
   _v_customize_json : (ret) ->
     ret.body.device = @device if @device?
 
+  # Eldest proofs do not require "eldest_kid" field right now.
+  # TODO: In the future, we want to enforce Eldest proofs to contain
+  # "eldest_kid" that's equal to "kid" being posted.
+  _v_require_eldest_kid : () -> false
+
 #==========================================================================

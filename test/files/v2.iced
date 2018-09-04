@@ -337,45 +337,45 @@ exports.semiprivate_link = (T,cb) ->
 
 #-------------
 
-exports.hprev_ingest = (T, cb) ->
-  esc = make_esc cb, "hprev_ingest"
+exports.high_skip_ingest = (T, cb) ->
+  esc = make_esc cb, "high_skip_ingest"
 
   await User.generate T.esc(defer(user), cb)
-  hprev_chain = new Chain { user }
+  high_skip_chain = new Chain { user }
 
-  arg = hprev_chain.to_constructor_arg({})
+  arg = high_skip_chain.to_constructor_arg({})
   eldest = new Eldest arg
   await eldest.generate_v2 esc defer out
   outer = out.outer
-  T.assert not outer.hprev_info?, "An older client did include hprev_seqno; should not be returned."
+  T.assert not outer.high_skip?, "An older client did include high_skip_seqno; should not be returned."
 
   new_eldest_from_params = (extra_params, corruptor, cb) ->
-    arg = hprev_chain.to_constructor_arg({ extra_params })
+    arg = high_skip_chain.to_constructor_arg({ extra_params })
     eldest = new Eldest arg
     await eldest.generate_v2 defer err, out
     return cb err, null if err?
     link = new LinkV2 out
     if corruptor?
       extra_params = corruptor extra_params
-    await check_valid_link {T, chain: hprev_chain, link, opts: {extra_params}}, defer err
+    await check_valid_link {T, chain: high_skip_chain, link, opts: {extra_params}}, defer err
     cb err, link, out
 
-  gen_params = (seqno, hash, corruptor) -> { hprev_info : { seqno, hash } }
+  gen_params = (seqno, hash, corruptor) -> { high_skip : { seqno, hash } }
 
-  T.waypoint 'hprev sanity checking'
+  T.waypoint 'high_skip sanity checking'
   hash_val = "7f1dbeb3db94c01b64948973c1d04a87bf6ff89eec4ae61a593f81c5a0ff1700"
   await new_eldest_from_params (gen_params hash_val, null), null, defer err, link, out
-  T.assert err?, 'no hprev hash without hprev seqno'
+  T.assert err?, 'no high_skip hash without high_skip seqno'
   await new_eldest_from_params (gen_params 0, hash_val), null, defer err, link, out
-  T.assert err?, 'no hprev hash with zero hprev seqno'
+  T.assert err?, 'no high_skip hash with zero high_skip seqno'
   await new_eldest_from_params (gen_params 1, null), null, defer err, link, out
-  T.assert err?, 'must provide hprev_hash with positive hprev_seqno'
+  T.assert err?, 'must provide high_skip_hash with positive high_skip_seqno'
   await new_eldest_from_params (gen_params 15, null), null, defer err, link, out
-  T.assert err?, 'must provide hprev_hash with positive hprev_seqno'
+  T.assert err?, 'must provide high_skip_hash with positive high_skip_seqno'
   await new_eldest_from_params (gen_params 1, null), null, defer err, link, out
-  T.assert err?, 'if seqno 1, cannot set hprev seqno, part 1 (no hash).'
+  T.assert err?, 'if seqno 1, cannot set high_skip seqno, part 1 (no hash).'
   await new_eldest_from_params (gen_params 1, hash_val), null, defer err, link, out
-  T.assert err?, 'if seqno 1, cannot set hprev seqno, part 2 (with hash).'
+  T.assert err?, 'if seqno 1, cannot set high_skip seqno, part 2 (with hash).'
   await new_eldest_from_params (gen_params -4, hash_val), null, defer err, link, out
   T.assert err?, 'no negative seqno'
 
@@ -383,16 +383,16 @@ exports.hprev_ingest = (T, cb) ->
   await new_eldest_from_params (gen_params 5, hash_val), null, defer err, link, out
   T.assert err?, 'hash_val must be valid hex'
 
-  T.waypoint 'hprev happy path'
+  T.waypoint 'high_skip happy path'
 
   # Note that the second link is only acceptable because seqno is greater than 1.
   for [seqno, hash] in [[0, null], [1, hash_val], [2, hash_val]]
     await new_eldest_from_params (gen_params seqno, hash), null, esc defer link, out
-    hprev_chain.push link
+    high_skip_chain.push link
 
   wrong_hash_val = "9e52faf4c08d21b4fa87f0561cfd415fb72ae6962b523e4b5897c3f48c5f2f97"
   corruptor = (extra_params) ->
-    extra_params.hprev_info.hash = wrong_hash_val
+    extra_params.high_skip.hash = wrong_hash_val
     return extra_params
   await new_eldest_from_params (gen_params 4, hash_val), corruptor, defer err, link, out
   T.assert err?, "client returned unexpected hash"

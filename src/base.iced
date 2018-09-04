@@ -127,7 +127,7 @@ class Verifier
     await @_check_inner_outer_match { outer_raw, inner_obj : json_obj, inner_buf }, esc defer outer_obj
     await @_check_ctime esc defer() unless @skip_clock_skew_check
     await @_check_expired esc defer()
-    await @_sanity_check_hprev_info esc defer() if @json.hprev_info?
+    await @_sanity_check_high_skip esc defer() if @json.high_skip?
     cb null, outer_obj, json_obj, json_str
 
   #---------------
@@ -153,10 +153,10 @@ class Verifier
       new Error "wrong seq type: #{errsan a} != #{errsan b}"
     else if (a = outer.get_ignore_if_unsupported()) isnt (b = (inner_obj.ignore_if_unsupported or false))
       new Error "wrong ignore_if_unsupported value: #{errsan a} != #{errsan b}"
-    else if (a = outer.get_hprev_info()?.seqno) isnt (b = (inner_obj.hprev_info?.seqno))
-      new Error "wrong hprev seqno: #{errsan a} != #{errsan b}"
-    else if not compare_hash_buf_to_str (a = outer.get_hprev_info()?.hash), (b = (inner_obj.hprev_info?.hash))
-      new Error "wrong hprev hash value: #{a?.toString('hex')} != #{errsan b}"
+    else if (a = outer.get_high_skip()?.seqno) isnt (b = (inner_obj.high_skip?.seqno))
+      new Error "wrong high_skip seqno: #{errsan a} != #{errsan b}"
+    else if not compare_hash_buf_to_str (a = outer.get_high_skip()?.hash), (b = (inner_obj.high_skip?.hash))
+      new Error "wrong high_skip hash value: #{a?.toString('hex')} != #{errsan b}"
     else
       null
     cb err, outer
@@ -214,19 +214,19 @@ class Verifier
 
   #---------------
 
-  _sanity_check_hprev_info : (cb) ->
+  _sanity_check_high_skip : (cb) ->
     err = null
-    {seqno, hprev_info} = @json
-    if hprev_info.hash and not hprev_info.seqno?
-      err = new Error "Cannot provide hprev hash but not hprev seqno."
-    else if seqno is 1 and hprev_info.seqno isnt 0
-      err = new Error "First seqno must provide hprev seqno 0, if hprev_info is provided."
-    else if hprev_info.seqno is 0 and hprev_info.hash?
-      err = new Error "Cannot provide hprev hash with hprev seqno 0."
-    else if hprev_info.seqno > 0 and not hprev_info.hash?
-      err = new Error "Must provide hprev_hash with positive hprev_seqno."
-    else if hprev_info.seqno < 0
-      err = new Error "hprev seqno should be non-negative."
+    {seqno, high_skip} = @json
+    if high_skip.hash and not high_skip.seqno?
+      err = new Error "Cannot provide high_skip hash but not high_skip seqno."
+    else if seqno is 1 and high_skip.seqno isnt 0
+      err = new Error "First seqno must provide high_skip seqno 0, if high_skip is provided."
+    else if high_skip.seqno is 0 and high_skip.hash?
+      err = new Error "Cannot provide high_skip hash with high_skip seqno 0."
+    else if high_skip.seqno > 0 and not high_skip.hash?
+      err = new Error "Must provide high_skip_hash with positive high_skip_seqno."
+    else if high_skip.seqno < 0
+      err = new Error "high_skip seqno should be non-negative."
     cb err
 
   #---------------
@@ -268,7 +268,7 @@ class Base
 
   #------
 
-  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @ignore_if_unsupported, @hprev_info, @eldest_kid, @expire_in, @ctime}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @ignore_if_unsupported, @high_skip, @eldest_kid, @expire_in, @ctime}) ->
 
   #------
 
@@ -434,13 +434,13 @@ class Base
       new Error "Wrong seq_type: wanted '#{errsan b}' but got '#{errsan a}'"
     else if not (key = json?.body?.key)?
       new Error "no 'body.key' block in signature"
-    # It's OK if server expects but hprev_info clients don't send it, because
+    # It's OK if server expects but high_skip clients don't send it, because
     # it is optional for now. If they both provide, must match.
-    else if (a = json?.hprev_info)? and (b = @hprev_info)?
+    else if (a = json?.high_skip)? and (b = @high_skip)?
       if a.seqno isnt b.seqno
-        new Error "Wrong hprev seqno: wanted '#{errsan b.seqno}' but got '#{errsan a.seqno}'"
+        new Error "Wrong high_skip seqno: wanted '#{errsan b.seqno}' but got '#{errsan a.seqno}'"
       else if a.hash isnt b.hash
-        new Error "Wrong hprev hash: wanted '#{errsan b.hash}' but got '#{errsan a.hash}'"
+        new Error "Wrong high_skip hash: wanted '#{errsan b.hash}' but got '#{errsan a.hash}'"
     else if (section_error = @_check_sections(json))?
       section_error
     else
@@ -545,7 +545,7 @@ class Base
 
     ret.ignore_if_unsupported = !!@ignore_if_unsupported if @ignore_if_unsupported?
 
-    ret.hprev_info = @hprev_info if @hprev_info?
+    ret.high_skip = @high_skip if @high_skip?
 
     ret.body.client = @client if @client?
     ret.body.merkle_root = @merkle_root if @merkle_root?
@@ -624,15 +624,15 @@ class Base
     ret = prev_buf = unpacked = null
 
     await @hex_to_buf { hex_str: inner.obj?.prev }, esc defer prev_buf
-    await @hex_to_buf { hex_str: inner.obj?.hprev_info?.hash }, esc defer hprev_hash_buf
+    await @hex_to_buf { hex_str: inner.obj?.high_skip?.hash }, esc defer high_skip_hash_buf
 
-    if inner.obj?.hprev_info?
-      hprev_info = {
-        seqno: inner.obj.hprev_info.seqno,
-        hash: hprev_hash_buf
+    if inner.obj?.high_skip?
+      high_skip = {
+        seqno: inner.obj.high_skip.seqno,
+        hash: high_skip_hash_buf
       }
     else
-      hprev_info = null
+      high_skip = null
 
     unpacked = new OuterLink {
       version : constants.versions.sig_v2
@@ -642,7 +642,7 @@ class Base
       hash : hash_sig(new Buffer inner.str, 'utf8')
       seq_type : if (x = inner.obj.seq_type_for_testing)? then x else (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
       ignore_if_unsupported : if (x = inner.obj.ignore_if_unsupported_for_testing)? then x else !!(inner.obj.ignore_if_unsupported or false)
-      hprev_info : hprev_info
+      high_skip : high_skip
     }
     ret = unpacked.pack()
 
@@ -752,7 +752,7 @@ class OuterLink
   # - first 7 filled
   # - first 9 filled
   # It is invalid to fill ignore_if_unsupported by not seq_type.
-  constructor : ({@version, @seqno, @prev, @hash, @type, @seq_type, @ignore_if_unsupported, @hprev_info}) ->
+  constructor : ({@version, @seqno, @prev, @hash, @type, @seq_type, @ignore_if_unsupported, @high_skip}) ->
 
   @parse : ({raw}, cb) ->
     esc = make_esc cb, "OuterLink.parse"
@@ -771,9 +771,9 @@ class OuterLink
         ignore_if_unsupported : arr[6],
       }
       # If reading a 2.3-or-later link, fill in the info, for either a high or
-      # a low link. Otherwise, don't set hprev_info for older clients.
+      # a low link. Otherwise, don't set high_skip for older clients.
       if arr.length >= 9
-        arg.hprev_info = {
+        arg.high_skip = {
           seqno : arr[7],
           hash : arr[8]
         }
@@ -784,7 +784,7 @@ class OuterLink
 
   get_ignore_if_unsupported : () -> if @ignore_if_unsupported then @ignore_if_unsupported else false
 
-  get_hprev_info : () -> @hprev_info or null
+  get_high_skip : () -> @high_skip or null
 
   pack : () ->
     # For backwards-compatibility, if the incoming chainlink doesn't have a
@@ -800,11 +800,11 @@ class OuterLink
     arr.push (!!@ignore_if_unsupported) if @ignore_if_unsupported?
 
     # If an older client wants to make an outer link, they will get null in both fields.
-    # If a newer client wants to make a first link, they should send hprev_seqno=0,
-    # a seqno which is never actually used, and leave hprev_hash as null.
-    if @hprev_info?
-      arr.push @hprev_info.seqno
-      arr.push @hprev_info.hash
+    # If a newer client wants to make a first link, they should send high_skip_seqno=0,
+    # a seqno which is never actually used, and leave high_skip_hash as null.
+    if @high_skip?
+      arr.push @high_skip.seqno
+      arr.push @high_skip.hash
 
     purepack.pack arr
 

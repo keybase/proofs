@@ -1,3 +1,7 @@
+## 2.1.48 (2018-09-05)
+
+- Add support for `high_skip` fields to point to the last high link.
+
 ## 2.1.44
 
 - Add an `appkey_derivation_version` field to the per_team_key section of team signatures

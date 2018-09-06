@@ -340,12 +340,12 @@ class GenericSocialBinding extends SocialNetworkBinding
   service_name : -> @remote_service
   proof_type   : -> constants.proof_type.generic_social
 
-  @check_name : (n) ->
+  check_name : (n) ->
     if not n? or not (n = n.toLowerCase())? then false
     else if n.match @name_regexp then true
     else false
-  @name_hint : () -> "alphanumerics, lower case"
-  check_name : (n) -> GenericSocialBinding.check_name(n)
+
+  @name_hint : () -> "valid username"
 
   @_check_remote_service : (n) ->
     if not n? or not (n = n.toLowerCase())? then false

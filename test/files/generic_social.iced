@@ -26,6 +26,10 @@ exports.test_generic_social_proof = (T, cb) ->
   cb null
 
 exports.test_generic_social_inputs = (T, cb) ->
+  assert_err = (err, str) ->
+    err_str = err?.toString()
+    T.assert err_str?.indexOf(str) isnt -1, "Expecting error to contain '#{str}', got: #{err_str}"
+
   esc = make_esc cb, "test_generic_social_proof"
   await KeyManager.generate {}, esc defer device
   arg = new_sig_arg { km : device }
@@ -34,19 +38,26 @@ exports.test_generic_social_inputs = (T, cb) ->
   arg.name_regexp = generic_name_regexp
   obj = new GenericSocialBinding arg
   err = obj.check_inputs()
-  T.assert err?, "expecting an error with invalid remote_service (without dot)"
+  assert_err err, "invalid remote_service"
+
+  arg.remote_service = "cryptopals.club"
+  arg.user.remote = "HelloBobby$$$"
+  obj = new GenericSocialBinding arg
+  err = obj.check_inputs()
+  assert_err err, "Bad remote_username given"
 
   arg = new_sig_arg { km : device }
   arg.user.remote = "b0b"
   arg.remote_service = "cryptopals.club"
   obj = new GenericSocialBinding arg
   err = obj.check_inputs()
-  T.assert err?, "expecting an error when omitted name regexp"
+  assert_err err, "No name_regexp given"
 
+  # Invalid regexp
   arg.name_regexp = "[1-.]{1,5}"
   obj = new GenericSocialBinding arg
   err = obj.check_inputs()
-  T.assert err?, "expecting an error when given invalid name_regexp"
+  assert_err err, "No name_regexp given"
 
   cb null
 

@@ -1,3 +1,7 @@
+## 2.1.51 (2018-09-12)
+
+- Add `GenericSocialBinding` proof type, where `service_name` is not predefined.
+
 ## 2.1.50 (2018-09-05)
 
 - Added specific error code for incorrect high skips.

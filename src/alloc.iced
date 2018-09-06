@@ -20,16 +20,18 @@ team = require './team'
 #=======================================================
 
 lookup_tab = {
-  "web_service_binding.twitter"    : web_service.TwitterBinding,
-  "web_service_binding.facebook"   : web_service.FacebookBinding,
-  "web_service_binding.github"     : web_service.GithubBinding,
-  "web_service_binding.reddit"     : web_service.RedditBinding,
-  "web_service_binding.keybase"    : web_service.KeybaseBinding,
-  "web_service_binding.generic"    : web_service.GenericWebSiteBinding,
-  "web_service_binding.dns"        : web_service.DnsBinding,
-  "web_service_binding.coinbase"   : web_service.CoinbaseBinding,
-  "web_service_binding.hackernews" : web_service.HackerNewsBinding,
-  "web_service_binding.bitbucket"  : web_service.BitbucketBinding,
+  "web_service_binding.twitter"        : web_service.TwitterBinding,
+  "web_service_binding.facebook"       : web_service.FacebookBinding,
+  "web_service_binding.github"         : web_service.GithubBinding,
+  "web_service_binding.reddit"         : web_service.RedditBinding,
+  "web_service_binding.keybase"        : web_service.KeybaseBinding,
+  "web_service_binding.generic"        : web_service.GenericWebSiteBinding,
+  "web_service_binding.dns"            : web_service.DnsBinding,
+  "web_service_binding.coinbase"       : web_service.CoinbaseBinding,
+  "web_service_binding.hackernews"     : web_service.HackerNewsBinding,
+  "web_service_binding.bitbucket"      : web_service.BitbucketBinding,
+  "web_service_binding.generic_social" : web_service.GenericSocialBinding,
+
   "generic_binding"                : base.GenericBinding,
   "track"                          : Track,
   "untrack"                        : Untrack,

@@ -328,6 +328,24 @@ class HackerNewsBinding extends SocialNetworkBinding
 
 #==========================================================================
 
+class GenericSocialBinding extends SocialNetworkBinding
+  constructor : (args) ->
+    @remote_service = args.remote_service
+    super args
+
+  @single_occupancy : () -> false
+  single_occupancy  : () -> GenericSocialBinding.single_occupancy()
+
+  service_name : -> @remote_service
+  proof_type   : -> constants.proof_type.generic_social
+
+  @check_name : (n) ->
+    if not n? or not (n = n.toLowerCase())? then false
+    else if n.match /^[a-z0-9_-]{1,20}$/ then true
+    else false
+  @name_hint : () -> "alphanumerics, lower case"
+  check_name : (n) -> GenericSocialBinding.check_name(n)
+
 exports.TwitterBinding = TwitterBinding
 exports.FacebookBinding = FacebookBinding
 exports.RedditBinding = RedditBinding
@@ -339,5 +357,6 @@ exports.DnsBinding = DnsBinding
 exports.HackerNewsBinding = HackerNewsBinding
 exports.SocialNetworkBinding = SocialNetworkBinding
 exports.BitbucketBinding = BitbucketBinding
+exports.GenericSocialBinding = GenericSocialBinding
 
 #==========================================================================

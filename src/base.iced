@@ -332,6 +332,10 @@ class Base
   _v_require_username : () -> true
   _v_require_uid      : () -> true
 
+  # Require eldest_kid to be passed by default for proofs appended to
+  # sigchain.
+  _v_require_eldest_kid : () -> true
+
   # Generates (and caches) a hash for PGP keys, returns null for other kinds of keys
   full_pgp_hash : (opts, cb) ->
     if @_full_pgp_hash is undefined
@@ -387,7 +391,7 @@ class Base
       else
         has_user_id = true
     else if @_v_require_username()
-      return new Error "no username given, but was was required"
+      return new Error "no username given, but was required"
 
     if json?.body?.key?.uid
       if (a = json?.body?.key?.uid) isnt (b = @user.local.uid)
@@ -395,7 +399,7 @@ class Base
       else
         has_user_id = true
     else if @_v_require_uid()
-      return new Error "no uid given, but was was required"
+      return new Error "no uid given, but was required"
 
     if (v = @user.local.emails)? and (e = json?.body?.key?.email)?
       if e.toLowerCase() in (x.toLowerCase() for x in v when x?)
@@ -405,6 +409,16 @@ class Base
 
     if not has_user_id
       return new Error "no UID or username given for signature"
+
+    if (ek = json?.body?.key?.eldest_kid)
+      if not(@eldest_kid?)
+        # This is likely a programmer error, where @eldest_kid was not
+        # passed, but the error is visible to a user.
+        return new Error "Local user does not have eldest_kid when checking sig type: #{@_type()}"
+      if ek isnt @eldest_kid
+        return new Error "Wrong eldest_kid: got '#{errsan ek}' but wanted '#{errsan @eldest_kid}'"
+    else if @_v_require_eldest_kid()
+      return new Error "no eldest_kid given, but was required"
 
     return null
 

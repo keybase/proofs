@@ -34,6 +34,7 @@ class User
     host : 'keybase.io'
     sig_eng : @km.make_sig_eng()
     seq_type : seq_type
+    eldest_kid : @km.get_ekid().toString('hex')
   }
 
 

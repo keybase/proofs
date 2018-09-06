@@ -42,6 +42,7 @@ exports.test_key_section_bad_and_good = (T,cb) ->
   arg.kms = {}
   await EncKeyManager.generate {}, esc defer arg.kms.encryption
   await KeyManager.generate {}, esc defer arg.kms.signing
+  arg.eldest_kid = arg.kms.signing.get_ekid().toString('hex')
 
   verify_from_arg = ({arg}, cb) ->
     obj = new team.RotateKey arg
@@ -81,6 +82,7 @@ round_trip_with_corrupted_reverse_sig = ({T, corrupt}, cb) ->
   await EncKeyManager.generate {}, esc defer arg.kms.encryption
   await KeyManager.generate {}, esc defer arg.kms.signing
   arg.kms.generation = 10
+  arg.eldest_kid = arg.kms.signing.get_ekid().toString('hex')
   obj = new team.RotateKey arg
 
   obj._v_generate = (opts, cb) ->

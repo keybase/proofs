@@ -1,4 +1,8 @@
-## 2.1.48 (2018-09-05)
+## 2.1.50 (2018-09-06)
+
+- Added `eldest_kid` checking during verification.
+
+## 2.1.49 (2018-09-05)
 
 - Add support for `high_skip` fields to point to the last high link.
 

@@ -18,3 +18,4 @@ exports.new_sig_arg = new_sig_arg = ({km}) ->
     seqno : 0
     seq_type : constants.seq_types.PUBLIC
     prev : null
+    eldest_kid : km.get_ekid().toString('hex')

@@ -366,18 +366,25 @@ exports.high_skip_ingest = (T, cb) ->
   hash_val = "7f1dbeb3db94c01b64948973c1d04a87bf6ff89eec4ae61a593f81c5a0ff1700"
   await new_eldest_from_params (gen_params hash_val, null), null, defer err, link, out
   T.assert err?, 'no high_skip hash without high_skip seqno'
+  T.assert err instanceof errors.BadHighSkipError
   await new_eldest_from_params (gen_params 0, hash_val), null, defer err, link, out
   T.assert err?, 'no high_skip hash with zero high_skip seqno'
+  T.assert err instanceof errors.BadHighSkipError
   await new_eldest_from_params (gen_params 1, null), null, defer err, link, out
   T.assert err?, 'must provide high_skip_hash with positive high_skip_seqno'
+  T.assert err instanceof errors.BadHighSkipError
   await new_eldest_from_params (gen_params 15, null), null, defer err, link, out
   T.assert err?, 'must provide high_skip_hash with positive high_skip_seqno'
+  T.assert err instanceof errors.BadHighSkipError
   await new_eldest_from_params (gen_params 1, null), null, defer err, link, out
   T.assert err?, 'if seqno 1, cannot set high_skip seqno, part 1 (no hash).'
+  T.assert err instanceof errors.BadHighSkipError
   await new_eldest_from_params (gen_params 1, hash_val), null, defer err, link, out
   T.assert err?, 'if seqno 1, cannot set high_skip seqno, part 2 (with hash).'
+  T.assert err instanceof errors.BadHighSkipError
   await new_eldest_from_params (gen_params -4, hash_val), null, defer err, link, out
   T.assert err?, 'no negative seqno'
+  T.assert err instanceof errors.BadHighSkipError
 
   unhex_hash_val = "qf1dbeb3db94c01b64948973c1d04a87bf6ff89eec4ae61a593f81c5a0ff1700"
   await new_eldest_from_params (gen_params 5, hash_val), null, defer err, link, out
@@ -396,6 +403,7 @@ exports.high_skip_ingest = (T, cb) ->
     return extra_params
   await new_eldest_from_params (gen_params 4, hash_val), corruptor, defer err, link, out
   T.assert err?, "client returned unexpected hash"
+  T.assert err instanceof errors.BadHighSkipError
 
   cb null
 

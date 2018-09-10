@@ -154,9 +154,9 @@ class Verifier
     else if (a = outer.get_ignore_if_unsupported()) isnt (b = (inner_obj.ignore_if_unsupported or false))
       new Error "wrong ignore_if_unsupported value: #{errsan a} != #{errsan b}"
     else if (a = outer.get_high_skip()?.seqno) isnt (b = (inner_obj.high_skip?.seqno))
-      new Error "wrong high_skip seqno: #{errsan a} != #{errsan b}"
+      new errors.BadHighSkipError "wrong high_skip seqno: #{errsan a} != #{errsan b}"
     else if not compare_hash_buf_to_str (a = outer.get_high_skip()?.hash), (b = (inner_obj.high_skip?.hash))
-      new Error "wrong high_skip hash value: #{a?.toString('hex')} != #{errsan b}"
+      new errors.BadHighSkipError "wrong high_skip hash value: #{a?.toString('hex')} != #{errsan b}"
     else
       null
     cb err, outer
@@ -218,15 +218,15 @@ class Verifier
     err = null
     {seqno, high_skip} = @json
     if high_skip.hash and not high_skip.seqno?
-      err = new Error "Cannot provide high_skip hash but not high_skip seqno."
+      err = new errors.BadHighSkipError "Cannot provide high_skip hash but not high_skip seqno."
     else if seqno is 1 and high_skip.seqno isnt 0
-      err = new Error "First seqno must provide high_skip seqno 0, if high_skip is provided."
+      err = new errors.BadHighSkipError "First seqno must provide high_skip seqno 0, if high_skip is provided."
     else if high_skip.seqno is 0 and high_skip.hash?
-      err = new Error "Cannot provide high_skip hash with high_skip seqno 0."
+      err = new errors.BadHighSkipError "Cannot provide high_skip hash with high_skip seqno 0."
     else if high_skip.seqno > 0 and not high_skip.hash?
-      err = new Error "Must provide high_skip_hash with positive high_skip_seqno."
+      err = new errors.BadHighSkipError "Must provide high_skip_hash with positive high_skip_seqno."
     else if high_skip.seqno < 0
-      err = new Error "high_skip seqno should be non-negative."
+      err = new errors.BadHighSkipError "high_skip seqno should be non-negative."
     cb err
 
   #---------------
@@ -438,9 +438,9 @@ class Base
     # it is optional for now. If they both provide, must match.
     else if (a = json?.high_skip)? and (b = @high_skip)?
       if a.seqno isnt b.seqno
-        new Error "Wrong high_skip seqno: wanted '#{errsan b.seqno}' but got '#{errsan a.seqno}'"
+        new errors.BadHighSkipError "Wrong high_skip seqno: wanted '#{errsan b.seqno}' but got '#{errsan a.seqno}'"
       else if a.hash isnt b.hash
-        new Error "Wrong high_skip hash: wanted '#{errsan b.hash}' but got '#{errsan a.hash}'"
+        new errors.BadHighSkipError "Wrong high_skip hash: wanted '#{errsan b.hash}' but got '#{errsan a.hash}'"
     else if (section_error = @_check_sections(json))?
       section_error
     else

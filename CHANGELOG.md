@@ -1,3 +1,7 @@
+## 2.1.50 (2018-09-05)
+
+- Added specific error code for incorrect high skips.
+
 ## 2.1.48 (2018-09-05)
 
 - Add support for `high_skip` fields to point to the last high link.

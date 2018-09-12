@@ -328,6 +328,38 @@ class HackerNewsBinding extends SocialNetworkBinding
 
 #==========================================================================
 
+class GenericSocialBinding extends SocialNetworkBinding
+  constructor : (args) ->
+    @remote_service = args.remote_service
+    if (r = args.name_regexp)? then try @name_regexp = new RegExp(r)
+    super args
+
+  @single_occupancy : () -> false
+  single_occupancy  : () -> GenericSocialBinding.single_occupancy()
+
+  service_name : -> @remote_service
+  proof_type   : -> constants.proof_type.generic_social
+
+  check_name : (n) ->
+    if not n? or not (n = n.toLowerCase())? then false
+    else if n.match @name_regexp then true
+    else false
+
+  @name_hint : () -> "valid username"
+
+  @_check_remote_service : (n) ->
+    if not n? or not (n = n.toLowerCase())? then false
+    else if n.match /^[a-z0-9_\-\.]{1,15}\.[a-z0-9]{2,15}$/ then true
+    else false
+  _check_remote_service : (n) -> GenericSocialBinding._check_remote_service(n)
+
+  check_inputs : () ->
+    if err = super() then return err
+    else if not(@remote_service?) then return new Error "No remote_service given"
+    else if not(@_check_remote_service(@remote_service)) then return new Error "invalid remote_service"
+    else if not(@name_regexp?) then return new Error "No name_regexp given"
+    else return null
+
 exports.TwitterBinding = TwitterBinding
 exports.FacebookBinding = FacebookBinding
 exports.RedditBinding = RedditBinding
@@ -339,5 +371,6 @@ exports.DnsBinding = DnsBinding
 exports.HackerNewsBinding = HackerNewsBinding
 exports.SocialNetworkBinding = SocialNetworkBinding
 exports.BitbucketBinding = BitbucketBinding
+exports.GenericSocialBinding = GenericSocialBinding
 
 #==========================================================================

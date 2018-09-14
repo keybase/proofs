@@ -1,4 +1,4 @@
-{alloc,GenericSocialBinding} = require '../../'
+{alloc,GenericSocialBinding,constants} = require '../../'
 {EncKeyManager,KeyManager} = require('kbpgp').kb
 {make_esc} = require 'iced-error'
 {new_sig_arg} = require './util'
@@ -22,6 +22,9 @@ exports.test_generic_social_proof = (T, cb) ->
   await obj2.verify varg, esc defer err
 
   T.equal obj2.service_obj(), { name : arg.remote_service, username : arg.user.remote }
+  T.equal obj2.proof_type(), constants.proof_types.generic_social, "got right proof_type"
+  T.equal obj2.service_name(), arg.remote_service, "got right service_name"
+  T.equal obj2.single_occupancy(), false, "got right single_occupancy"
 
   cb null
 

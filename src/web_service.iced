@@ -338,7 +338,7 @@ class GenericSocialBinding extends SocialNetworkBinding
   single_occupancy  : () -> GenericSocialBinding.single_occupancy()
 
   service_name : -> @remote_service
-  proof_type   : -> constants.proof_type.generic_social
+  proof_type   : -> constants.proof_types.generic_social
 
   check_name : (n) ->
     if not n? or not (n = n.toLowerCase())? then false

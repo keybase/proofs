@@ -1,3 +1,11 @@
+## 2.1.53 (2018-09-24)
+
+- Change constant
+
+## 2.1.52 (2018-09-14)
+
+- Bug fixes
+
 ## 2.1.51 (2018-09-12)
 
 - Add `GenericSocialBinding` proof type, where `service_name` is not predefined.

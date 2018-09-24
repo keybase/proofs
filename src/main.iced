@@ -30,6 +30,7 @@ mods = [
   require('./scrapers/coinbase')
   require('./scrapers/hackernews')
   require('./scrapers/bitbucket')
+  require('./scrapers/generic_social')
   require('./errors')
 ]
 

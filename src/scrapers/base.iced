@@ -18,8 +18,9 @@ class BaseScraper
   hunt : (username, proof_check_text, cb) -> hunt2 { username, proof_check_text }, cb
   hunt2 : (args, cb) -> cb new Error "unimplemented"
   id_to_url : (username, status_id) ->
-  check_status : ({username, url, signature, status_id}, cb) ->
+  check_status : ({username, url, signature, status_id}, cb) -> cb new Error("check_status not implemented"), v_codes.NOT_FOUND
   _check_args : () -> new Error "unimplemented"
+  _check_api_url : () -> false # unimplemented
 
   #-------------------------------------------------------------
 

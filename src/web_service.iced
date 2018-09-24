@@ -360,6 +360,8 @@ class GenericSocialBinding extends SocialNetworkBinding
     else if not(@name_regexp?) then return new Error "No name_regexp given"
     else return null
 
+  resource_id : () -> @remote_service
+
 exports.TwitterBinding = TwitterBinding
 exports.FacebookBinding = FacebookBinding
 exports.RedditBinding = RedditBinding

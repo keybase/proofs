@@ -1,3 +1,7 @@
+## 2.1.54 (2018-09-25)
+
+- Add GenericSocialScraper.
+
 ## 2.1.53 (2018-09-24)
 
 - Change constant

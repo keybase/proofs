@@ -28,25 +28,22 @@ exports.GenericSocialScraper = class GenericSocialScraper extends BaseScraper
       err = bad_args_err "no service name given"
     else if name.indexOf('.') is -1
       err = bad_args_err "service name `#{name}` is likely wrong - no dot in name."
-    else if not @libs.get_service_obj?
-      err = bad_args_err "@libs.get_service_obj is undefined"
-    else if not (service_obj = @libs.get_service_obj(name))?
+    else if not (pproof = @libs.create_paramproofs_url_and_path({ name, username }))?
       err = bad_args_err "unknown service `#{name}`", v_codes.SERVICE_DEAD
     else
       out =
         rc : v_codes.OK
-        api_url : service_obj.create_check_url { remote_username : username }
+        api_url : pproof.api_url
         remote_id : username
 
     cb err, out
 
   # ---------------------------------------------------------------------------
 
-  _find_proofs_in_json : ({service_obj, obj, kb_username, sig_id}) ->
+  _find_proofs_in_json : ({check_path, obj, kb_username, sig_id}) ->
     rc = v_codes.NOT_FOUND
     err = null
 
-    {check_path} = service_obj
     path = check_path.concat()
     while step = path.shift()
       obj = obj[step]
@@ -66,11 +63,11 @@ exports.GenericSocialScraper = class GenericSocialScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   check_status : ({kb_username, username, name, api_url, sig_id}, cb) -> 
-    if not (service_obj = @libs.get_service_obj?(name))?
+    pproof = @libs.create_paramproofs_url_and_path({ name, username })
+    unless pproof?
       return cb new Error("bad service name"), v_codes.SERVICE_DEAD
 
-    url = service_obj.create_check_url { remote_username : username }
-    await @_get_url_body { url }, defer err, rc, html
+    await @_get_url_body { url : pproof.api_url }, defer err, rc, html
     if rc is v_codes.OK
       try
         obj = JSON.parse html
@@ -78,6 +75,6 @@ exports.GenericSocialScraper = class GenericSocialScraper extends BaseScraper
         err = new Error "unable to parse JSON content: #{e.toString()}"
         rc = v_codes.CONTENT_FAILURE
       if not err
-        [err, rc] = @_find_proofs_in_json { service_obj, obj, kb_username, sig_id }
+        [err, rc] = @_find_proofs_in_json { check_path : pproof.check_path , obj, kb_username, sig_id }
 
     cb err, rc

@@ -341,14 +341,14 @@ class GenericSocialBinding extends SocialNetworkBinding
   proof_type   : -> constants.proof_types.generic_social
 
   check_name : (n) ->
-    if not n? or not (n = n.toLowerCase())? then false
+    unless n? and (n is n.toLowerCase()) then false
     else if n.match @name_regexp then true
     else false
 
   @name_hint : () -> "valid username"
 
   @_check_remote_service : (n) ->
-    if not n? or not (n = n.toLowerCase())? then false
+    unless n? and (n is n.toLowerCase()) then false
     else if n.match /^[a-z0-9_\-\.]{1,15}\.[a-z0-9]{2,15}$/ then true
     else false
   _check_remote_service : (n) -> GenericSocialBinding._check_remote_service(n)

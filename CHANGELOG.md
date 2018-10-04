@@ -1,3 +1,7 @@
+## 2.1.55 (2018-10-04)
+
+- GenericSocialScraper insists on lowercase inputs.
+
 ## 2.1.54 (2018-09-25)
 
 - Add GenericSocialScraper.

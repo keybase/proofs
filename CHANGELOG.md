@@ -1,3 +1,7 @@
+## 2.1.56 (2018-10-19)
+
+- lowercase fix in GenericSocialScraper for `check_status`
+
 ## 2.1.55 (2018-10-04)
 
 - GenericSocialScraper insists on lowercase inputs.

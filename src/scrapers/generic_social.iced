@@ -1,6 +1,6 @@
-{BaseScraper} = require './base'
-{constants} = require '../constants'
-{v_codes} = constants
+{sncmp, BaseScraper} = require './base'
+{constants}          = require '../constants'
+{v_codes}            = constants
 
 exports.GenericSocialScraper = class GenericSocialScraper extends BaseScraper
   constructor : (opts) ->
@@ -52,8 +52,7 @@ exports.GenericSocialScraper = class GenericSocialScraper extends BaseScraper
     unless obj? and Array.isArray obj
       err = new Error "did not find proof list on #{check_path.join('.')} in json data"
       return [err, rc]
-
-    found = obj.find (x) -> x.kb_username is kb_username and x.sig_hash is sig_id
+    found = obj.find (x) -> sncmp(x.kb_username, kb_username) and sncmp(x.sig_hash, sig_id)
     if found?
       rc = v_codes.OK
     else
@@ -62,7 +61,7 @@ exports.GenericSocialScraper = class GenericSocialScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
-  check_status : ({kb_username, username, name, api_url, sig_id}, cb) -> 
+  check_status : ({kb_username, username, name, api_url, sig_id}, cb) ->
     pproof = @libs.create_paramproofs_url_and_path({ name, username })
     unless pproof?
       return cb new Error("bad service name"), v_codes.SERVICE_DEAD

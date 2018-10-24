@@ -349,7 +349,7 @@ class GenericSocialBinding extends SocialNetworkBinding
 
   @_check_remote_service : (n) ->
     unless n? and (n is n.toLowerCase()) then false
-    else if n.match /^[a-z0-9_\-\.]{1,15}\.[a-z0-9]{2,15}$/ then true
+    else if n.match /^([a-z0-9]+([a-z0-9]+_\-)*\.)+[a-z]{2,15}$/ then true
     else false
   _check_remote_service : (n) -> GenericSocialBinding._check_remote_service(n)
 

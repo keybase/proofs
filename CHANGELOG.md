@@ -1,4 +1,4 @@
-## 2.1.57 (2018-10-24)
+## 2.1.57-8 (2018-10-24)
 
 - Allow subdomains in `GenericSocialBinding`
 

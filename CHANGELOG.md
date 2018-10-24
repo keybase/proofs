@@ -1,3 +1,7 @@
+## 2.1.57 (2018-10-24)
+
+- Allow subdomains in `GenericSocialBinding`
+
 ## 2.1.56 (2018-10-19)
 
 - lowercase fix in GenericSocialScraper for `check_status`

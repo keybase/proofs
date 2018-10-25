@@ -35,6 +35,7 @@ exports.GenericSocialScraper = class GenericSocialScraper extends BaseScraper
         rc : v_codes.OK
         api_url : pproof.api_url
         remote_id : username
+        human_url : pproof.human_url
 
     cb err, out
 

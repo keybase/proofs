@@ -1,3 +1,7 @@
+## 2.1.59 (2018-10-25)
+
+- Add `human_url` to `GenericSocialScraper` output
+
 ## 2.1.57-8 (2018-10-24)
 
 - Allow subdomains in `GenericSocialBinding`

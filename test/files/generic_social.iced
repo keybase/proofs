@@ -10,7 +10,7 @@ exports.test_generic_social_proof = (T, cb) ->
   await KeyManager.generate {}, esc defer device
   arg = new_sig_arg { km : device }
   arg.user.remote = "al1ce"
-  arg.remote_service = "cryptopals.social"
+  arg.remote_service = "api.crypto_pals.social"
   arg.name_regexp = generic_name_regexp
   obj = new GenericSocialBinding arg
   await obj.generate esc defer out

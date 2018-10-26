@@ -1,3 +1,7 @@
+## 2.1.59 (2018-10-24)
+
+- Fix subdomain validation in `GenericSocialBinding`
+
 ## 2.1.57-8 (2018-10-24)
 
 - Allow subdomains in `GenericSocialBinding`

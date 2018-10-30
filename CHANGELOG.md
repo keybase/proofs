@@ -1,3 +1,7 @@
+## 2.1.60 (2018-10-29)
+
+- Upgrade bitcoyne to support sapling addresses
+
 ## 2.1.59 (2018-10-24)
 
 - Fix subdomain validation in `GenericSocialBinding`

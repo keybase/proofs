@@ -1,6 +1,8 @@
-## 2.1.61 and .62 (2018-12-02)
 
-- Add a public summary field to the team key section
+
+## 2.1.61 and .62 and .63 (2018-12-02)
+
+- NOOP, reverted feature
 
 ## 2.1.60 (2018-10-29)
 

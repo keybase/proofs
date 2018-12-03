@@ -39,6 +39,7 @@ exports.TeamBase = class TeamBase extends SubkeyBase
     m.encryption_kid = @kms.encryption.get_ekid().toString('hex')
     m.signing_kid = @kms.signing.get_ekid().toString('hex')
     m.appkey_derivation_version = v if (v = @kms.appkey_derivation_version)?
+    m.public_summary_hash = psh if (psh = @kms.public_summary_hash)?
     @per_team_key = m
   get_new_km : () -> @kms?.signing # use the signing KM
   need_reverse_sig : (json) -> json?.body?.team?.per_team_key?

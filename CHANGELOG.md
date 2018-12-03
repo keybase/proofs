@@ -1,4 +1,4 @@
-## 2.1.61 (2018-12-02)
+## 2.1.61 and .62 (2018-12-02)
 
 - Add a public summary field to the team key section
 

@@ -1,3 +1,7 @@
+## 2.1.61 (2018-12-02)
+
+- Add a public summary field to the team key section
+
 ## 2.1.60 (2018-10-29)
 
 - Upgrade bitcoyne to support sapling addresses
@@ -165,7 +169,7 @@ New Features:
 Bugfix:
  - Wrong proof type for sibkeys in v2
 
-## 2.1.0 
+## 2.1.0
 
 Feature:
   - Support for V2 chainlinks

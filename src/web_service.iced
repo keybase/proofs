@@ -184,7 +184,7 @@ class DnsBinding extends WebServiceBinding
     so = @service_obj()
     return x? and so? and cieq(so.protocol, x.protocol) and cieq(so.domain, x.domain)
   @service_name : -> "dns"
-  service_name  : -> "dns"
+  service_name  : -> @constructor.service_name()
   proof_type : -> constants.proof_types.dns
   @check_name : (n) -> DnsBinding.parse(n)?
   check_name : (n) -> DnsBinding.check_name(n)
@@ -205,7 +205,7 @@ class DnsBinding extends WebServiceBinding
 class TwitterBinding extends SocialNetworkBinding
 
   @service_name : -> "twitter"
-  service_name  : -> "twitter"
+  service_name  : -> @constructor.service_name()
   proof_type    : -> constants.proof_types.twitter
   is_short      : -> true
 
@@ -224,7 +224,7 @@ class TwitterBinding extends SocialNetworkBinding
 class FacebookBinding extends SocialNetworkBinding
 
   @service_name : -> "facebook"
-  service_name  : -> "facebook"
+  service_name  : -> @constructor.service_name()
   proof_type    : -> constants.proof_types.facebook
   is_short      : -> true
 
@@ -246,7 +246,7 @@ class KeybaseBinding extends WebServiceBinding
 
   _service_obj_check  : (x) -> not x?
   @service_name       : -> "keybase"
-  service_name        : -> "keybase"
+  service_name        : -> @constructor.service_name()
   proof_type          : -> constants.proof_types.keybase
   service_obj         : ->  null
 
@@ -254,7 +254,7 @@ class KeybaseBinding extends WebServiceBinding
 
 class GithubBinding extends SocialNetworkBinding
   @service_name : -> "github"
-  service_name  : -> "github"
+  service_name  : -> @constructor.service_name()
   proof_type    : -> constants.proof_types.github
 
   @check_name : (n) ->
@@ -269,7 +269,7 @@ class GithubBinding extends SocialNetworkBinding
 
 class BitbucketBinding extends SocialNetworkBinding
   @service_name : -> "bitbucket"
-  service_name  : -> "bitbucket"
+  service_name  : -> @constructor.service_name()
   proof_type    : -> constants.proof_types.bitbucket
 
   @check_name : (n) ->
@@ -284,7 +284,7 @@ class BitbucketBinding extends SocialNetworkBinding
 
 class RedditBinding extends SocialNetworkBinding
   @service_name : -> "reddit"
-  service_name  : -> "reddit"
+  service_name  : -> @constructor.service_name()
   proof_type    : -> constants.proof_types.reddit
 
   @check_name : (n) ->
@@ -299,7 +299,7 @@ class RedditBinding extends SocialNetworkBinding
 
 class CoinbaseBinding extends SocialNetworkBinding
   @service_name : -> "coinbase"
-  service_name  : -> "coinbase"
+  service_name  : -> @constructor.service_name()
   proof_type    : -> constants.proof_types.coinbase
 
   @check_name : (n) ->
@@ -314,7 +314,7 @@ class CoinbaseBinding extends SocialNetworkBinding
 
 class HackerNewsBinding extends SocialNetworkBinding
   @service_name : -> "hackernews"
-  service_name  : -> "hackernews"
+  service_name  : -> @constructor.service_name()
   proof_type    : -> constants.proof_types.hackernews
 
   @check_name : (n) ->

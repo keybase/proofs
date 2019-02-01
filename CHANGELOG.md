@@ -1,3 +1,6 @@
+## 2.1.65 (2019-02-01)
+
+- Deprecate (new Buffer) and use Buffer.from
 
 ## 2.1.64 (2019-01-30)
 

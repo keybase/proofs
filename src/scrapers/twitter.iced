@@ -38,7 +38,7 @@ class BearerToken
       @base.log "+ Request for bearer token"
 
       # Very crypto!  Not sure why this is done, but it's done
-      cred = (new Buffer [ @auth.key, @auth.secret].join(":")).toString('base64')
+      cred = (Buffer.from [ @auth.key, @auth.secret].join(":")).toString('base64')
 
       opts =
         url : "https://api.twitter.com/oauth2/token"

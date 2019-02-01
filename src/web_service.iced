@@ -81,7 +81,7 @@ class SocialNetworkBinding extends WebServiceBinding
 
 # A last-minute sanity check of the URL module
 has_non_ascii = (s) ->
-  buf = new Buffer s, 'utf8'
+  buf = Buffer.from s, 'utf8'
   for i in [0...buf.length]
     if buf.readUInt8(i) >= 128
       return true

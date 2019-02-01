@@ -71,7 +71,7 @@ class BaseScraper
   #-------------------------------------------------------------
 
   _find_sig_in_raw : (proof_text_check, raw) ->
-    ptc_buf = new Buffer proof_text_check, "base64"
+    ptc_buf = Buffer.from proof_text_check, "base64"
     return b64find raw, ptc_buf
 
   #-------------------------------------------------------------

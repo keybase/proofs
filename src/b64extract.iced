@@ -57,7 +57,7 @@ class Finder
     while i < @lines.length
       [msg, i] = @find_one_block i
       if msg.length
-        buf = new Buffer msg, 'base64'
+        buf = Buffer.from msg, 'base64'
         return true if bufeq_fast buf, needle
     return false
 

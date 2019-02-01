@@ -95,7 +95,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
     # calls back with a v_code or null if it was ok
     await @_get_body api_url, false, defer err, rc, raw
 
-    ptc_buf = new Buffer proof_text_check, "base64"
+    ptc_buf = Buffer.from proof_text_check, "base64"
     rc = if rc isnt v_codes.OK                       then rc
     else if @_find_sig_in_raw(proof_text_check, raw) then v_codes.OK
     else                                                  v_codes.NOT_FOUND

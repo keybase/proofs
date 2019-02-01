@@ -72,7 +72,7 @@ has_revoke = (o) ->
 #================================================================================
 
 proof_text_check_to_med_id = (proof_text_check) ->
-  {med_id} = make_ids(new Buffer proof_text_check, 'base64')
+  {med_id} = make_ids(Buffer.from proof_text_check, 'base64')
   med_id
 
 #================================================================================
@@ -81,14 +81,14 @@ exports.cieq = cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase(
 
 #==========================================================================
 
-bufferify = (b) -> if Buffer.isBuffer(b) then b else (new Buffer b, 'utf8')
+bufferify = (b) -> if Buffer.isBuffer(b) then b else (Buffer.from b, 'utf8')
 
 #==========================================================================
 
 compare_hash_buf_to_str = (b, s) ->
   if not(b)? and not(s)? then true
   else if not(b)? or not(s)? then false
-  else bufeq_secure b, (new Buffer s, 'hex')
+  else bufeq_secure b, (Buffer.from s, 'hex')
 
 #==========================================================================
 
@@ -122,7 +122,7 @@ class Verifier
   verify_v2 : (cb) ->
     esc = make_esc cb, "Verifier::verfiy"
     await @_parse_and_process {@armored}, esc defer outer_raw
-    inner_buf = new Buffer @inner, 'utf8'
+    inner_buf = Buffer.from @inner, 'utf8'
     await @_check_json {payload : inner_buf}, esc defer json_obj, json_str
     await @_check_inner_outer_match { outer_raw, inner_obj : json_obj, inner_buf }, esc defer outer_obj
     await @_check_ctime esc defer() unless @skip_clock_skew_check
@@ -293,7 +293,7 @@ class Base
   #------
 
   _v_check_kid : (kid) ->
-    if not bufeq_secure (a = @km().get_ekid()), (new Buffer kid, "hex")
+    if not bufeq_secure (a = @km().get_ekid()), (Buffer.from kid, "hex")
       err = new Error "Verification key doesn't match packet (via kid): #{errsan a.toString('hex')} != #{errsan kid}"
     else
       null
@@ -303,11 +303,11 @@ class Base
   _v_check_fingerprint : (key) ->
     if not (key_id = key?.key_id)?
       new Error "Needed a body.key.key_id but none given"
-    else if not bufeq_secure (a = @km().get_pgp_key_id()), (new Buffer key_id, "hex")
+    else if not bufeq_secure (a = @km().get_pgp_key_id()), (Buffer.from key_id, "hex")
       new Error "Verification key doesn't match packet (via key ID): #{errsan a.toString('hex')} != #{errsan key_id}"
     else if not (fp = key?.fingerprint)?
       new Error "Needed a body.key.fingerprint but none given"
-    else if not bufeq_secure @km().get_pgp_fingerprint(), (new Buffer fp, "hex")
+    else if not bufeq_secure @km().get_pgp_fingerprint(), (Buffer.from fp, "hex")
       new Error "Verifiation key doesn't match packet (via fingerprint)"
     else
       null
@@ -609,7 +609,7 @@ class Base
     # expect a SHA256 hash by default
     n or= 32
     try
-      buf = new Buffer(hex_str, 'hex')
+      buf = Buffer.from(hex_str, 'hex')
     catch e
       err = new Error "failed to read #{errsan hex_str} as a hex string"
     if not err? and buf.length isnt n
@@ -639,7 +639,7 @@ class Base
       type : @_type_v2()
       seqno : (inner.obj.seqno or 0)
       prev : prev_buf
-      hash : hash_sig(new Buffer inner.str, 'utf8')
+      hash : hash_sig(Buffer.from inner.str, 'utf8')
       seq_type : if (x = inner.obj.seq_type_for_testing)? then x else (inner.obj.seq_type or constants.seq_types.SEMIPRIVATE)
       ignore_if_unsupported : if (x = inner.obj.ignore_if_unsupported_for_testing)? then x else !!(inner.obj.ignore_if_unsupported or false)
       high_skip : high_skip

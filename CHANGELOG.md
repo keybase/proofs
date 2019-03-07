@@ -1,7 +1,3 @@
-## 2.1.66 (2019-03-06)
-
-- Replace the standard library regexp parser with RE2 in `GeneralSocialBinding`.
-
 ## 2.1.65 (2019-02-01)
 
 - Deprecate (new Buffer) and use Buffer.from

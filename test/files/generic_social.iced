@@ -62,12 +62,6 @@ exports.test_generic_social_inputs = (T, cb) ->
   err = obj.check_inputs()
   assert_err err, "No name_regexp given"
 
-  # PCRE-only regexp
-  arg.name_regexp = "^(?!On.*On\\s.+?wrote:)(On\\s(.+?)wrote:)$"
-  obj = new GenericSocialBinding arg
-  err = obj.check_inputs()
-  assert_err err, "No name_regexp given"
-
   cb null
 
 

@@ -1,7 +1,6 @@
 {cieq,Base} = require './base'
 {constants} = require './constants'
 urlmod = require 'url'
-RE2 = require 're2'
 
 #==========================================================================
 
@@ -341,7 +340,7 @@ class HackerNewsBinding extends SocialNetworkBinding
 class GenericSocialBinding extends SocialNetworkBinding
   constructor : (args) ->
     @remote_service = args.remote_service
-    if (r = args.name_regexp)? then try @name_regexp = new RE2(r)
+    if (r = args.name_regexp)? then try @name_regexp = new RegExp(r)
     super args
 
   @single_occupancy : () -> false

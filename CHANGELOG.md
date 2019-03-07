@@ -1,3 +1,7 @@
+## 2.1.67 (2019-03-09)
+
+- Backout 2.1.66, which has a compiled dependency
+
 ## 2.1.65 (2019-02-01)
 
 - Deprecate (new Buffer) and use Buffer.from

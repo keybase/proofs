@@ -384,7 +384,6 @@ class Base
 
     if json?.body?.key?.username
       if not cieq (a = json?.body?.key?.username), (b = @user.local.username)
-        console.log a, b, typeof a, typeof b
         return new Error "Wrong local user: got '#{errsan a}' but wanted '#{errsan b}'"
       else
         has_user_id = true

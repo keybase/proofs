@@ -1,3 +1,7 @@
+## 2.1.68 (2019-04-30)
+
+- Check types before comparing strings
+
 ## 2.1.67 (2019-03-09)
 
 - Backout 2.1.66, which has a compiled dependency

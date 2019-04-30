@@ -77,7 +77,8 @@ proof_text_check_to_med_id = (proof_text_check) ->
 
 #================================================================================
 
-exports.cieq = cieq = (a,b) -> (a? and b? and (a.toLowerCase() is b.toLowerCase()))
+isString = (x) -> (typeof x is 'string') or (x instanceof String)
+exports.cieq = cieq = (a,b) -> (a? and b? and (isString a) and (isString b) and (a.toLowerCase() is b.toLowerCase()))
 
 #==========================================================================
 

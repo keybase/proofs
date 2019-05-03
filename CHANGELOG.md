@@ -1,3 +1,7 @@
+## 2.1.69 (2019-05-02)
+
+- Tighten up defenses against malicious redirectors
+
 ## 2.1.68 (2019-04-30)
 
 - Check types before comparing strings

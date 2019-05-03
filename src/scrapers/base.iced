@@ -86,6 +86,24 @@ class BaseScraper
     opts.timeout = constants.http_timeout unless opts.timeout?
     opts.headers or= {}
     opts.headers["User-Agent"] = (opts.user_agent or user_agent)
+
+    # Tighten up our redirect strategy abunch, since H1'ers can use it to
+    # poke around inside our internal network. It might also make sense to have
+    # cross-domain checking here too, but that's fine for now.
+    followRedirect = (response) =>
+      {hostname,port,search} = url.parse response.headers.location
+      fail = (why) =>
+        @log "Failure in redirect path for #{@hostname}: #{why}"
+        false
+      if not hostname?.length then return fail("no hostname")
+      if port? and not(port in [ 80, 443 ]) then return fail("bad port: #{port}")
+      if new ipaddress.Address4(hostname).isValid() then return fail("found an IPv4 address (#{hostname})")
+      if new ipaddress.Address6(hostname).isValid() then return fail("found an IPv6 address (#{hostname})")
+      if search? then return fail("found a search parameter (#{search})")
+      true
+
+    opts.followRedirect = followRedirect
+
     await @libs.request opts, defer err, response, body
     rc = if err?
       if err.code is 'ETIMEDOUT' then               v_codes.TIMEOUT

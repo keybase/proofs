@@ -4,6 +4,7 @@ pkg = require '../../package.json'
 {decode_sig} = require('kbpgp').ukm
 {space_normalize} = require '../util'
 {b64find} = require '../b64extract'
+ipaddress = require 'ip-address'
 
 #==============================================================
 

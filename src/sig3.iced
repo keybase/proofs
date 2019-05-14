@@ -106,6 +106,9 @@ exports.Base = class Base
         return e("need a hash for p.h") unless parse.is_hex(json.p.h, 32)
         return e("need a seqno for p.s") unless parse.is_seqno(json.p.s)
         return e("need a chain type for p.t") unless parse.is_chain_type(json.p.t)
+      if json.i?
+        return e("need a string for i.d") unless parse.is_string(json.i.d)
+        return e("need a string for i.v") unless parse.is_string(json.i.v)
       return null
     err = p()
     return cb err if err?

@@ -155,6 +155,8 @@ exports.test_bad_inner = (T,cb) ->
   await run ((o) -> o.s.u = Buffer.alloc(16)), "bad UID", defer()
   await run ((o) -> o.p.h = Buffer.alloc(30)), "need a hash for p.h", defer()
   await run ((o) -> o.p.s = {}), "need a seqno for p.s", defer()
+  await run ((o) -> o.i.d = 10), "need a string for i.d", defer()
+  await run ((o) -> o.i.v = 10), "need a string for i.v", defer()
 
   cb null
 

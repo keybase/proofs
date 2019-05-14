@@ -5,6 +5,7 @@
 
 exports.is_dict = is_dict = (o) -> typeof(o) is 'object' and not Array.isArray(o) and o?
 exports.is_array = (o) -> typeof(o) is 'object' and Array.isArray(o)
+exports.is_string = (s) -> typeof(s) is 'string' and s.length > 0
 exports.is_uid = (u) -> is_hex(u, 16)
 exports.is_prev = (p) -> not(p?) or is_hex(p, 32)
 exports.is_inner_link_hash = (h) -> is_hex(h, 32)

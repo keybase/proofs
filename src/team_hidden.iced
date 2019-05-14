@@ -3,6 +3,7 @@
 parse = require './parse3'
 {EncKeyManager, KeyManager} = require('kbpgp').kb
 {make_esc} = require 'iced-error'
+schema = require './schema3'
 
 #------------------
 
@@ -14,6 +15,9 @@ exports.TeamBase = class TeamBase extends Base
 
   _v_encode_inner : ({json}) ->
     json.t = Buffer.from(@team_id, 'hex')
+
+  _v_extend_schema : (schm) ->
+    schm.set_key "t", schema.binary(16).name("team_id")
 
   _v_decode_inner : ({json}, cb) ->
     e = (m) -> new Error m
@@ -40,17 +44,18 @@ exports.RotateKey = class RotateKey extends TeamBase
       r : null
       s : @rotate_key.sig_km.key.ekid() }
 
+  _v_extend_schema : (schm) ->
+    super schm
+    schm.set_key "b", schema.dict({
+      g : schema.seqno().name("generation")
+      s : schema.kid().name("signing")
+      e : schema.enc_kid().name("encryption")
+      r : schema.binary(64).name("reverse_sig")
+    }).name("body")
+
   _v_decode_inner : ({json}, cb) ->
     esc = make_esc cb
     await super { json }, esc defer()
-    e = (m) -> new Error m
-    p = () ->
-      return e("need a body at b") unless parse.is_dict(json.b)
-      return e("need a positive at at b.g") unless parse.is_int(json.b.g)
-      return e("need a KID at b.s") unless parse.is_kid(json.b.s)
-      return e("need a KID at b.e") unless parse.is_kid(json.b.e)
-    err = p()
-    return cb err if err?
     @rotate_key = { generation : json.b.g }
     await EncKeyManager.import_public { raw : json.b.e }, esc defer @rotate_key.enc_km
     await KeyManager.import_public { raw : json.b.s }, esc defer @rotate_key.sig_km

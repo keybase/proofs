@@ -26,6 +26,7 @@ $(BUILD_STAMP): \
 	lib/main.js \
 	lib/parse3.js \
 	lib/revoke.js \
+	lib/schema3.js \
 	lib/sibkey.js \
 	lib/sig3.js \
 	lib/subkey.js \

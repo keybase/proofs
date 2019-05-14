@@ -1,0 +1,101 @@
+
+parse = require './parse3'
+
+mkerr = (path, err) -> new Error "At #{path.toString()}: #{err}"
+
+class Path
+  constructor : (v) ->
+    @_v = v or []
+  extend : (e) -> new Path @_v.concat [e]
+  toString : () -> @_v.join(".")
+  @top : () -> new Path [ "<top>" ]
+
+class Node
+  constructor : ({}) ->
+    @_optional = false
+    @_name = ""
+    @_path = []
+  optional : () ->
+    @_optional = true
+    @
+  is_optional : () -> @_optional
+  name : (n) ->
+    @_name = n
+    @
+  _check : ({path, obj}) -> mkerr path, "internal error, no checker found"
+
+  check : (obj) -> @_check { path :Path.top(), obj }
+
+class Dict extends Node
+  constructor : ({keys}) ->
+    @_keys = keys
+    super
+
+  _check : ({path, obj}) ->
+    if typeof(obj) isnt 'object' or Array.isArray(obj)
+      return mkerr path, "need a dictionary"
+    for k,v of obj
+      new_path = path.extend(k)
+      if not (checker = @_keys[k])? then return mkerr new_path, "key is not supported"
+      if (err = checker._check { path : new_path, obj : v })? then return err
+    for k,v of @_keys
+      new_path = path.extend(k)
+      if not obj[k]? and not v.is_optional() then return mkerr new_path, "key is missing but is mandatory"
+    return null
+
+  set_key : (k,v) ->
+    @_keys[k] = v
+
+class Binary extends Node
+
+  constructor : ({len}) ->
+    @_len = len
+
+  _check : ({path, obj}) ->
+    unless Buffer.isBuffer(obj) and obj.length is @_len
+      return mkerr path, "value needs to be buffer of length #{@_len}"
+    return null
+
+class KID extends Binary
+
+  constructor : ({encryption}) ->
+    @_encryption = encryption
+    @_len = 35
+
+  _check : ({path, obj}) ->
+    return err if (err = super { path, obj })?
+    typ = if @_encryption then 0x21 else 0x20
+    if obj[0] isnt 0x01 or obj[1] isnt typ or obj[-1...][0] isnt 0x0a
+      return mkerr path, "value must be a KID#{if @_encryption then ' (for encryption)' else ''}"
+    return null
+
+class Seqno extends Node
+  _check : ({path, obj}) ->
+    if not parse.is_seqno obj then return mkerr path, "value must be a seqno (sequence number)"
+    return null
+
+class Time extends Node
+  _check : ({path, obj}) ->
+    if not parse.is_time obj then return mkerr path, "value must be a UTC timestamp"
+    return null
+
+class ChainType extends Node
+  _check : ({path, obj}) ->
+    if not parse.is_chain_type obj then return mkerr path, "value must be a valid chain type"
+    return null
+
+class String extends Node
+  _check : ({path, obj}) ->
+    if typeof(obj) isnt 'string' or obj.length is 0 then return mkerr path, "value must be a string"
+    return null
+
+exports.dict = (keys) -> new Dict { keys }
+exports.binary = (l) -> new Binary { len : l }
+exports.uid = () -> new Binary { len : 16 }
+exports.kid = () -> new KID { encryption : false }
+exports.enc_kid = () -> new KID { encryption : true }
+exports.seqno = () -> new Seqno {}
+exports.time = () -> new Time {}
+exports.uid = () -> new Binary { len : 16 }
+exports.chain_type = () -> new ChainType {}
+exports.string = () -> new String {}

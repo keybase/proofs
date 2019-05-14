@@ -9,6 +9,7 @@ parse = require './parse3'
 {KeyManager} = kbpgp.kb
 pgp_utils = require('pgp-utils')
 {unix_time} = pgp_utils.util
+schema = require './schema3'
 
 #-------------------------
 
@@ -88,30 +89,33 @@ exports.Base = class Base
     @prev = outer_obj.prev
     @ignore_if_unsupported = outer_obj.ignore_if_unsupported
 
+  _enforce_schema : ({json}, cb) ->
+    schm = schema.dict({
+      c : schema.time().name("ctime")
+      e : schema.binary(16).name("entropy")
+      m : schema.dict({
+        c : schema.time().name("ctime")
+        h : schema.binary(32).name("hash_meta")
+        s : schema.seqno().name("seqno") }).name("merkle_root")
+      s : schema.dict({
+        e : schema.seqno().name("eldest_seqno")
+        k : schema.kid().name("kid")
+        u : schema.uid().name("uid") }).name("signer")
+      p : schema.dict({
+        h : schema.binary(32).name("tail")
+        s : schema.seqno().name("seqno")
+        t : schema.chain_type().name("chain_type") }).optional().name("public_chain_tail")
+      i : schema.dict({
+        d : schema.string().name("description")
+        v : schema.string().name("version")
+      }).optional().name("client_info") })
+    @_v_extend_schema schm
+    cb schm.check json
+
   decode_inner : ({json, outer_obj}, cb) ->
     esc = make_esc cb
-    e = (m) -> new Error m
-    p = () ->
-      return e("need a time for c") unless parse.is_time(json.c)
-      return e("need 16-byte entropy") unless parse.is_hex(json.e, 16)
-      return e("need a merkle root") unless json.m? and parse.is_dict(json.m)
-      return e("m.c must be a time") unless parse.is_time(json.m.c)
-      return e("m.h must be a 32-byte hash") unless parse.is_hex(json.m.h, 32)
-      return e("m.s must be a seqno") unless parse.is_seqno(json.m.s)
-      return e("need a signer for s") unless json.s? and parse.is_dict(json.s)
-      return e("need a seqno for s.e") unless parse.is_seqno(json.s.e)
-      return e("need a kid for s.k") unless parse.is_kid(json.s.k)
-      return e("need a uid for s.u") unless parse.is_uid(json.s.u)
-      if json.p?
-        return e("need a hash for p.h") unless parse.is_hex(json.p.h, 32)
-        return e("need a seqno for p.s") unless parse.is_seqno(json.p.s)
-        return e("need a chain type for p.t") unless parse.is_chain_type(json.p.t)
-      if json.i?
-        return e("need a string for i.d") unless parse.is_string(json.i.d)
-        return e("need a string for i.v") unless parse.is_string(json.i.v)
-      return null
-    err = p()
-    return cb err if err?
+
+    await @_enforce_schema { json }, esc defer()
 
     @_assign_outer { outer_obj }
 

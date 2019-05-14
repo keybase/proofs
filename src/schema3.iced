@@ -8,23 +8,27 @@ class Path
     @_v = v or []
   extend : (e) -> new Path @_v.concat [e]
   toString : () -> @_v.join(".")
-  @top : () -> new Path [ "<top>" ]
+  @top : (n) -> new Path [ n or "<top>" ]
 
 class Node
   constructor : ({}) ->
     @_optional = false
+    @_convert = false
     @_name = ""
     @_path = []
   optional : () ->
     @_optional = true
     @
   is_optional : () -> @_optional
+  convert : () ->
+    @_convert = true
+    @
   name : (n) ->
     @_name = n
     @
   _check : ({path, obj}) -> mkerr path, "internal error, no checker found"
 
-  check : (obj) -> @_check { path :Path.top(), obj }
+  check : (obj) -> @_check { path : Path.top(@_name), obj }
 
 class Dict extends Node
   constructor : ({keys}) ->
@@ -70,6 +74,8 @@ class Binary extends Node
     @_len = len
 
   _check : ({path, obj}) ->
+    if @_convert and typeof(obj) is 'string'
+      obj = Buffer.from(obj, 'hex')
     unless Buffer.isBuffer(obj) and obj.length is @_len
       return mkerr path, "value needs to be buffer of length #{@_len}"
     return null
@@ -119,10 +125,12 @@ class LinkType extends Node
     return null
 
 class Bool extends Node
-
   _check : ({path, obj}) ->
     if not parse.is_bool obj then return mkerr path, "value must be a boolean"
     return null
+
+class Object extends Node
+  _check : ({path, obj}) -> null
 
 exports.dict = (keys) -> new Dict { keys }
 exports.binary = (l) -> new Binary { len : l }
@@ -138,3 +146,4 @@ exports.string = () -> new String {}
 exports.value = (v) -> new Value v
 exports.bool = () -> new Bool {}
 exports.array = (s) -> new Array {slots : s}
+exports.obj = () -> new Object {}

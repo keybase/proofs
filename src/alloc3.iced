@@ -9,6 +9,7 @@ parse = require './parse3'
 {OuterLink} = require './sig3'
 {RotateKey} = require './team_hidden'
 {errors} = require './errors'
+schema = require './schema3'
 
 #=======================================================
 
@@ -65,17 +66,16 @@ _parse_inputs = ({armored, km, skip_inner, check_params}) ->
   unless check_params?
     return errout "need check_params"
 
-  if not parse.is_uid check_params?.user?.local?.uid
-    return errout "need a valid UID"
+  schm = schema.dict({
+    user : schema.dict({
+      local : schema.dict ({
+        uid : schema.uid().name("uid").convert()
+        eldest_seqno : schema.seqno().name("eldest_seqno") }) })
+    prev : schema.binary(32).optional().name("prev").convert()
+    seqno : schema.seqno().name("seqno")
+  }).name("check_params")
 
-  if not parse.is_seqno check_params?.user?.local?.eldest_seqno
-    return errout "need a valid eldest_seqno"
-
-  if not parse.is_prev check_params.prev
-    return errout 'need a valid or null prev pointer"'
-
-  if not parse.is_seqno check_params?.seqno
-    return errout "need a seqno for chain placement"
+  return [err, {}] if (err = schm.check check_params)?
 
   [ null, { json, raw } ]
 

@@ -14,6 +14,13 @@ twiddle_hex = (b) ->
   twiddle buf
   buf.toString('hex')
 
+_to_check_params = (a) ->
+  return {
+    user : a.user
+    seqno : a.seqno
+    prev : a.prev
+  }
+
 exports.test_generate_team_hidden_rotate = (T,cb) ->
   esc = make_esc cb
   await gen { T }, esc defer ret
@@ -35,31 +42,31 @@ gen = (T,cb) ->
 exports.test_generate_verify_team_hidden_rotate = (T,cb) ->
   esc = make_esc cb
   await gen { T }, esc defer {ret, km, arg }
-  await alloc_v3 { km, armored : ret.armored, check_params : arg }, esc defer { objs }
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, esc defer { objs }
   await KeyManager.generate {}, esc defer km2
-  await alloc_v3 { km : km2, armored : ret.armored, check_params : arg }, defer err
+  await alloc_v3 { km : km2, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
   T.assert err?, "got an error"
   T.equal err.message, "Signature failed to verify", "right error message"
 
   arg.user.local.uid = twiddle_hex arg.user.local.uid
-  await alloc_v3 { km, armored : ret.armored, check_params : arg }, defer err
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
   T.assert err?, "got an error"
   T.equal err.message, "bad UID", "got the wrong UID"
   arg.user.local.uid = twiddle_hex arg.user.local.uid
 
   arg.user.local.eldest_seqno++
-  await alloc_v3 { km, armored : ret.armored, check_params : arg }, defer err
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
   T.assert err?, "got an error"
   T.equal err.message, "bad eldest_seqno", "got the wrong eldest"
   arg.user.local.eldest_seqno--
 
   twiddle arg.prev
-  await alloc_v3 { km, armored : ret.armored, check_params : arg }, defer err
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
   T.assert err?, "got an error"
   T.assert (err instanceof errors.BadPrevError), "right error type"
   twiddle arg.prev
 
-  await alloc_v3 { km, armored : ret.armored, check_params : arg, now : unix_time()+1000000 }, defer err
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg), now : unix_time()+1000000 }, defer err
   T.assert err?, "got an error"
   T.assert (err instanceof errors.ClockSkewError), "right error type"
 
@@ -67,7 +74,7 @@ exports.test_generate_verify_team_hidden_rotate = (T,cb) ->
   inner = unpack(Buffer.from(ret.armored.inner, "base64"))
   inner.c++
   ret.armored.inner = pack(inner).toString('base64')
-  await alloc_v3 { km, armored : ret.armored, check_params : arg }, defer err
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
   T.assert err?, "got an error ack"
   T.equal err.message, "outer's body hash doesn't match inner link", "right message"
   ret.armored.inner = inner_armored
@@ -98,20 +105,20 @@ exports.test_bad_outer = (T,cb) ->
       f ret
       ret
     await obj.generate {}, esc defer ret
-    await alloc_v3 { km, armored : ret.armored, check_params : arg }, defer err
+    await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
     T.assert err?, "error"
     T.equal err.message, msg, "right message"
     cb null
 
-  await run ((v) -> v.push "foo"), "At <top>: need an array with 7 fields", defer()
-  await run ((v) -> v.pop()), "At <top>: need an array with 7 fields", defer()
-  await run ((v) -> v[0]++), "At <top>.0: must be set to value 3", defer()
-  await run ((v) -> v[1] = ["hi"]), "At <top>.1: value must be a seqno (sequence number)", defer()
-  await run ((v) -> v[2] = Buffer.alloc(33)), "At <top>.2: value needs to be buffer of length 32", defer()
-  await run ((v) -> v[3] = Buffer.alloc(33)), "At <top>.3: value needs to be buffer of length 32", defer()
-  await run ((v) -> v[4] = 1000), "At <top>.4: value must be a valid link type", defer()
-  await run ((v) -> v[5] = 1000), "At <top>.5: value must be a valid chain type", defer()
-  await run ((v) -> v[6] = 1000), "At <top>.6: value must be a boolean", defer()
+  await run ((v) -> v.push "foo"), "At outer: need an array with 7 fields", defer()
+  await run ((v) -> v.pop()), "At outer: need an array with 7 fields", defer()
+  await run ((v) -> v[0]++), "At outer.0: must be set to value 3", defer()
+  await run ((v) -> v[1] = ["hi"]), "At outer.1: value must be a seqno (sequence number)", defer()
+  await run ((v) -> v[2] = Buffer.alloc(33)), "At outer.2: value needs to be buffer of length 32", defer()
+  await run ((v) -> v[3] = Buffer.alloc(33)), "At outer.3: value needs to be buffer of length 32", defer()
+  await run ((v) -> v[4] = 1000), "At outer.4: value must be a valid link type", defer()
+  await run ((v) -> v[5] = 1000), "At outer.5: value must be a valid chain type", defer()
+  await run ((v) -> v[6] = 1000), "At outer.6: value must be a boolean", defer()
 
   cb null
 
@@ -131,30 +138,30 @@ exports.test_bad_inner = (T,cb) ->
       f ret
       ret
     await obj.generate {}, esc defer ret
-    await alloc_v3 { km, armored : ret.armored, check_params : arg }, defer err
+    await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
     T.assert err?, "error"
     T.equal err.message, msg, "right message"
     cb null
 
-  await run ((o) -> o.c = "blah"), "At <top>.c: value must be a UTC timestamp", defer()
-  await run ((o) -> o.e = Buffer.alloc(13)), "At <top>.e: value needs to be buffer of length 16", defer()
-  await run ((o) -> o.m = [1]), "At <top>.m: need a dictionary", defer()
-  await run ((o) -> o.m.c = [1]), "At <top>.m.c: value must be a UTC timestamp", defer()
-  await run ((o) -> o.m.h = Buffer.alloc(40)), "At <top>.m.h: value needs to be buffer of length 32", defer()
-  await run ((o) -> o.m.s = -1), "At <top>.m.s: value must be a seqno (sequence number)", defer()
-  await run ((o) -> delete o.s), "At <top>.s: key is missing but is mandatory", defer()
-  await run ((o) -> o.s.e = "foo"), "At <top>.s.e: value must be a seqno (sequence number)", defer()
+  await run ((o) -> o.c = "blah"), "At inner.c: value must be a UTC timestamp", defer()
+  await run ((o) -> o.e = Buffer.alloc(13)), "At inner.e: value needs to be buffer of length 16", defer()
+  await run ((o) -> o.m = [1]), "At inner.m: need a dictionary", defer()
+  await run ((o) -> o.m.c = [1]), "At inner.m.c: value must be a UTC timestamp", defer()
+  await run ((o) -> o.m.h = Buffer.alloc(40)), "At inner.m.h: value needs to be buffer of length 32", defer()
+  await run ((o) -> o.m.s = -1), "At inner.m.s: value must be a seqno (sequence number)", defer()
+  await run ((o) -> delete o.s), "At inner.s: key is missing but is mandatory", defer()
+  await run ((o) -> o.s.e = "foo"), "At inner.s.e: value must be a seqno (sequence number)", defer()
   await run ((o) -> o.s.e++), "bad eldest_seqno", defer()
-  await run ((o) -> o.s.k = Buffer.alloc(30)), "At <top>.s.k: value needs to be buffer of length 35", defer()
-  await run ((o) -> o.s.u = [1]), "At <top>.s.u: value needs to be buffer of length 16", defer()
+  await run ((o) -> o.s.k = Buffer.alloc(30)), "At inner.s.k: value needs to be buffer of length 35", defer()
+  await run ((o) -> o.s.u = [1]), "At inner.s.u: value needs to be buffer of length 16", defer()
   await run ((o) -> o.s.u = Buffer.alloc(16)), "bad UID", defer()
-  await run ((o) -> o.p.h = Buffer.alloc(30)), "At <top>.p.h: value needs to be buffer of length 32", defer()
-  await run ((o) -> o.p.s = {}), "At <top>.p.s: value must be a seqno (sequence number)", defer()
-  await run ((o) -> o.i.d = 10), "At <top>.i.d: value must be a string", defer()
-  await run ((o) -> o.i.v = 10), "At <top>.i.v: value must be a string", defer()
-  await run ((o) -> o.x = 10), "At <top>.x: key is not supported", defer()
-  await run ((o) -> o.i.x = 10), "At <top>.i.x: key is not supported", defer()
-  await run ((o) -> o.m.x = 10), "At <top>.m.x: key is not supported", defer()
+  await run ((o) -> o.p.h = Buffer.alloc(30)), "At inner.p.h: value needs to be buffer of length 32", defer()
+  await run ((o) -> o.p.s = {}), "At inner.p.s: value must be a seqno (sequence number)", defer()
+  await run ((o) -> o.i.d = 10), "At inner.i.d: value must be a string", defer()
+  await run ((o) -> o.i.v = 10), "At inner.i.v: value must be a string", defer()
+  await run ((o) -> o.x = 10), "At inner.x: key is not supported", defer()
+  await run ((o) -> o.i.x = 10), "At inner.i.x: key is not supported", defer()
+  await run ((o) -> o.m.x = 10), "At inner.m.x: key is not supported", defer()
 
   cb null
 
@@ -176,7 +183,7 @@ exports.test_bad_reverse_sig = (T,cb) ->
       twiddle sig
       inner.b.r = sig
   await obj.generate {}, esc defer ret
-  await alloc_v3 { km, armored : ret.armored, check_params : arg }, defer err
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
   T.assert err?, "got an error"
   T.equal err.message, "Signature failed to verify", "right error"
   T.assert (err.stack.indexOf("verify_reverse_sig") > 0), "we find a reverse sig in the stack"

@@ -41,6 +41,7 @@ exports.OuterLink = class OuterLink
     ]
 
   @decode : (obj) ->
+
     schm = schema.array([
       schema.value(3).name("version")
       schema.seqno().name("seqno")
@@ -49,8 +50,10 @@ exports.OuterLink = class OuterLink
       schema.link_type().name("link_type")
       schema.chain_type().name("chain_type")
       schema.bool().name("ignore_if_unsupported")
-    ])
+    ]).name("outer")
+
     return [err, null] if (err = schm.check obj)?
+
     return [null, (new OuterLink {
       version               : obj[0]
       seqno                 : obj[1]
@@ -108,7 +111,8 @@ exports.Base = class Base
       i : schema.dict({
         d : schema.string().name("description")
         v : schema.string().name("version")
-      }).optional().name("client_info") })
+      }).optional().name("client_info")
+    }).name("inner")
     @_v_extend_schema schm
     cb schm.check json
 

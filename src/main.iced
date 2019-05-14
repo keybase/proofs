@@ -4,6 +4,7 @@ mods = [
   require('./b64extract')
   require('./util')
   require('./alloc')
+  require('./alloc3')
   require('./constants')
   require('./base')
   require('./track')
@@ -40,3 +41,5 @@ for m in mods
 
 # Leave it namespaced; don't poke into namespace for teams
 exports.team = require('./team')
+exports.team_hidden = require('./team_hidden')
+exports.sig3 = require('./sig3')

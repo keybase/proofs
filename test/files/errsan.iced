@@ -1,5 +1,5 @@
 
-{errsan} = require '../../lib/base'
+{errsan} = require '../../lib/errors'
 
 exports.errsan = (T,cb) ->
   cases = [

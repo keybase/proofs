@@ -16,6 +16,7 @@ base = require './base'
 {UpdatePassphraseHash} = require './update_passphrase_hash'
 {UpdateSettings} = require './update_settings'
 team = require './team'
+team_hidden = require './team_hidden'
 
 #=======================================================
 

@@ -13,6 +13,7 @@ lib/%.js: src/%.iced
 
 $(BUILD_STAMP): \
 	lib/alloc.js \
+	lib/alloc3.js \
 	lib/announcement.js \
 	lib/auth.js \
 	lib/base.js \
@@ -23,8 +24,11 @@ $(BUILD_STAMP): \
 	lib/eldest.js \
 	lib/errors.js \
 	lib/main.js \
+	lib/parse3.js \
 	lib/revoke.js \
+	lib/schema3.js \
 	lib/sibkey.js \
+	lib/sig3.js \
 	lib/subkey.js \
 	lib/per_user_key.js \
 	lib/pgp_update.js \
@@ -40,6 +44,7 @@ $(BUILD_STAMP): \
 	lib/scrapers/twitter.js \
 	lib/scrapers/generic_social.js \
 	lib/team.js \
+	lib/team_hidden.js \
 	lib/track.js \
 	lib/wallet.js \
 	lib/web_service.js \

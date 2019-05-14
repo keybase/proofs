@@ -5,6 +5,9 @@ exports.constants = constants =
   versions :
     sig_v1 : 1
     sig_v2 : 2
+    sig_v3 : 3
+  sig_prefixes :
+    3 : "Keybase-Sigchain-3"
   sig_types :
     generic_binding : "generic_binding"
     web_service_binding : "web_service_binding"
@@ -75,6 +78,12 @@ exports.constants = constants =
       kbfs : 47
     wallet :
       stellar : 15
+  sig_types_v3:
+    user:
+      peg : 65
+    team:
+      rotate_key : 81
+
   proof_types :
     none : 0
     keybase : 1
@@ -101,6 +110,7 @@ exports.constants = constants =
     PUBLIC : 1
     PRIVATE : 2
     SEMIPRIVATE : 3
+    TEAM_HIDDEN : 17
 
   v_codes : # verification codes for hosted proofs
     NONE:              0

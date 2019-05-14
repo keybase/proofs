@@ -1,5 +1,6 @@
 {constants} = require './constants'
 {json_stringify_sorted,bufeq_secure} = require('pgp-utils').util
+crypto = require 'crypto'
 
 #----------
 
@@ -18,6 +19,10 @@ exports.v2_sig_type_from_sig_type = v2_sig_type_from_sig_type = (type) ->
   for k in keys
     v = v[k]
   return v
+
+##-----------------------------------------------------------------------
+
+exports.bufferify = (b) -> if Buffer.isBuffer(b) then b else (Buffer.from b, 'utf8')
 
 ##-----------------------------------------------------------------------
 
@@ -44,5 +49,9 @@ exports.Lock = class Lock
 ##-----------------------------------------------------------------------
 
 exports.space_normalize = (s) -> s.split(/[\r\n\t ]+/).join(' ')
+
+##-----------------------------------------------------------------------
+
+exports.sha256 = (b) -> crypto.createHash('SHA256').update(b).digest('buffer')
 
 ##-----------------------------------------------------------------------

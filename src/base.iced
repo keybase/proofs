@@ -8,8 +8,9 @@ kbpgp = require 'kbpgp'
 {make_esc} = require 'iced-error'
 util = require 'util'
 {base64_extract} = require './b64extract'
-{errors} = require './errors'
+{errors,errsan} = require './errors'
 purepack = require 'purepack'
+{bufferify} = require './util'
 
 #==========================================================================
 
@@ -42,23 +43,6 @@ sig_id_to_med_id = (sig_id) -> base64u.encode sig_id
 sig_id_to_short_id = (sig_id) ->
   base64u.encode sig_id[0...constants.short_id_bytes]
 
-exports.errsan = errsan = (s) ->
-  if typeof(s) is 'number' then return s
-  if typeof(s) is 'boolean' then return s
-  if not s? then return s
-  if typeof(s) isnt 'string'
-    s = s.toString()
-  map = {
-    "&" : "&amp;"
-    "<" : "&lt;"
-    ">" : "&gt;"
-    '"' : "&quot;"
-    "'" : "&#x27;"
-    "/" : "&#x2F;"
-  }
-  re = new RegExp("[" + Object.keys(map) + "]", "g")
-  s.replace re, (c) -> (map[c] or c)
-
 #================================================================================
 
 has_revoke = (o) ->
@@ -79,10 +63,6 @@ proof_text_check_to_med_id = (proof_text_check) ->
 
 isString = (x) -> (typeof x is 'string') or (x instanceof String)
 exports.cieq = cieq = (a,b) -> (a? and b? and (isString a) and (isString b) and (a.toLowerCase() is b.toLowerCase()))
-
-#==========================================================================
-
-bufferify = (b) -> if Buffer.isBuffer(b) then b else (Buffer.from b, 'utf8')
 
 #==========================================================================
 
@@ -597,8 +577,9 @@ class Base
   #------
 
   generate_versioned : ({version}, cb) ->
-    if version is constants.versions.sig_v2 then @generate_v2 cb
-    else @generate cb
+    switch version
+      when constants.versions.sig_v2 then @generate_v2 cb
+      else @generate cb
 
   #------
 

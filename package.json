@@ -28,7 +28,7 @@
     "iced-lock": "^1.0.1",
     "iced-runtime": ">=0.0.1",
     "ip-address": "^5.9.0",
-    "kbpgp": ">=2.0.58",
+    "kbpgp": ">=2.1.2",
     "pgp-utils": ">=0.0.22",
     "purepack": "^1.0.4",
     "triplesec": ">=3.0.16"

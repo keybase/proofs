@@ -86,7 +86,7 @@ exports.test_bad_outer = (T,cb) ->
     await KeyManager.generate {}, esc defer rotate_key.sig_km
     obj = new team_hidden.RotateKey arg
     obj._generate_outer = ({inner}) ->
-      return f (new sig3.OuterLink {
+      ret = (new sig3.OuterLink {
         version: obj._version()
         seqno : obj.seqno
         prev : parse.unhex(obj.prev)
@@ -95,28 +95,23 @@ exports.test_bad_outer = (T,cb) ->
         chain_type : obj._v_chain_type_v3()
         ignore_if_unsupported : obj.ignore_if_unsupported
       }).encode()
+      f ret
+      ret
     await obj.generate {}, esc defer ret
     await alloc_v3 { km, armored : ret.armored, check_params : arg }, defer err
     T.assert err?, "error"
     T.equal err.message, msg, "right message"
     cb null
 
-  f = (v) -> v.push "foo"; return v
-  await run f, "outer links must be len 7", defer()
-  f = (v) -> v[0]++; return v
-  await run f, "outer link slot 0 must be version 3", defer()
-  f = (v) -> v[1] = ["hi"]; return v
-  await run f, "outer link slot 1 must be a seqno", defer()
-  f = (v) -> v[2] = Buffer.alloc(33); return v
-  await run f, "outer link slot 2 must be a prev", defer()
-  f = (v) -> v[3] = Buffer.alloc(33); return v
-  await run f, "outer link slot 3 must be an innerlink hash", defer()
-  f = (v) -> v[4] = 1000; return v
-  await run f, "outer link slot 4 must be a link type", defer()
-  f = (v) -> v[5] = 1000; return v
-  await run f, "outer link slot 5 must be a chain type", defer()
-  f = (v) -> v[6] = 1000; return v
-  await run f, "outer link slot 6 must be a boolean", defer()
+  await run ((v) -> v.push "foo"), "At <top>: need an array with 7 fields", defer()
+  await run ((v) -> v.pop()), "At <top>: need an array with 7 fields", defer()
+  await run ((v) -> v[0]++), "At <top>.0: must be set to value 3", defer()
+  await run ((v) -> v[1] = ["hi"]), "At <top>.1: value must be a seqno (sequence number)", defer()
+  await run ((v) -> v[2] = Buffer.alloc(33)), "At <top>.2: value needs to be buffer of length 32", defer()
+  await run ((v) -> v[3] = Buffer.alloc(33)), "At <top>.3: value needs to be buffer of length 32", defer()
+  await run ((v) -> v[4] = 1000), "At <top>.4: value must be a valid link type", defer()
+  await run ((v) -> v[5] = 1000), "At <top>.5: value must be a valid chain type", defer()
+  await run ((v) -> v[6] = 1000), "At <top>.6: value must be a boolean", defer()
 
   cb null
 

@@ -41,16 +41,16 @@ exports.OuterLink = class OuterLink
     ]
 
   @decode : (obj) ->
-    e = (s) -> [(new Error s), null]
-    return e("outer links must be arrays") unless typeof(obj) is 'object' and Array.isArray(obj)
-    return e("outer links must be len 7") unless obj.length is 7
-    return e("outer link slot 0 must be version 3") unless obj[0] is constants.versions.sig_v3
-    return e("outer link slot 1 must be a seqno") unless parse.is_seqno obj[1]
-    return e("outer link slot 2 must be a prev") unless parse.is_prev obj[2]
-    return e("outer link slot 3 must be an innerlink hash") unless parse.is_inner_link_hash obj[3]
-    return e("outer link slot 4 must be a link type") unless parse.is_link_type obj[4]
-    return e("outer link slot 5 must be a chain type") unless parse.is_chain_type obj[5]
-    return e("outer link slot 6 must be a boolean") unless parse.is_bool obj[6]
+    schm = schema.array([
+      schema.value(3).name("version")
+      schema.seqno().name("seqno")
+      schema.binary(32).name("prev").optional()
+      schema.binary(32).name("inner_link")
+      schema.link_type().name("link_type")
+      schema.chain_type().name("chain_type")
+      schema.bool().name("ignore_if_unsupported")
+    ])
+    return [err, null] if (err = schm.check obj)?
     return [null, (new OuterLink {
       version               : obj[0]
       seqno                 : obj[1]

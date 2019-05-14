@@ -32,7 +32,7 @@ class Dict extends Node
     super
 
   _check : ({path, obj}) ->
-    if typeof(obj) isnt 'object' or Array.isArray(obj)
+    if not parse.is_dict(obj)
       return mkerr path, "need a dictionary"
     for k,v of obj
       new_path = path.extend(k)
@@ -45,6 +45,24 @@ class Dict extends Node
 
   set_key : (k,v) ->
     @_keys[k] = v
+
+class Array extends Node
+
+  constructor : ({slots}) ->
+    @_slots = slots
+
+  _check : ({path, obj}) ->
+    unless parse.is_array(obj)
+      return mkerr path, "need an array"
+    if obj.length isnt @_slots.length
+      return mkerr path, "need an array with #{@_slots.length} fields"
+    for o,i in obj
+      new_path = path.extend(i.toString())
+      if not o? and not @_slots[i].is_optional()
+        return mkerr path, "value cannot be null"
+      checker = @_slots[i]
+      if (err = checker._check { path  : new_path, obj : o})? then return err
+    return null
 
 class Binary extends Node
 
@@ -89,6 +107,23 @@ class String extends Node
     if typeof(obj) isnt 'string' or obj.length is 0 then return mkerr path, "value must be a string"
     return null
 
+class Value extends Node
+  constructor : (@_value) ->
+  _check : ({path, obj}) ->
+    unless obj is @_value then return mkerr path, "must be set to value #{@_value}"
+    return null
+
+class LinkType extends Node
+  _check : ({path, obj}) ->
+    if not parse.is_link_type obj then return mkerr path, "value must be a valid link type"
+    return null
+
+class Bool extends Node
+
+  _check : ({path, obj}) ->
+    if not parse.is_bool obj then return mkerr path, "value must be a boolean"
+    return null
+
 exports.dict = (keys) -> new Dict { keys }
 exports.binary = (l) -> new Binary { len : l }
 exports.uid = () -> new Binary { len : 16 }
@@ -98,4 +133,8 @@ exports.seqno = () -> new Seqno {}
 exports.time = () -> new Time {}
 exports.uid = () -> new Binary { len : 16 }
 exports.chain_type = () -> new ChainType {}
+exports.link_type = () -> new LinkType {}
 exports.string = () -> new String {}
+exports.value = (v) -> new Value v
+exports.bool = () -> new Bool {}
+exports.array = (s) -> new Array {slots : s}

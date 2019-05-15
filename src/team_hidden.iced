@@ -34,7 +34,7 @@ exports.RotateKey = class RotateKey extends TeamBase
   _v_encode_inner : ({json}) ->
     super { json }
     json.b = { # Body
-      a : 2 # appkey_derivation_version, hardcoded to 2 (HMAC)
+      a : constants.appkey_derivation_version.hmac
       e : @rotate_key.enc_km.key.ekid()
       g : @rotate_key.generation
       r : null
@@ -43,7 +43,7 @@ exports.RotateKey = class RotateKey extends TeamBase
   _v_extend_schema : (schm) ->
     super schm
     schm.set_key "b", schema.dict({
-      a : schema.value(2).name("appkey_derivation_version")
+      a : schema.value(constants.appkey_derivation_version.hmac).name("appkey_derivation_version")
       e : schema.enc_kid().name("encryption")
       g : schema.seqno().name("generation")
       r : schema.binary(64).name("reverse_sig")

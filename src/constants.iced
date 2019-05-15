@@ -84,6 +84,11 @@ exports.constants = constants =
     team:
       rotate_key : 81
 
+  appkey_derivation_version :
+    default : 0
+    xor : 1
+    hmac : 2
+
   proof_types :
     none : 0
     keybase : 1

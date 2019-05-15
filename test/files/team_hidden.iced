@@ -123,20 +123,22 @@ exports.test_bad_outer = (T,cb) ->
   cb null
 
 exports.test_bad_inner = (T,cb) ->
+
   esc = make_esc cb
+  rotate_key = { generation : 10 }
+  await KeyManager.generate {}, esc defer km
+  await EncKeyManager.generate {}, esc defer rotate_key.enc_km
+  await KeyManager.generate {}, esc defer rotate_key.sig_km
+
   run = (f, msg, cb) ->
-    await KeyManager.generate {}, esc defer km
-    rotate_key = { generation : 10 }
     arg = new_sig_arg_v3 { mk_prev : true, km }
     arg.rotate_key = rotate_key
     arg.team_id = prng(16)
-    await EncKeyManager.generate {}, esc defer rotate_key.enc_km
-    await KeyManager.generate {}, esc defer rotate_key.sig_km
     obj = new team_hidden.RotateKey arg
-    obj._encode_inner = (opts) ->
-      ret = obj._encode_inner_impl opts
-      f ret
-      ret
+    obj._generate_inner = (opts, cb) ->
+      await obj._generate_inner_impl opts, defer err, json
+      f json
+      cb err, json
     await obj.generate {}, esc defer ret
     await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
     T.assert err?, "error"
@@ -162,6 +164,11 @@ exports.test_bad_inner = (T,cb) ->
   await run ((o) -> o.x = 10), "At inner.x: key is not supported", defer()
   await run ((o) -> o.i.x = 10), "At inner.i.x: key is not supported", defer()
   await run ((o) -> o.m.x = 10), "At inner.m.x: key is not supported", defer()
+  await run ((o) -> o.t = 10), "At inner.t: value needs to be buffer of length 16", defer()
+  await run ((o) -> o.b.x = 10), "At inner.b.x: key is not supported", defer()
+  await run ((o) -> o.b.s = Buffer.alloc(32)), "At inner.b.s: value needs to be buffer of length 35" , defer()
+  await run ((o) -> o.b.e = Buffer.alloc(32)), "At inner.b.e: value needs to be buffer of length 35" , defer()
+  await run ((o) -> o.b.g = Buffer.alloc(3)), "At inner.b.g: value must be a seqno (sequence number)" , defer()
 
   cb null
 

@@ -42,10 +42,10 @@ exports.RotateKey = class RotateKey extends TeamBase
   _v_extend_schema : (schm) ->
     super schm
     schm.set_key "b", schema.dict({
-      g : schema.seqno().name("generation")
-      s : schema.kid().name("signing")
       e : schema.enc_kid().name("encryption")
+      g : schema.seqno().name("generation")
       r : schema.binary(64).name("reverse_sig")
+      s : schema.kid().name("signing")
     }).name("body")
 
   _v_decode_inner : ({json}, cb) ->

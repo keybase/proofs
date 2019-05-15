@@ -69,7 +69,10 @@ exports.Base = class Base
 
   constructor : ({@sig_eng, @seqno, @user, @prev, @client, @merkle_root, @ignore_if_unsupported, @ctime, @entropy, @public_chain_tail, @new_sig_km}) ->
 
-  _generate_inner : (opts, cb) ->
+  # one layer of redirection for the purposes of tests
+  _generate_inner : (opts, cb) -> @_generate_inner_impl opts, cb
+
+  _generate_inner_impl : (opts, cb) ->
     esc = make_esc cb
     json = @_encode_inner opts
     opts.json = json
@@ -147,10 +150,7 @@ exports.Base = class Base
     await @_v_decode_inner { json }, esc defer()
     cb null
 
-  # slight level of indirection for testing purposes
-  _encode_inner : (opts) -> @_encode_inner_impl opts
-
-  _encode_inner_impl : (opts) ->
+  _encode_inner : (opts) ->
     entropy = @entropy or crypto.prng(16)
     json = {
       c : @ctime

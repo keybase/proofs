@@ -2,7 +2,7 @@
 {make_esc} = require 'iced-error'
 {KeyManager} = require('kbpgp').kb
 {constants} = require './constants'
-{bufferify,sha256} = require './util'
+{pack,bufferify,sha256} = require './util'
 pgp_utils = require('pgp-utils')
 {bufeq_secure} = pgp_utils.util
 parse = require './parse3'

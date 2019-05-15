@@ -1,5 +1,7 @@
 {unpack} = require 'purepack'
 {constants} = require './constants'
+{pack} = require './util'
+{bufeq_fast} = require('pgp-utils').util
 
 #=======================================================
 
@@ -30,11 +32,18 @@ exports.dearmor_dict = (armored) ->
   for k,v of armored
     ret[k] = Buffer.from(v, 'base64')
   return ret
+
 exports.unpack_dict = (raw) ->
   if not is_dict(raw) then throw new Error "need an object of packed objects"
   ret = {}
   for k,v of raw
-    ret[k] = unpack v
+    ret[k] = unpack_strict v
+  return ret
+
+unpack_strict = (v) ->
+  ret = unpack v
+  expected = pack ret
+  throw new Error("strict decoding requirement failed") unless bufeq_fast(v, expected)
   return ret
 
 exports.is_link_type = (x) ->

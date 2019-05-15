@@ -1,10 +1,10 @@
 kbpgp = require 'kbpgp'
-{pack,unpack} = require 'purepack'
+{unpack} = require 'purepack'
 {errors} = require './errors'
 crypto = require 'crypto'
 {make_esc} = require 'iced-error'
 {constants} = require './constants'
-{bufferify,sha256} = require './util'
+{pack,bufferify,sha256} = require './util'
 parse = require './parse3'
 {KeyManager} = kbpgp.kb
 pgp_utils = require('pgp-utils')
@@ -13,14 +13,10 @@ schema = require './schema3'
 
 #-------------------------
 
-_pack = (obj) -> pack obj, {sort_keys : true}
-
-#-------------------------
-
 _encode_dict = (d) ->
   ret = {}
   for k,v of d
-    ret[k] = _pack(v).toString('base64')
+    ret[k] = pack(v).toString('base64')
   ret
 
 #-------------------------
@@ -178,11 +174,11 @@ exports.Base = class Base
 
   _sign : ({sig_eng, outer}, cb) ->
     esc = make_esc cb
-    payload = _pack outer
+    payload = pack outer
     await sig_eng.box payload, esc(defer(res)), { prefix : @_prefix() }
     cb null, res.sig
 
-  _hash : (inner) -> sha256 _pack inner
+  _hash : (inner) -> sha256 pack inner
 
   _reverse_sign : ({inner, outer}, cb) ->
     esc = make_esc cb
@@ -208,7 +204,7 @@ exports.Base = class Base
     outer = outer_obj.encode()
     outer_obj.inner_hash = inner_hash
     @_v_assign_reverse_sig { sig, inner }
-    payload = _pack outer
+    payload = pack outer
     await k.verify_raw { prefix : @_prefix(), payload, sig }, esc defer()
     cb null
 

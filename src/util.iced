@@ -1,6 +1,7 @@
 {constants} = require './constants'
 {json_stringify_sorted,bufeq_secure} = require('pgp-utils').util
 crypto = require 'crypto'
+{pack} = require 'purepack'
 
 #----------
 
@@ -55,3 +56,8 @@ exports.space_normalize = (s) -> s.split(/[\r\n\t ]+/).join(' ')
 exports.sha256 = (b) -> crypto.createHash('SHA256').update(b).digest('buffer')
 
 ##-----------------------------------------------------------------------
+
+exports.pack = (o) -> pack o, { sort_keys : true }
+
+##-----------------------------------------------------------------------
+

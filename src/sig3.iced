@@ -234,6 +234,14 @@ exports.Base = class Base
       ignore_if_unsupported : @ignore_if_unsupported
     }).encode()
 
+  get_merkle_root_hex : () ->
+    return null unless @merkle_root?
+    return {
+      hash_meta : @merkle_root.hash_meta.toString('hex')
+      ctime : @merkle_root.ctime
+      seqno : @merkle_root.seqno
+    }
+
   generate : (opts, cb) ->
     esc = make_esc cb
     await @_generate_inner opts, esc defer inner

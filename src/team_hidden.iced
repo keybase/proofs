@@ -20,13 +20,8 @@ exports.TeamBase = class TeamBase extends Base
     schm.set_key "t", schema.binary(16).name("team_id")
 
   _v_decode_inner : ({json}, cb) ->
-    e = (m) -> new Error m
-    p = () ->
-      return e("need a team ID at t") unless parse.is_hex(json.t, 16)
-      return null
-    err = p()
     @team_id = json.t
-    cb err
+    cb null
 
 #------------------
 

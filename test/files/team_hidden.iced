@@ -169,6 +169,7 @@ exports.test_bad_inner = (T,cb) ->
   await run ((o) -> o.b.s = Buffer.alloc(32)), "At inner.b.s: value needs to be buffer of length 35" , defer()
   await run ((o) -> o.b.e = Buffer.alloc(32)), "At inner.b.e: value needs to be buffer of length 35" , defer()
   await run ((o) -> o.b.g = Buffer.alloc(3)), "At inner.b.g: value must be a seqno (sequence number)" , defer()
+  await run ((o) -> o.b.a = 4), "At inner.b.a: must be set to value 2" , defer()
 
   cb null
 

@@ -98,6 +98,11 @@ class Seqno extends Node
     if not parse.is_seqno obj then return mkerr path, "value must be a seqno (sequence number)"
     return null
 
+class Int extends Node
+  _check : ({path, obj}) ->
+    if not parse.is_int obj then return mkerr path, "value must be an int"
+    return null
+
 class Time extends Node
   _check : ({path, obj}) ->
     if not parse.is_time obj then return mkerr path, "value must be a UTC timestamp"
@@ -139,6 +144,7 @@ exports.kid = () -> new KID { encryption : false }
 exports.enc_kid = () -> new KID { encryption : true }
 exports.seqno = () -> new Seqno {}
 exports.time = () -> new Time {}
+exports.int = () -> new Int {}
 exports.uid = () -> new Binary { len : 16 }
 exports.chain_type = () -> new ChainType {}
 exports.link_type = () -> new LinkType {}

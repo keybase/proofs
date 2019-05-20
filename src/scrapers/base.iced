@@ -5,6 +5,9 @@ pkg = require '../../package.json'
 {space_normalize} = require '../util'
 {b64find} = require '../b64extract'
 ipaddress = require 'ip-address'
+dns = require 'dns'
+http = require 'http'
+https = require 'https'
 
 #==============================================================
 
@@ -13,7 +16,8 @@ exports.user_agent = user_agent = constants.user_agent + pkg.version
 #==============================================================
 
 class BaseScraper
-  constructor : ({@libs, log_level, @proxy, @ca}) ->
+  # is_bad_address takes in address (string) and family (int) [4 - ipv4, 6 - ipv6]
+  constructor : ({@libs, log_level, @proxy, @ca, @is_bad_address}) ->
     @log_level = log_level or "debug"
 
   hunt : (username, proof_check_text, cb) -> hunt2 { username, proof_check_text }, cb
@@ -105,7 +109,19 @@ class BaseScraper
 
     opts.followRedirect = followRedirect
 
-    await @libs.request opts, defer err, response, body
+    lookup = (hostname, options, callback) ->
+      filtered_callback = (err, addr, family) ->
+        if not err? and @is_bad_address? and @is_bad_address(addr, family)
+          err = E.make "blacklisted ip address #{addr} on ipv#{family}"
+        callback(err, addr, family)
+      dns.lookup(hostname, options, filtered_callback)
+    opts.agent = (_parsedURL) ->
+      if _parsedURL.protocol is "http:"
+        http.Agent({lookup})
+      else
+        https.Agent({lookup})
+
+    await @libs.fetch opts.url, opts, defer(err, response, body)
     rc = if err?
       if err.code is 'ETIMEDOUT' then               v_codes.TIMEOUT
       else                                          v_codes.HOST_UNREACHABLE

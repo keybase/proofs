@@ -155,6 +155,7 @@ alloc_v3 = ({armored, km, skip_inner, check_params, now}, cb) ->
   await _verify_outer_sig { outer : raw.outer, sig : json.sig, km }, esc defer()
   objs = {}
   await _parse_outer_link {array : json.outer}, esc defer objs.outer
+  await objs.outer.check {}, esc defer()
   await _check_chain { outer_obj : objs.outer, check_params }, esc defer()
   unless skip_inner
     await _verify_inner_hash { inner : raw.inner, outer_obj : objs.outer }, esc defer()

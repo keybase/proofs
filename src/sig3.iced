@@ -59,6 +59,12 @@ exports.OuterLink = class OuterLink
       chain_type            : obj[5]
       ignore_if_unsupported : obj[6] })]
 
+  check : (opts, cb) ->
+    err = null
+    # For now, only support TeamHidden on Chain17 though more combos will become available
+    err = new Error "bad chain/link type combo" unless (@chain_type is constants.seq_types.TEAM_HIDDEN) and (@link_type is constants.sig_types_v3.team.rotate_key)
+    cb err
+
 #-------------------------
 
 exports.Base = class Base

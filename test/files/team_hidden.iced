@@ -137,7 +137,7 @@ exports.test_bad_outer = (T,cb) ->
   await run ((v) -> v[3] = Buffer.alloc(33)), "At outer.3: value needs to be buffer of length 32", defer()
   await run ((v) -> v[4] = 1000), "At outer.4: value must be a valid link type", defer()
   await run ((v) -> v[5] = 1000), "At outer.5: value must be a valid chain type", defer()
-  await run ((v) -> v[6] = 1000), "At outer.6: value must be a boolean", defer()
+  await run ((v) -> v[5] = 3), "bad chain/link type combo", defer()
 
   cb null
 
@@ -183,7 +183,8 @@ exports.test_bad_inner = (T,cb) ->
   await run ((o) -> o.x = 10), "At inner.x: key is not supported", defer()
   await run ((o) -> o.i.x = 10), "At inner.i.x: key is not supported", defer()
   await run ((o) -> o.m.x = 10), "At inner.m.x: key is not supported", defer()
-  await run ((o) -> o.t = 10), "At inner.t: value needs to be buffer of length 16", defer()
+  await run ((o) -> o.t.i = 10), "At inner.t.i: value needs to be buffer of length 16", defer()
+  await run ((o) -> o.t = 10), "At inner.t: need a dictionary", defer()
   await run ((o) -> o.b.x = 10), "At inner.b.x: key is not supported", defer()
   await run ((o) -> o.b.s = Buffer.alloc(32)), "At inner.b.s: value needs to be buffer of length 35" , defer()
   await run ((o) -> o.b.e = Buffer.alloc(32)), "At inner.b.e: value needs to be buffer of length 35" , defer()

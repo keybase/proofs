@@ -267,21 +267,6 @@ class GithubBinding extends SocialNetworkBinding
 
 #==========================================================================
 
-class BitbucketBinding extends SocialNetworkBinding
-  @service_name : -> "bitbucket"
-  service_name  : -> @constructor.service_name()
-  proof_type    : -> constants.proof_types.bitbucket
-
-  @check_name : (n) ->
-    if not n? or not (n = n.toLowerCase())? then false
-    else if n.match /^[a-zA-Z0-9_\-]{0,31}/ then true
-    else false
-
-  @name_hint : () -> "alphanumerics, between 1 and 30 characters long"
-  check_name : (n) -> BitbucketBinding.check_name(n)
-
-#==========================================================================
-
 class RedditBinding extends SocialNetworkBinding
   @service_name : -> "reddit"
   service_name  : -> @constructor.service_name()
@@ -381,7 +366,6 @@ exports.CoinbaseBinding = CoinbaseBinding
 exports.DnsBinding = DnsBinding
 exports.HackerNewsBinding = HackerNewsBinding
 exports.SocialNetworkBinding = SocialNetworkBinding
-exports.BitbucketBinding = BitbucketBinding
 exports.GenericSocialBinding = GenericSocialBinding
 
 #==========================================================================

@@ -81,24 +81,32 @@ class BaseScraper
     ###
       cb(err, status, body) only replies with body if status is 200
     ###
-    body = null
-    opts.proxy = @proxy if @proxy?
-    opts.ca = @ca if @ca?
-    opts.timeout = constants.http_timeout unless opts.timeout?
+    opts.timeout ?= constants.http_timeout
     opts.headers or= {}
-    opts.headers["User-Agent"] = (opts.user_agent or user_agent)
+    opts.headers["User-Agent"] ?= (opts.user_agent or user_agent)
+    await @libs.fetch opts.url, opts, defer(err, response)
 
-    await @libs.request opts, defer err, response, body
     rc = if err?
       if err.code is 'ETIMEDOUT' then               v_codes.TIMEOUT
       else                                          v_codes.HOST_UNREACHABLE
-    else if (response.statusCode in [401,403]) then v_codes.PERMISSION_DENIED
-    else if (response.statusCode is 200)       then v_codes.OK
-    else if (response.statusCode >= 500)       then v_codes.HTTP_500
-    else if (response.statusCode >= 400)       then v_codes.HTTP_400
-    else if (response.statusCode >= 300)       then v_codes.HTTP_300
-    else                                            v_codes.HTTP_OTHER
-    cb err, rc, body
+    else if (response.status in [401,403]) then v_codes.PERMISSION_DENIED
+    else if (response.status is 200)       then v_codes.OK
+    else if (response.status >= 500)       then v_codes.HTTP_500
+    else if (response.status >= 400)       then v_codes.HTTP_400
+    else if (response.status >= 300)       then v_codes.HTTP_300
+    else                                        v_codes.HTTP_OTHER
+    if rc is v_codes.OK
+      try
+        if opts.json
+          response.json().then (body) ->
+            cb err, rc, body
+        else
+          response.text().then (body) ->
+            cb err, rc, body
+      catch err
+        cb err, rc, null
+    else
+      cb err, rc, null
 
   #--------------------------------------------------------------
 

@@ -39,12 +39,8 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
       return cb err, { rc: v_codes.BAD_ARGS }
 
     await @_get_url_body
-      url: "#{PREFIX}/user/#{encodeURIComponent(username)}/submitted.json"
+      url: "#{PREFIX}/user/#{encodeURIComponent(username)}/submitted.json?count=25&cachebust=#{Math.random()}"
       json: true
-      qs:
-        count: 25
-        cachebust: Math.random()
-
     , defer err, rc, json
 
     if err? or rc isnt v_codes.OK
@@ -116,9 +112,8 @@ exports.RedditScraper = class RedditScraper extends BaseScraper
 
     # calls back with a v_code or null if it was ok
     await @_get_url_body {
-      url : api_url
+      url : api_url + "?cachebust=#{Math.random()}"
       json : true
-      qs: { cachebust: Math.random() }
       user_agent : "linux:com.github/keybase/proofs:v2.1.41 (by /u/maxtaco)"
     }, defer err, rc, json
 

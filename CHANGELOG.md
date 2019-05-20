@@ -1,3 +1,7 @@
+## 2.3.0 (2019-05-30)
+
+- use node-fetch instead of request in proof scraper
+
 ## 2.2.2 (2019-05-30)
 
 -  multiple PTKs per RotateKey link now possible, though we'll only accept 1

@@ -30,7 +30,9 @@ exports.dearmor_dict = (armored) ->
   if not is_dict(armored) then throw new Error "need an object of encodings"
   ret = {}
   for k,v of armored
-    ret[k] = Buffer.from(v, 'base64')
+    raw = Buffer.from(v, 'base64')
+    if raw.toString('base64') isnt v then throw new Error "non-canonical base64-encoding in #{k}"
+    ret[k] = raw
   return ret
 
 exports.unpack_dict = (raw) ->

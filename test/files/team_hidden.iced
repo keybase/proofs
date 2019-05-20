@@ -81,6 +81,25 @@ exports.test_generate_verify_team_hidden_rotate = (T,cb) ->
 
   cb null
 
+exports.test_bad_encoding = (T,cb) ->
+  esc = make_esc cb
+  await KeyManager.generate {}, esc defer km
+  rotate_key = { generation : 10 }
+  arg = new_sig_arg_v3 { mk_prev : true, km }
+  arg.rotate_key = rotate_key
+  arg.team_id = prng(16)
+  await EncKeyManager.generate {}, esc defer rotate_key.enc_km
+  await KeyManager.generate {}, esc defer rotate_key.sig_km
+  obj = new team_hidden.RotateKey arg
+  await obj.generate {}, esc defer ret
+  s = ret.armored.inner
+  n = 30
+  ret.armored.inner = s[0...n] + " " + s[n...]
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
+  T.assert err?, "error"
+  T.equal err.message, "non-canonical base64-encoding in inner", "right message"
+  cb null
+
 exports.test_bad_outer = (T,cb) ->
   esc = make_esc cb
   run = (f, msg, cb) ->

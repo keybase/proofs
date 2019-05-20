@@ -43,7 +43,7 @@ _parse_inputs = ({armored, km, skip_inner, check_params}) ->
     raw = parse.dearmor_dict armored
     json = parse.unpack_dict raw
   catch e
-    return errout(e)
+    return [e,{}]
 
   if not json?.outer? or not json?.sig
     return errout "need 'outer' and 'sig' fields"

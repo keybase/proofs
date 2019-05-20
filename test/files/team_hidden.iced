@@ -32,7 +32,7 @@ gen = (T,cb) ->
   rotate_key = { generation : 10 }
   arg = new_sig_arg_v3 { mk_prev : true, km }
   arg.rotate_key = rotate_key
-  arg.team_id = prng(16)
+  arg.team = { id : prng(16) }
   await EncKeyManager.generate {}, esc defer rotate_key.enc_km
   await KeyManager.generate {}, esc defer rotate_key.sig_km
   obj = new team_hidden.RotateKey arg
@@ -87,7 +87,7 @@ exports.test_bad_encoding = (T,cb) ->
   rotate_key = { generation : 10 }
   arg = new_sig_arg_v3 { mk_prev : true, km }
   arg.rotate_key = rotate_key
-  arg.team_id = prng(16)
+  arg.team = { id : prng(16) }
   await EncKeyManager.generate {}, esc defer rotate_key.enc_km
   await KeyManager.generate {}, esc defer rotate_key.sig_km
   obj = new team_hidden.RotateKey arg
@@ -107,7 +107,7 @@ exports.test_bad_outer = (T,cb) ->
     rotate_key = { generation : 10 }
     arg = new_sig_arg_v3 { mk_prev : true, km }
     arg.rotate_key = rotate_key
-    arg.team_id = prng(16)
+    arg.team = { id : prng(16) }
     await EncKeyManager.generate {}, esc defer rotate_key.enc_km
     await KeyManager.generate {}, esc defer rotate_key.sig_km
     obj = new team_hidden.RotateKey arg
@@ -152,7 +152,7 @@ exports.test_bad_inner = (T,cb) ->
   run = (f, msg, cb) ->
     arg = new_sig_arg_v3 { mk_prev : true, km }
     arg.rotate_key = rotate_key
-    arg.team_id = prng(16)
+    arg.team = { id : prng(16) }
     obj = new team_hidden.RotateKey arg
     obj._generate_inner = (opts, cb) ->
       await obj._generate_inner_impl opts, defer err, json
@@ -199,7 +199,7 @@ exports.test_bad_reverse_sig = (T,cb) ->
   rotate_key = { generation : 10 }
   arg = new_sig_arg_v3 { mk_prev : true, km }
   arg.rotate_key = rotate_key
-  arg.team_id = prng(16)
+  arg.team = { id : prng(16) }
   await EncKeyManager.generate {}, esc defer rotate_key.enc_km
   await KeyManager.generate {}, esc defer rotate_key.sig_km
   obj = new team_hidden.RotateKey arg

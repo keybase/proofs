@@ -10,11 +10,14 @@ schema = require './schema3'
 exports.TeamBase = class TeamBase extends Base
 
   constructor : (args) ->
-    @team_id = args.team_id
+    @team = args.team
     super args
 
   _v_encode_inner : ({json}) ->
-    json.t = { i : Buffer.from(@team_id, 'hex') }
+    obj = { i : Buffer.from(@team.id, 'hex') }
+    obj.m = true if @team.is_implicit
+    obj.p = true if @team.is_public
+    json.t = obj
 
   _v_extend_schema : (schm) ->
     schm.set_key "t", schema.dict {
@@ -24,8 +27,14 @@ exports.TeamBase = class TeamBase extends Base
     }
 
   _v_decode_inner : ({json}, cb) ->
-    @team_id = json.t.i
+    @team = {
+      id : json.t.i
+      is_public : !!json.t.p
+      is_implicit : !!json.t.m
+    }
     cb null
+
+  to_v2_team_obj : () -> @team
 
 #------------------
 
@@ -70,13 +79,11 @@ exports.RotateKey = class RotateKey extends TeamBase
   _v_chain_type_v3 : -> constants.seq_types.TEAM_HIDDEN
 
   to_v2_team_obj : () ->
-    return {
-      id : @team_id
-      per_team_key : {
-        encryption_kid : @rotate_key.enc_km.key.ekid().toString('hex')
-        signing_kid : @rotate_key.sig_km.key.ekid().toString('hex')
-        generation : @rotate_key.generation
-      }
-    }
+    ret = super()
+    ret.per_team_key =
+      encryption_kid : @rotate_key.enc_km.key.ekid().toString('hex')
+      signing_kid : @rotate_key.sig_km.key.ekid().toString('hex')
+      generation : @rotate_key.generation
+    return ret
 
 #------------------

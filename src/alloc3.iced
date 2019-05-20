@@ -99,7 +99,7 @@ _check_inner = ({inner_obj, km, check_params}, cb) ->
   cb c()
 
 _check_chain = ({outer_obj, check_params}, cb) ->
-  if (outer_obj.seqno isnt check_params.seqno) then err = new errors.WrongSeqno "bad sequence number in chain (#{outer_obj.seqno} != #{check_params.seqno})"
+  if (outer_obj.seqno isnt check_params.seqno) then err = new errors.WrongSeqnoError "bad sequence number in chain (#{outer_obj.seqno} != #{check_params.seqno})"
   else err = _check_prev outer_obj.prev, check_params.prev
   cb err
 

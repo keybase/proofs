@@ -26,7 +26,7 @@ exports.test_generate_team_hidden_rotate = (T,cb) ->
   await gen { T }, esc defer ret
   cb null, ret
 
-gen = (T,cb) ->
+gen = ({T,f},cb) ->
   esc = make_esc cb
   await KeyManager.generate {}, esc defer km
   rotate_key = { generation : 10 }
@@ -35,9 +35,19 @@ gen = (T,cb) ->
   arg.team = { id : prng(16) }
   await EncKeyManager.generate {}, esc defer rotate_key.enc_km
   await KeyManager.generate {}, esc defer rotate_key.sig_km
+  f? arg
   obj = new team_hidden.RotateKey arg
   await obj.generate {}, esc defer ret
   cb null, {ret, km, arg }
+
+exports.test_head = (T,cb) ->
+  esc = make_esc cb
+  f = (arg) ->
+    arg.seqno = 1
+    arg.prev = null
+  await gen { T, f }, esc defer { km, ret, arg }
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, esc defer()
+  cb null
 
 exports.test_generate_verify_team_hidden_rotate = (T,cb) ->
   esc = make_esc cb

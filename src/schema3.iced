@@ -30,6 +30,11 @@ class Node
 
   check : (obj) -> @_check { path : Path.top(@_name), obj }
 
+  _check_value : ({checker, path, obj}) ->
+    if not obj? and checker.is_optional() then return null
+    if not obj? then mkerr path, "value cannot be null"
+    return checker._check { path, obj  }
+
 class Dict extends Node
   constructor : ({keys}) ->
     @_keys = keys
@@ -41,7 +46,7 @@ class Dict extends Node
     for k,v of obj
       new_path = path.extend(k)
       if not (checker = @_keys[k])? then return mkerr new_path, "key is not supported"
-      if (err = checker._check { path : new_path, obj : v })? then return err
+      if (err = @_check_value { checker, path : new_path, obj : v }) then return err
     for k,v of @_keys
       new_path = path.extend(k)
       if not obj[k]? and not v.is_optional() then return mkerr new_path, "key is missing but is mandatory"
@@ -62,10 +67,7 @@ class Array extends Node
       return mkerr path, "need an array with #{@_slots.length} fields"
     for o,i in obj
       new_path = path.extend(i.toString())
-      if not o? and not @_slots[i].is_optional()
-        return mkerr path, "value cannot be null"
-      checker = @_slots[i]
-      if (err = checker._check { path  : new_path, obj : o})? then return err
+      if (err = @_check_value { checker : @_slots[i], path : new_path, obj : o  }) then return err
     return null
 
 class Binary extends Node

@@ -5,6 +5,7 @@ pkg = require '../../package.json'
 {space_normalize} = require '../util'
 {b64find} = require '../b64extract'
 ipaddress = require 'ip-address'
+urlmod = require 'url'
 
 #==============================================================
 
@@ -92,7 +93,7 @@ class BaseScraper
     # poke around inside our internal network. It might also make sense to have
     # cross-domain checking here too, but that's fine for now.
     followRedirect = (response) =>
-      {hostname,port,search} = url.parse response.headers.location
+      {hostname,port,search} = urlmod.parse response.headers.location
       fail = (why) =>
         @log "Failure in redirect path for #{@hostname}: #{why}"
         false

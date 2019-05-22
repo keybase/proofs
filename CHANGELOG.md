@@ -1,11 +1,7 @@
 ## 2.2.0 (2019-05-15)
 
 - Sig v3 first implementation, and RotateKey
-
-## 2.1.69 (2019-05-02)
-
 - Tighten up defenses against malicious redirectors
-
 
 ## 2.1.68 (2019-04-30)
 

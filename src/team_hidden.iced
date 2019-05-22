@@ -34,7 +34,12 @@ exports.TeamBase = class TeamBase extends Base
     }
     cb null
 
-  to_v2_team_obj : () -> @team
+  to_v2_team_obj : () ->
+    {
+      id : @team.id.toString('hex')
+      is_implicit : @team.is_implicit
+      is_public : @team.is_public
+    }
 
 #------------------
 
@@ -69,6 +74,7 @@ exports.RotateKey = class RotateKey extends TeamBase
     @rotate_key = { generation : json.b.g }
     await EncKeyManager.import_public { raw : json.b.e }, esc defer @rotate_key.enc_km
     await KeyManager.import_public { raw : json.b.s }, esc defer @rotate_key.sig_km
+    @rotate_key.reverse_sig = json.b.r
     cb null
 
   _v_link_type_v3 : () -> constants.sig_types_v3.team.rotate_key
@@ -84,6 +90,7 @@ exports.RotateKey = class RotateKey extends TeamBase
       encryption_kid : @rotate_key.enc_km.key.ekid().toString('hex')
       signing_kid : @rotate_key.sig_km.key.ekid().toString('hex')
       generation : @rotate_key.generation
+      reverse_sig : @rotate_key.reverse_sig.toString('base64')
     return ret
 
 #------------------

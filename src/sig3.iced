@@ -14,9 +14,10 @@ schema = require './schema3'
 #-------------------------
 
 _encode_dict = (d) ->
-  ret = {}
+  ret = { armored : {}, json : {} }
   for k,v of d
-    ret[k] = pack(v).toString('base64')
+    ret.json[k] = pack(v)
+    ret.armored[k] = ret.json[k].toString('base64')
   ret
 
 #-------------------------
@@ -255,7 +256,7 @@ exports.Base = class Base
     await @_reverse_sign { inner, outer }, esc defer { inner, outer }
     await @_sign { @sig_eng, outer }, esc defer sig
     raw = { outer, inner, sig }
-    armored = _encode_dict raw
-    cb null, { raw, armored }
+    {json, armored} = _encode_dict raw
+    cb null, { raw, armored, json }
 
 #-------------------------

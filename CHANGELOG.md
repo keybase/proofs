@@ -1,3 +1,7 @@
+## 2.2.1 (2019-05-23)
+
+- public_chain -> parent_chain
+
 ## 2.2.0 (2019-05-15)
 
 - Sig v3 first implementation, and RotateKey

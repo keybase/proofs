@@ -21,7 +21,7 @@ exports.new_sig_arg = new_sig_arg = ({km}) ->
     seq_type : constants.seq_types.PUBLIC
     prev : null
 
-exports.new_sig_arg_v3 = new_sig_arg_v3 = ({km, mk_prev, eldest_seqno, seqno, public_chain_tail}) ->
+exports.new_sig_arg_v3 = new_sig_arg_v3 = ({km, mk_prev, eldest_seqno, seqno, parent_chain_tail}) ->
   arg =
     user :
       local :
@@ -30,7 +30,7 @@ exports.new_sig_arg_v3 = new_sig_arg_v3 = ({km, mk_prev, eldest_seqno, seqno, pu
     sig_eng : km.make_sig_eng()
     seqno : seqno or 7
     prev : (if mk_prev then prng(32) else null)
-    public_chain_tail : (public_chain_tail or {
+    parent_chain_tail : (parent_chain_tail or {
       hash : prng(32)
       seqno : 10
       chain_type : constants.seq_types.SEMIPRIVATE

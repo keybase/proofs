@@ -70,7 +70,7 @@ exports.OuterLink = class OuterLink
 
 exports.Base = class Base
 
-  constructor : ({@sig_eng, @seqno, @user, @prev, @client, @merkle_root, @ignore_if_unsupported, @ctime, @entropy, @public_chain_tail, @new_sig_km}) ->
+  constructor : ({@sig_eng, @seqno, @user, @prev, @client, @merkle_root, @ignore_if_unsupported, @ctime, @entropy, @parent_chain_tail, @new_sig_km}) ->
 
   # one layer of redirection for the purposes of tests
   _generate_inner : (opts, cb) -> @_generate_inner_impl opts, cb
@@ -113,7 +113,7 @@ exports.Base = class Base
       p : schema.dict({
         h : schema.binary(32).name("tail")
         s : schema.seqno().name("seqno")
-        t : schema.chain_type().name("chain_type") }).optional().name("public_chain_tail")
+        t : schema.chain_type().name("chain_type") }).optional().name("parent_chain_tail")
       i : schema.dict({
         d : schema.string().name("description")
         v : schema.string().name("version")
@@ -140,7 +140,7 @@ exports.Base = class Base
     await KeyManager.import_public { raw : json.s. k}, esc defer km
     @sig_eng = km.make_sig_eng()
     if json.p?
-      @public_chain_tail = {
+      @parent_chain_tail = {
         hash : json.p.h
         seqno : json.p.s
         chain_type : json.p.t
@@ -166,8 +166,8 @@ exports.Base = class Base
         e : @user.local.eldest_seqno
         k : @sig_eng.get_km().key.ekid()
         u : parse.unhex(@user.local.uid) } }
-    if (p = @public_chain_tail)?
-      json.p = { # PublicChain
+    if (p = @parent_chain_tail)?
+      json.p = { # ParentChain
         h : parse.unhex(p.hash)
         s : p.seqno
         t : p.chain_type }

@@ -40,14 +40,15 @@ class BearerToken
       # Very crypto!  Not sure why this is done, but it's done
       cred = (Buffer.from [ @auth.key, @auth.secret].join(":")).toString('base64')
 
+      req = 'grant_type=client_credentials'
       opts =
         url : "https://api.twitter.com/oauth2/token"
         headers :
           Authorization : "Basic #{cred}"
-        form :
-          grant_type : "client_credentials"
-        method : "POST"
-
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+          'Content-Length': req.length
+        method : "post"
+        body : req
       await @base._get_url_body opts, defer err, rc, body
 
       if err?
@@ -363,7 +364,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
         url : url
         headers :
           Authorization : "Bearer #{tok}"
-          method : "GET"
+        method : "get"
         json : true
       await @_get_url_body args, defer err, rc, body
     cb err, rc, body

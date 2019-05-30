@@ -105,9 +105,10 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
 
   _get_body : (url, json, cb) ->
     @log "| HTTP request for URL '#{url}'"
+    cred = (Buffer.from [ @auth.user, @auth.pass ].join(':')).toString('base64')
     args =
       url : url
-      auth : @auth
+      headers : { Authorization : "Basic #{cred}" }
     args.json = 1 if json
     @_get_url_body args, cb
 

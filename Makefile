@@ -33,7 +33,6 @@ $(BUILD_STAMP): \
 	lib/per_user_key.js \
 	lib/pgp_update.js \
 	lib/scrapers/base.js \
-	lib/scrapers/bitbucket.js \
 	lib/scrapers/coinbase.js \
 	lib/scrapers/dns.js \
 	lib/scrapers/facebook.js \

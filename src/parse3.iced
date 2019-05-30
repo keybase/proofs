@@ -53,6 +53,11 @@ exports.is_link_type = (x) ->
   return false unless x in [constants.sig_types_v3.user.peg, constants.sig_types_v3.team.rotate_key]
   return true
 
+exports.is_ptk_type = (x) ->
+  return false unless is_int x
+  return false unless x in Object.values(constants.ptk_types)
+  return true
+
 exports.is_time = (x) ->
   return false unless is_int x
   return false unless x > 0

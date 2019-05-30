@@ -1,4 +1,4 @@
-{sig3,alloc_v3,team_hidden,errors} = require '../../'
+{sig3,alloc_v3,team_hidden,errors,constants} = require '../../'
 {EncKeyManager,KeyManager} = require('kbpgp').kb
 {make_esc} = require 'iced-error'
 {new_sig_arg_v3} = require './util'
@@ -29,12 +29,12 @@ exports.test_generate_team_hidden_rotate = (T,cb) ->
 gen = ({T,f},cb) ->
   esc = make_esc cb
   await KeyManager.generate {}, esc defer km
-  rotate_key = { generation : 10 }
+  ptk = { generation : 10, ptk_type : constants.ptk_types.reader }
   arg = new_sig_arg_v3 { mk_prev : true, km }
-  arg.rotate_key = rotate_key
+  arg.per_team_keys = [ ptk ]
   arg.team = { id : prng(16) }
-  await EncKeyManager.generate {}, esc defer rotate_key.enc_km
-  await KeyManager.generate {}, esc defer rotate_key.sig_km
+  await EncKeyManager.generate {}, esc defer ptk.enc_km
+  await KeyManager.generate {}, esc defer ptk.sig_km
   f? arg
   obj = new team_hidden.RotateKey arg
   await obj.generate {}, esc defer ret
@@ -47,6 +47,39 @@ exports.test_head = (T,cb) ->
     arg.prev = null
   await gen { T, f }, esc defer { km, ret, arg }
   await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, esc defer()
+  cb null
+
+exports.test_many_ptks = (T,cb) ->
+  esc = make_esc cb
+  await KeyManager.generate {}, esc defer km
+  arg = new_sig_arg_v3 { mk_prev : true, km }
+  arg.team = { id : prng(16) }
+  arg.per_team_keys = []
+  constants.ptk_types.bot = 999
+  constants.ptk_types.admin = 9999
+  for i in Object.values(constants.ptk_types)
+    ptk = { generation : 10, ptk_type : i }
+    await EncKeyManager.generate {}, esc defer ptk.enc_km
+    await KeyManager.generate {}, esc defer ptk.sig_km
+    arg.per_team_keys.push ptk
+  obj = new team_hidden.RotateKey arg
+  await obj.generate {}, esc defer ret
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, esc defer { objs }
+  T.equal objs.inner.per_team_keys.length, 3, "3 ptks"
+
+  arg.per_team_keys[0].ptk_type = 0
+  arg.per_team_keys[1].ptk_type = 0
+  await obj.generate {}, esc defer ret
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
+  T.assert err?, "got an error back if repeating the type"
+  T.equal err.message, "Repeated PTK type 0 not allowed", "right message"
+
+  arg.per_team_keys[1].ptk_type = 100
+  await obj.generate {}, esc defer ret
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
+  T.assert err?, "got an error back if using a bad PTK type"
+  T.equal err.message, "At inner.b.k.1.t: value must be a PTK type"
+
   cb null
 
 exports.test_generate_verify_team_hidden_rotate = (T,cb) ->
@@ -94,12 +127,12 @@ exports.test_generate_verify_team_hidden_rotate = (T,cb) ->
 exports.test_bad_encoding = (T,cb) ->
   esc = make_esc cb
   await KeyManager.generate {}, esc defer km
-  rotate_key = { generation : 10 }
+  ptk = { generation : 10, ptk_type : constants.ptk_types.reader }
   arg = new_sig_arg_v3 { mk_prev : true, km }
-  arg.rotate_key = rotate_key
+  arg.per_team_keys = [ ptk ]
   arg.team = { id : prng(16) }
-  await EncKeyManager.generate {}, esc defer rotate_key.enc_km
-  await KeyManager.generate {}, esc defer rotate_key.sig_km
+  await EncKeyManager.generate {}, esc defer ptk.enc_km
+  await KeyManager.generate {}, esc defer ptk.sig_km
   obj = new team_hidden.RotateKey arg
   await obj.generate {}, esc defer ret
   s = ret.armored.inner
@@ -114,12 +147,12 @@ exports.test_bad_outer = (T,cb) ->
   esc = make_esc cb
   run = (f, msg, cb) ->
     await KeyManager.generate {}, esc defer km
-    rotate_key = { generation : 10 }
+    ptk = { generation : 10, ptk_type : constants.ptk_types.reader }
     arg = new_sig_arg_v3 { mk_prev : true, km }
-    arg.rotate_key = rotate_key
+    arg.per_team_keys = [ ptk ]
     arg.team = { id : prng(16) }
-    await EncKeyManager.generate {}, esc defer rotate_key.enc_km
-    await KeyManager.generate {}, esc defer rotate_key.sig_km
+    await EncKeyManager.generate {}, esc defer ptk.enc_km
+    await KeyManager.generate {}, esc defer ptk.sig_km
     obj = new team_hidden.RotateKey arg
     obj._generate_outer = ({inner}) ->
       ret = (new sig3.OuterLink {
@@ -154,14 +187,14 @@ exports.test_bad_outer = (T,cb) ->
 exports.test_bad_inner = (T,cb) ->
 
   esc = make_esc cb
-  rotate_key = { generation : 10 }
+  ptk = { generation : 10, ptk_type : constants.ptk_types.reader }
   await KeyManager.generate {}, esc defer km
-  await EncKeyManager.generate {}, esc defer rotate_key.enc_km
-  await KeyManager.generate {}, esc defer rotate_key.sig_km
+  await EncKeyManager.generate {}, esc defer ptk.enc_km
+  await KeyManager.generate {}, esc defer ptk.sig_km
 
   run = (f, msg, cb) ->
     arg = new_sig_arg_v3 { mk_prev : true, km }
-    arg.rotate_key = rotate_key
+    arg.per_team_keys = [ ptk ]
     arg.team = { id : prng(16) }
     obj = new team_hidden.RotateKey arg
     obj._generate_inner = (opts, cb) ->
@@ -195,34 +228,39 @@ exports.test_bad_inner = (T,cb) ->
   await run ((o) -> o.m.x = 10), "At inner.m.x: key is not supported", defer()
   await run ((o) -> o.t.i = 10), "At inner.t.i: value needs to be buffer of length 16", defer()
   await run ((o) -> o.t = 10), "At inner.t: need a dictionary", defer()
-  await run ((o) -> o.b.x = 10), "At inner.b.x: key is not supported", defer()
-  await run ((o) -> o.b.s = Buffer.alloc(32)), "At inner.b.s: value needs to be buffer of length 35" , defer()
-  await run ((o) -> o.b.e = Buffer.alloc(32)), "At inner.b.e: value needs to be buffer of length 35" , defer()
-  await run ((o) -> o.b.g = Buffer.alloc(3)), "At inner.b.g: value must be a seqno (sequence number)" , defer()
-  await run ((o) -> o.b.a = 4), "At inner.b.a: must be set to value 2" , defer()
+  await run ((o) -> o.b.k[0].x = 10), "At inner.b.k.0.x: key is not supported", defer()
+  await run ((o) -> o.b.k[0].s = Buffer.alloc(32)), "At inner.b.k.0.s: value needs to be buffer of length 35" , defer()
+  await run ((o) -> o.b.k[0].e = Buffer.alloc(32)), "At inner.b.k.0.e: value needs to be buffer of length 35" , defer()
+  await run ((o) -> o.b.k[0].g = Buffer.alloc(3)), "At inner.b.k.0.g: value must be a seqno (sequence number)" , defer()
+  await run ((o) -> o.b.k[0].a = 4), "At inner.b.k.0.a: must be set to value 2" , defer()
 
   cb null
 
 exports.test_bad_reverse_sig = (T,cb) ->
   esc = make_esc cb
   await KeyManager.generate {}, esc defer km
-  rotate_key = { generation : 10 }
+  ptk = { generation : 10, ptk_type : constants.ptk_types.reader }
   arg = new_sig_arg_v3 { mk_prev : true, km }
-  arg.rotate_key = rotate_key
+  arg.per_team_keys = [ ptk ]
   arg.team = { id : prng(16) }
-  await EncKeyManager.generate {}, esc defer rotate_key.enc_km
-  await KeyManager.generate {}, esc defer rotate_key.sig_km
+  await EncKeyManager.generate {}, esc defer ptk.enc_km
+  await KeyManager.generate {}, esc defer ptk.sig_km
   obj = new team_hidden.RotateKey arg
 
   # Hack - instead of assigning the right reverse sig, assign a twiddled
   # signature (with one bit off).
-  obj._v_assign_reverse_sig = ({sig, inner}) ->
-    if sig?
+  obj._v_reverse_sign = ({inner, outer}, cb) ->
+    esc = make_esc cb
+    for k,i in obj.per_team_keys
+      await obj._sign { sig_eng : k.sig_km.make_sig_eng(), outer }, esc defer sig
       twiddle sig
-      inner.b.r = sig
+      inner.b.k[i].r = sig
+      outer = obj._generate_outer { inner }
+    cb null, { inner, outer }
+
   await obj.generate {}, esc defer ret
   await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
   T.assert err?, "got an error"
   T.equal err.message, "Signature failed to verify", "right error"
-  T.assert (err.stack.indexOf("verify_reverse_sig") > 0), "we find a reverse sig in the stack"
+  T.assert (err.stack.indexOf("_v_verify_reverse_sig") > 0), "we find a reverse sig in the stack"
   cb null

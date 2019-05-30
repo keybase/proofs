@@ -39,7 +39,7 @@ exports.OuterLink = class OuterLink
 
   @decode : (obj) ->
 
-    schm = schema.array([
+    schm = schema.struct([
       schema.value(3).name("version")
       schema.seqno().name("seqno")
       schema.binary(32).name("prev").optional()
@@ -70,7 +70,7 @@ exports.OuterLink = class OuterLink
 
 exports.Base = class Base
 
-  constructor : ({@sig_eng, @seqno, @user, @prev, @client, @merkle_root, @ignore_if_unsupported, @ctime, @entropy, @parent_chain_tail, @new_sig_km}) ->
+  constructor : ({@sig_eng, @seqno, @user, @prev, @client, @merkle_root, @ignore_if_unsupported, @ctime, @entropy, @parent_chain_tail}) ->
 
   # one layer of redirection for the purposes of tests
   _generate_inner : (opts, cb) -> @_generate_inner_impl opts, cb
@@ -86,12 +86,12 @@ exports.Base = class Base
   _version : -> constants.versions.sig_v3
 
   _v_generate_inner : ({obj}) ->
-  _v_do_reverse_sign : -> false
-  _v_assign_reverse_sig : ->
   _v_new_sig_km : -> null
   _v_link_type_v3 : -> throw new Error "unimplemented"
   _v_chain_type_v3 : -> throw new Error "unimplemented"
-  _get_reverse_sig : -> throw new Error "unimplemented"
+  _v_reverse_sign : ({inner, outer}, cb) -> cb null, { inner, outer }
+  _v_verify_reverse_sig : ({inner, outer_obj}, cb) -> cb null
+  _v_assert_is_v2_legacy : () -> null
 
   _assign_outer : ({outer_obj}) ->
     @seqno = outer_obj.seqno
@@ -187,33 +187,6 @@ exports.Base = class Base
 
   _hash : (inner) -> sha256 pack inner
 
-  _reverse_sign : ({inner, outer}, cb) ->
-    esc = make_esc cb
-    if not @_v_do_reverse_sign()
-      return cb null, { inner, outer }
-    if not (k = @_v_new_sig_km())?
-      return cb new Error "need a new_sig_km if doing a reverse signature"
-    await @_sign { sig_eng : k.make_sig_eng(), outer }, esc defer sig
-    @_v_assign_reverse_sig { sig, inner }
-    outer = @_generate_outer { inner }
-    cb null, { inner, outer }
-
-  verify_reverse_sig : ({inner, outer_obj}, cb) ->
-    esc = make_esc cb
-    if not @_v_do_reverse_sign()
-      return cb null
-    if not (k = @_v_new_sig_km())?
-      return cb new Error "need a new_sig_km if checking a reverse signature"
-    sig = @_v_get_reverse_sig { inner }
-    @_v_assign_reverse_sig { sig : null, inner }
-    inner_hash = outer_obj.inner_hash
-    outer_obj.inner_hash = @_hash(inner)
-    outer = outer_obj.encode()
-    outer_obj.inner_hash = inner_hash
-    @_v_assign_reverse_sig { sig, inner }
-    payload = pack outer
-    await k.verify_raw { prefix : @_prefix(), payload, sig }, esc defer()
-    cb null
 
   check : ({now}, cb) ->
     esc = make_esc cb
@@ -249,11 +222,13 @@ exports.Base = class Base
       seqno : @merkle_root.seqno
     }
 
+  assert_is_v2_legacy : () -> @_v_assert_is_v2_legacy()
+
   generate : (opts, cb) ->
     esc = make_esc cb
     await @_generate_inner opts, esc defer inner
     outer = @_generate_outer { inner }
-    await @_reverse_sign { inner, outer }, esc defer { inner, outer }
+    await @_v_reverse_sign { inner, outer }, esc defer { inner, outer }
     await @_sign { @sig_eng, outer }, esc defer sig
     raw = { outer, inner, sig }
     {json, armored} = _encode_dict raw

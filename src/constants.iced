@@ -89,6 +89,9 @@ exports.constants = constants =
     xor : 1
     hmac : 2
 
+  ptk_types :
+    reader : 0 # the standard PTK that owners, admins, writers and readers see
+
   proof_types :
     none : 0
     keybase : 1

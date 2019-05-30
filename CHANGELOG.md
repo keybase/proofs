@@ -1,3 +1,7 @@
+## 2.2.2 (2019-05-30)
+
+-  multiple PTKs per RotateKey link now possible, though we'll only accept 1
+
 ## 2.2.1 (2019-05-23)
 
 - public_chain -> parent_chain

@@ -24,7 +24,7 @@ _encode_dict = (d) ->
 
 exports.OuterLink = class OuterLink
 
-  constructor : ({@version, @seqno, @prev, @inner_hash, @link_type, @chain_type, @ignore_if_unsupported}) ->
+  constructor : ({@version, @seqno, @prev, @inner_hash, @link_type, @chain_type, @ignore_if_unsupported, @encryption_parameters}) ->
 
   encode : () ->
     return [ # OuterLink encoding
@@ -35,6 +35,7 @@ exports.OuterLink = class OuterLink
       @link_type
       @chain_type
       @ignore_if_unsupported
+      @encryption_parameters
     ]
 
   @decode : (obj) ->
@@ -47,6 +48,11 @@ exports.OuterLink = class OuterLink
       schema.link_type().name("link_type")
       schema.chain_type().name("chain_type")
       schema.bool().name("ignore_if_unsupported")
+      schema.dict({
+        k : schema.enc_kid().name("kid")
+        n : schema.binary(24).name("nonce")
+        v : schema.int().name("version")
+      }).optional().name("encryption_parameters")
     ]).name("outer")
 
     return [err, null] if (err = schm.check obj)?
@@ -58,7 +64,8 @@ exports.OuterLink = class OuterLink
       inner_hash            : obj[3]
       link_type             : obj[4]
       chain_type            : obj[5]
-      ignore_if_unsupported : obj[6] })]
+      ignore_if_unsupported : obj[6]
+      encryption_parameters : obj[7] })]
 
   check : (opts, cb) ->
     err = null

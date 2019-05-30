@@ -81,7 +81,7 @@ exports.RotateKey = class RotateKey extends TeamBase
   _decode_key : ({key}, cb) ->
     esc = make_esc cb
     ret = {
-      generate : key.g
+      generation : key.g
       appkey_derivation_version : key.a
       reverse_sig : key.r
       ptk_type : key.t
@@ -129,6 +129,14 @@ exports.RotateKey = class RotateKey extends TeamBase
 
   _v_link_type_v3 : () -> constants.sig_types_v3.team.rotate_key
   _v_chain_type_v3 : -> constants.seq_types.TEAM_HIDDEN
+
+  _v_assert_is_v2_legacy : () ->
+    return err if err?
+    if @per_team_keys.length isnt 1
+      return new Error "need exactly one PTK"
+    if @per_team_keys[0].ptk_type isnt constants.ptk_types.reader
+      return new Error "need a reader PTK (no current support for bot or admin keys)"
+    null
 
   to_v2_team_obj : () ->
     ret = super()

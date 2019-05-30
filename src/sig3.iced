@@ -91,6 +91,7 @@ exports.Base = class Base
   _v_chain_type_v3 : -> throw new Error "unimplemented"
   _v_reverse_sign : ({inner, outer}, cb) -> cb null, { inner, outer }
   _v_verify_reverse_sig : ({inner, outer_obj}, cb) -> cb null
+  _v_assert_is_v2_legacy : () -> null
 
   _assign_outer : ({outer_obj}) ->
     @seqno = outer_obj.seqno
@@ -220,6 +221,8 @@ exports.Base = class Base
       ctime : @merkle_root.ctime
       seqno : @merkle_root.seqno
     }
+
+  assert_is_v2_legacy : () -> @_v_assert_is_v2_legacy()
 
   generate : (opts, cb) ->
     esc = make_esc cb

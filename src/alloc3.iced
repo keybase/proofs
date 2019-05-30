@@ -162,7 +162,7 @@ alloc_v3 = ({armored, km, skip_inner, check_params, now}, cb) ->
     await _alloc_inner_obj { outer_obj : objs.outer, inner_json : json.inner }, esc defer objs.inner
     await _check_inner { inner_obj : objs.inner, km, check_params }, esc defer()
     await objs.inner.check { now }, esc defer()
-    await objs.inner.verify_reverse_sig { outer_obj : objs.outer, inner : json.inner }, esc defer()
+    await objs.inner._v_verify_reverse_sig { outer_obj : objs.outer, inner : json.inner }, esc defer()
   cb null, { objs, json, raw, armored }
 
 #=======================================================

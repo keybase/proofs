@@ -4,6 +4,7 @@ parse = require './parse3'
 {EncKeyManager, KeyManager} = require('kbpgp').kb
 {make_esc} = require 'iced-error'
 schema = require './schema3'
+{pack,unpack} = require 'purepack'
 
 #------------------
 
@@ -46,51 +47,93 @@ exports.TeamBase = class TeamBase extends Base
 exports.RotateKey = class RotateKey extends TeamBase
 
   constructor : (args) ->
-    @rotate_key = args.rotate_key
+    @per_team_keys = args.per_team_keys
     super args
 
   _v_encode_inner : ({json}) ->
     super { json }
-    json.b = { # Body
-      a : constants.appkey_derivation_version.hmac
-      e : @rotate_key.enc_km.key.ekid()
-      g : @rotate_key.generation
-      r : null
-      s : @rotate_key.sig_km.key.ekid() }
+    keys = for k in @per_team_keys
+      {
+        a : constants.appkey_derivation_version.hmac
+        e : k.enc_km.key.ekid()
+        g : k.generation
+        r : null
+        s : k.sig_km.key.ekid()
+        t : k.ptk_type
+      }
+    json.b = { k : keys }
 
   _v_extend_schema : (schm) ->
     super schm
-    schm.set_key "b", schema.dict({
+    elem = schema.dict({
       a : schema.value(constants.appkey_derivation_version.hmac).name("appkey_derivation_version")
       e : schema.enc_kid().name("encryption_kid")
       g : schema.seqno().name("generation")
       r : schema.binary(64).name("reverse_sig")
       s : schema.kid().name("signing_kid")
+      t : schema.ptk_type().name("ptk_type")
+    }).name("key")
+
+    schm.set_key "b", schema.dict({
+      k : schema.array(elem).name("keys")
     }).name("body")
+
+  _decode_key : ({key}, cb) ->
+    esc = make_esc cb
+    ret = {
+      generate : key.g
+      appkey_derivation_version : key.a
+      reverse_sig : key.r
+      ptk_type : key.t
+    }
+    await EncKeyManager.import_public { raw : key.e }, esc defer ret.enc_km
+    await KeyManager.import_public { raw : key.s }, esc defer ret.sig_km
+    cb null, ret
 
   _v_decode_inner : ({json}, cb) ->
     esc = make_esc cb
     await super { json }, esc defer()
-    @rotate_key = { generation : json.b.g }
-    await EncKeyManager.import_public { raw : json.b.e }, esc defer @rotate_key.enc_km
-    await KeyManager.import_public { raw : json.b.s }, esc defer @rotate_key.sig_km
-    @rotate_key.reverse_sig = json.b.r
+    @per_team_keys = []
+    for key in json.b.k
+      await @_decode_key { key }, esc defer ptk
+      @per_team_keys.push ptk
+    cb null
+
+  _v_reverse_sign : ({inner, outer}, cb) ->
+    esc = make_esc cb
+    for k,i in @per_team_keys
+      await @_sign { sig_eng : k.sig_km.make_sig_eng(), outer }, esc defer sig
+      inner.b.k[i].r = sig
+      outer = @_generate_outer { inner }
+    cb null, { inner, outer }
+
+  _v_verify_reverse_sig : ({inner, outer_obj}, cb) ->
+    esc = make_esc cb
+    reverse_sigs = []
+    reverse_sigs = (k.r for k in inner.b.k)
+    inner_hash = outer_obj.inner_hash
+    for k, i in inner.b.k by -1
+      sig = k.r
+      k.r = null
+      outer_obj.inner_hash = @_hash inner
+      outer = outer_obj.encode()
+      payload = pack outer
+      await @per_team_keys[i].sig_km.verify_raw { prefix : @_prefix(), payload, sig }, esc defer()
+    for s, i in reverse_sigs
+      inner.b.k[i].r = s
     cb null
 
   _v_link_type_v3 : () -> constants.sig_types_v3.team.rotate_key
-  _v_do_reverse_sign : () -> true
-  _v_assign_reverse_sig : ({sig, inner}) -> inner.b.r = sig
-  _v_get_reverse_sig : ({inner}) -> inner.b.r
-  _v_new_sig_km : () -> @rotate_key.sig_km
   _v_chain_type_v3 : -> constants.seq_types.TEAM_HIDDEN
 
   to_v2_team_obj : () ->
     ret = super()
+    k = @per_team_keys[0]
     ret.per_team_key =
-      encryption_kid : @rotate_key.enc_km.key.ekid().toString('hex')
-      signing_kid : @rotate_key.sig_km.key.ekid().toString('hex')
-      generation : @rotate_key.generation
-      reverse_sig : @rotate_key.reverse_sig.toString('base64')
+      encryption_kid : k.enc_km.key.ekid().toString('hex')
+      signing_kid : k.sig_km.key.ekid().toString('hex')
+      generation : k.generation
+      reverse_sig : k.reverse_sig.toString('base64')
     return ret
 
 #------------------

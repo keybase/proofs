@@ -39,7 +39,7 @@ exports.OuterLink = class OuterLink
 
   @decode : (obj) ->
 
-    schm = schema.array([
+    schm = schema.struct([
       schema.value(3).name("version")
       schema.seqno().name("seqno")
       schema.binary(32).name("prev").optional()
@@ -86,12 +86,10 @@ exports.Base = class Base
   _version : -> constants.versions.sig_v3
 
   _v_generate_inner : ({obj}) ->
-  _v_do_reverse_sign : -> false
-  _v_assign_reverse_sig : ->
   _v_new_sig_km : -> null
   _v_link_type_v3 : -> throw new Error "unimplemented"
   _v_chain_type_v3 : -> throw new Error "unimplemented"
-  _get_reverse_sig : -> throw new Error "unimplemented"
+  _v_reverse_sign : ({inner, outer}, cb) -> cb null, { inner, outer }
 
   _assign_outer : ({outer_obj}) ->
     @seqno = outer_obj.seqno
@@ -198,21 +196,7 @@ exports.Base = class Base
     outer = @_generate_outer { inner }
     cb null, { inner, outer }
 
-  verify_reverse_sig : ({inner, outer_obj}, cb) ->
-    esc = make_esc cb
-    if not @_v_do_reverse_sign()
-      return cb null
-    if not (k = @_v_new_sig_km())?
-      return cb new Error "need a new_sig_km if checking a reverse signature"
-    sig = @_v_get_reverse_sig { inner }
-    @_v_assign_reverse_sig { sig : null, inner }
-    inner_hash = outer_obj.inner_hash
-    outer_obj.inner_hash = @_hash(inner)
-    outer = outer_obj.encode()
-    outer_obj.inner_hash = inner_hash
-    @_v_assign_reverse_sig { sig, inner }
-    payload = pack outer
-    await k.verify_raw { prefix : @_prefix(), payload, sig }, esc defer()
+  _v_verify_reverse_sig : ({inner, outer_obj}, cb) ->
     cb null
 
   check : ({now}, cb) ->
@@ -253,7 +237,7 @@ exports.Base = class Base
     esc = make_esc cb
     await @_generate_inner opts, esc defer inner
     outer = @_generate_outer { inner }
-    await @_reverse_sign { inner, outer }, esc defer { inner, outer }
+    await @_v_reverse_sign { inner, outer }, esc defer { inner, outer }
     await @_sign { @sig_eng, outer }, esc defer sig
     raw = { outer, inner, sig }
     {json, armored} = _encode_dict raw

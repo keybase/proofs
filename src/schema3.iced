@@ -57,6 +57,21 @@ class Dict extends Node
 
 class Array extends Node
 
+  constructor : ({elem}) ->
+    @_elem = elem
+
+  _check : ({path, obj}) ->
+    unless parse.is_array(obj)
+      return mkerr path, "need an array"
+    if obj.length < 1
+      return mkerr path, "need 1 or more objects"
+    for o, i in obj
+      new_path = path.extend(i.toString())
+      if (err = @_check_value { checker : @_elem, path : new_path, obj : o }) then return err
+    return null
+
+class Struct extends Node
+
   constructor : ({slots}) ->
     @_slots = slots
 
@@ -131,6 +146,11 @@ class LinkType extends Node
     if not parse.is_link_type obj then return mkerr path, "value must be a valid link type"
     return null
 
+class PtkType extends Node
+  _check: ({path, obj}) ->
+    if not parse.is_ptk_type obj then return mkerr path, "value must be a PTK type"
+    return null
+
 class Bool extends Node
   _check : ({path, obj}) ->
     if not parse.is_bool obj then return mkerr path, "value must be a boolean"
@@ -153,5 +173,7 @@ exports.link_type = () -> new LinkType {}
 exports.string = () -> new String {}
 exports.value = (v) -> new Value v
 exports.bool = () -> new Bool {}
-exports.array = (s) -> new Array {slots : s}
+exports.struct = (s) -> new Struct {slots : s}
 exports.obj = () -> new Object {}
+exports.array = (elem) -> new Array { elem }
+exports.ptk_type = () -> new PtkType {}

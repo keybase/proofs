@@ -1,6 +1,7 @@
 ## 2.3.0 (2019-05-30)
 
 - use node-fetch instead of request in proof scraper
+- add encryption parameters to sig3 schema
 
 ## 2.2.2 (2019-05-30)
 

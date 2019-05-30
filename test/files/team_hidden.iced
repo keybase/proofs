@@ -172,8 +172,8 @@ exports.test_bad_outer = (T,cb) ->
     T.equal err.message, msg, "right message"
     cb null
 
-  await run ((v) -> v.push "foo"), "At outer: need an array with 7 fields", defer()
-  await run ((v) -> v.pop()), "At outer: need an array with 7 fields", defer()
+  await run ((v) -> v.push "foo"), "At outer: need an array with 8 fields", defer()
+  await run ((v) -> v.pop()), "At outer: need an array with 8 fields", defer()
   await run ((v) -> v[0]++), "At outer.0: must be set to value 3", defer()
   await run ((v) -> v[1] = ["hi"]), "At outer.1: value must be a seqno (sequence number)", defer()
   await run ((v) -> v[2] = Buffer.alloc(33)), "At outer.2: value needs to be buffer of length 32", defer()

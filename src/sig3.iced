@@ -70,7 +70,7 @@ exports.OuterLink = class OuterLink
 
 exports.Base = class Base
 
-  constructor : ({@sig_eng, @seqno, @user, @prev, @client, @merkle_root, @ignore_if_unsupported, @ctime, @entropy, @parent_chain_tail, @new_sig_km}) ->
+  constructor : ({@sig_eng, @seqno, @user, @prev, @client, @merkle_root, @ignore_if_unsupported, @ctime, @entropy, @parent_chain_tail}) ->
 
   # one layer of redirection for the purposes of tests
   _generate_inner : (opts, cb) -> @_generate_inner_impl opts, cb
@@ -90,6 +90,7 @@ exports.Base = class Base
   _v_link_type_v3 : -> throw new Error "unimplemented"
   _v_chain_type_v3 : -> throw new Error "unimplemented"
   _v_reverse_sign : ({inner, outer}, cb) -> cb null, { inner, outer }
+  _v_verify_reverse_sig : ({inner, outer_obj}, cb) -> cb null
 
   _assign_outer : ({outer_obj}) ->
     @seqno = outer_obj.seqno
@@ -185,19 +186,6 @@ exports.Base = class Base
 
   _hash : (inner) -> sha256 pack inner
 
-  _reverse_sign : ({inner, outer}, cb) ->
-    esc = make_esc cb
-    if not @_v_do_reverse_sign()
-      return cb null, { inner, outer }
-    if not (k = @_v_new_sig_km())?
-      return cb new Error "need a new_sig_km if doing a reverse signature"
-    await @_sign { sig_eng : k.make_sig_eng(), outer }, esc defer sig
-    @_v_assign_reverse_sig { sig, inner }
-    outer = @_generate_outer { inner }
-    cb null, { inner, outer }
-
-  _v_verify_reverse_sig : ({inner, outer_obj}, cb) ->
-    cb null
 
   check : ({now}, cb) ->
     esc = make_esc cb

@@ -24,7 +24,6 @@ _to_check_params = (a) ->
 exports.test_generate_team_hidden_rotate = (T,cb) ->
   esc = make_esc cb
   await gen { T }, esc defer ret
-  console.log ret
   cb null, ret
 
 gen = ({T,f},cb) ->
@@ -48,6 +47,39 @@ exports.test_head = (T,cb) ->
     arg.prev = null
   await gen { T, f }, esc defer { km, ret, arg }
   await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, esc defer()
+  cb null
+
+exports.test_many_ptks = (T,cb) ->
+  esc = make_esc cb
+  await KeyManager.generate {}, esc defer km
+  arg = new_sig_arg_v3 { mk_prev : true, km }
+  arg.team = { id : prng(16) }
+  arg.per_team_keys = []
+  constants.ptk_types.bot = 999
+  constants.ptk_types.admin = 9999
+  for i in Object.values(constants.ptk_types)
+    ptk = { generation : 10, ptk_type : i }
+    await EncKeyManager.generate {}, esc defer ptk.enc_km
+    await KeyManager.generate {}, esc defer ptk.sig_km
+    arg.per_team_keys.push ptk
+  obj = new team_hidden.RotateKey arg
+  await obj.generate {}, esc defer ret
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, esc defer { objs }
+  T.equal objs.inner.per_team_keys.length, 3, "3 ptks"
+
+  arg.per_team_keys[0].ptk_type = 0
+  arg.per_team_keys[1].ptk_type = 0
+  await obj.generate {}, esc defer ret
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
+  T.assert err?, "got an error back if repeating the type"
+  T.equal err.message, "Repeated PTK type 0 not allowed", "right message"
+
+  arg.per_team_keys[1].ptk_type = 100
+  await obj.generate {}, esc defer ret
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, defer err
+  T.assert err?, "got an error back if using a bad PTK type"
+  T.equal err.message, "At inner.b.k.1.t: value must be a PTK type"
+
   cb null
 
 exports.test_generate_verify_team_hidden_rotate = (T,cb) ->

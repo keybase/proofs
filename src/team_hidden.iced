@@ -94,8 +94,12 @@ exports.RotateKey = class RotateKey extends TeamBase
     esc = make_esc cb
     await super { json }, esc defer()
     @per_team_keys = []
+    seen = {}
     for key in json.b.k
       await @_decode_key { key }, esc defer ptk
+      if seen[ptk.ptk_type]
+        return cb new Error "Repeated PTK type #{ptk.ptk_type} not allowed"
+      seen[ptk.ptk_type] = true
       @per_team_keys.push ptk
     cb null
 

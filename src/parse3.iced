@@ -55,7 +55,7 @@ exports.is_link_type = (x) ->
 
 exports.is_ptk_type = (x) ->
   return false unless is_int x
-  return false unless x in [constants.ptk_types.reader]
+  return false unless x in Object.values(constants.ptk_types)
   return true
 
 exports.is_time = (x) ->

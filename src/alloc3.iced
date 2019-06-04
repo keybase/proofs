@@ -99,7 +99,9 @@ _check_inner = ({inner_obj, km, check_params}, cb) ->
   cb c()
 
 _check_chain = ({outer_obj, check_params}, cb) ->
-  if (outer_obj.seqno isnt check_params.seqno) then err = new errors.WrongSeqnoError "bad sequence number in chain (#{outer_obj.seqno} != #{check_params.seqno})"
+  if (outer_obj.seqno isnt check_params.seqno)
+    err = new errors.WrongSeqnoError "bad sequence number in chain (#{outer_obj.seqno} != #{check_params.seqno})"
+    err.seqno = outer_obj.seqno
   else err = _check_prev outer_obj.prev, check_params.prev
   cb err
 
@@ -150,7 +152,7 @@ _alloc_inner_obj = ({outer_obj, inner_json}, cb) ->
 #
 alloc_v3 = ({armored, km, skip_inner, check_params, now}, cb) ->
   esc = make_esc cb
-  [err, {json, raw}] = _parse_inputs { armored, km, check_params }
+  [err, {json, raw}] = _parse_inputs { armored, km, check_params, skip_inner }
   if err? then return cb err
   await _verify_outer_sig { outer : raw.outer, sig : json.sig, km }, esc defer()
   objs = {}

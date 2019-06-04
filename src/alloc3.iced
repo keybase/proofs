@@ -152,7 +152,7 @@ _alloc_inner_obj = ({outer_obj, inner_json}, cb) ->
 #
 alloc_v3 = ({armored, km, skip_inner, check_params, now}, cb) ->
   esc = make_esc cb
-  [err, {json, raw}] = _parse_inputs { armored, km, check_params }
+  [err, {json, raw}] = _parse_inputs { armored, km, check_params, skip_inner }
   if err? then return cb err
   await _verify_outer_sig { outer : raw.outer, sig : json.sig, km }, esc defer()
   objs = {}

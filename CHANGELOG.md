@@ -1,3 +1,7 @@
+## 2.3.1 (2019-06-10)
+
+- small tweaks from testing
+
 ## 2.3.0 (2019-05-30)
 
 - use node-fetch instead of request in proof scraper

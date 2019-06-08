@@ -54,7 +54,7 @@ exports.RotateKey = class RotateKey extends TeamBase
     super { json }
     keys = for k in @per_team_keys
       {
-        a : constants.appkey_derivation_version.hmac
+        a : constants.appkey_derivation_version.xor
         e : k.enc_km.key.ekid()
         g : k.generation
         r : null

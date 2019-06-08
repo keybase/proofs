@@ -21,6 +21,8 @@ _to_check_params = (a) ->
     prev : a.prev
   }
 
+seed_check = (ptk) -> ptk.seed_check = { h : prng(32), v : 1 }
+
 exports.test_generate_team_hidden_rotate = (T,cb) ->
   esc = make_esc cb
   await gen { T }, esc defer ret
@@ -35,6 +37,7 @@ gen = ({T,f},cb) ->
   arg.team = { id : prng(16) }
   await EncKeyManager.generate {}, esc defer ptk.enc_km
   await KeyManager.generate {}, esc defer ptk.sig_km
+  seed_check ptk
   f? arg
   obj = new team_hidden.RotateKey arg
   await obj.generate {}, esc defer ret
@@ -61,6 +64,7 @@ exports.test_many_ptks = (T,cb) ->
     ptk = { generation : 10, ptk_type : i }
     await EncKeyManager.generate {}, esc defer ptk.enc_km
     await KeyManager.generate {}, esc defer ptk.sig_km
+    seed_check ptk
     arg.per_team_keys.push ptk
   obj = new team_hidden.RotateKey arg
   await obj.generate {}, esc defer ret
@@ -133,6 +137,7 @@ exports.test_bad_encoding = (T,cb) ->
   arg.team = { id : prng(16) }
   await EncKeyManager.generate {}, esc defer ptk.enc_km
   await KeyManager.generate {}, esc defer ptk.sig_km
+  seed_check ptk
   obj = new team_hidden.RotateKey arg
   await obj.generate {}, esc defer ret
   s = ret.armored.inner
@@ -153,6 +158,7 @@ exports.test_bad_outer = (T,cb) ->
     arg.team = { id : prng(16) }
     await EncKeyManager.generate {}, esc defer ptk.enc_km
     await KeyManager.generate {}, esc defer ptk.sig_km
+    ptk.seed_check = { h : prng(32), v : 1 }
     obj = new team_hidden.RotateKey arg
     obj._generate_outer = ({inner}) ->
       ret = (new sig3.OuterLink {
@@ -191,6 +197,7 @@ exports.test_bad_inner = (T,cb) ->
   await KeyManager.generate {}, esc defer km
   await EncKeyManager.generate {}, esc defer ptk.enc_km
   await KeyManager.generate {}, esc defer ptk.sig_km
+  seed_check ptk
 
   run = (f, msg, cb) ->
     arg = new_sig_arg_v3 { mk_prev : true, km }
@@ -232,7 +239,7 @@ exports.test_bad_inner = (T,cb) ->
   await run ((o) -> o.b.k[0].s = Buffer.alloc(32)), "At inner.b.k.0.s: value needs to be buffer of length 35" , defer()
   await run ((o) -> o.b.k[0].e = Buffer.alloc(32)), "At inner.b.k.0.e: value needs to be buffer of length 35" , defer()
   await run ((o) -> o.b.k[0].g = Buffer.alloc(3)), "At inner.b.k.0.g: value must be a seqno (sequence number)" , defer()
-  await run ((o) -> o.b.k[0].a = 4), "At inner.b.k.0.a: must be set to value 2" , defer()
+  await run ((o) -> o.b.k[0].a = 4), "At inner.b.k.0.a: must be set to value 1" , defer()
 
   cb null
 
@@ -245,6 +252,7 @@ exports.test_bad_reverse_sig = (T,cb) ->
   arg.team = { id : prng(16) }
   await EncKeyManager.generate {}, esc defer ptk.enc_km
   await KeyManager.generate {}, esc defer ptk.sig_km
+  seed_check ptk
   obj = new team_hidden.RotateKey arg
 
   # Hack - instead of assigning the right reverse sig, assign a twiddled

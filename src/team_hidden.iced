@@ -55,6 +55,7 @@ exports.RotateKey = class RotateKey extends TeamBase
     keys = for k in @per_team_keys
       {
         a : constants.appkey_derivation_version.xor
+        c : k.seed_check
         e : k.enc_km.key.ekid()
         g : k.generation
         r : null
@@ -67,6 +68,9 @@ exports.RotateKey = class RotateKey extends TeamBase
     super schm
     elem = schema.dict({
       a : schema.value(constants.appkey_derivation_version.xor).name("appkey_derivation_version")
+      c : schema.dict({
+        h : schema.binary(32).name("hash")
+        v : schema.value(1).name("version") }).name("seed_check")
       e : schema.enc_kid().name("encryption_kid")
       g : schema.seqno().name("generation")
       r : schema.binary(64).name("reverse_sig")

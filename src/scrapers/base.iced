@@ -87,8 +87,8 @@ class BaseScraper
     await @libs.fetch opts.url, opts, defer(err, response)
 
     rc = if err?
-      if err.code is 'ETIMEDOUT' then               v_codes.TIMEOUT
-      else                                          v_codes.HOST_UNREACHABLE
+      if err.message.includes('network timeout') then v_codes.TIMEOUT
+      else                                            v_codes.HOST_UNREACHABLE
     else if (response.status in [401,403]) then v_codes.PERMISSION_DENIED
     else if (response.status is 200)       then v_codes.OK
     else if (response.status >= 500)       then v_codes.HTTP_500

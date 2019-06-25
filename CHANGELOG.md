@@ -1,3 +1,6 @@
+## 2.3.3 (2019-06-25)
+- export schema system, it's quite useful
+
 ## 2.3.2 (2019-06-10)
 - fix issue where network timeouts were not being assigned the right error code
 - small fixes to chain17 from testing

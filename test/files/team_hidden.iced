@@ -25,8 +25,22 @@ seed_check = (ptk) -> ptk.seed_check = { h : prng(32), v : 1 }
 
 exports.test_generate_team_hidden_rotate = (T,cb) ->
   esc = make_esc cb
-  await gen { T }, esc defer ret
+  await gen { T }, esc defer { km, ret, arg }
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, esc defer()
   cb null, ret
+
+exports.test_generate_team_hidden_rotate_with_implicit_admin = (T,cb) ->
+  esc = make_esc cb
+  admin = {
+    id : prng(16)
+    seqno : 20
+    chain_type : 3
+  }
+  f = (arg) -> arg.team.admin = admin
+  await gen { T, f }, esc defer { km, ret, arg }
+  await alloc_v3 { km, armored : ret.armored, check_params : _to_check_params(arg) }, esc defer ret
+  T.equal ret.objs.inner.team.admin, admin, "admin is right"
+  cb null
 
 gen = ({T,f},cb) ->
   esc = make_esc cb
@@ -202,7 +216,7 @@ exports.test_bad_inner = (T,cb) ->
   run = (f, msg, cb) ->
     arg = new_sig_arg_v3 { mk_prev : true, km }
     arg.per_team_keys = [ ptk ]
-    arg.team = { id : prng(16) }
+    arg.team = { id : prng(16), admin : { id : prng(16), seqno : 19, chain_type : 3 } }
     obj = new team_hidden.RotateKey arg
     obj._generate_inner = (opts, cb) ->
       await obj._generate_inner_impl opts, defer err, json
@@ -240,6 +254,10 @@ exports.test_bad_inner = (T,cb) ->
   await run ((o) -> o.b.k[0].e = Buffer.alloc(32)), "At inner.b.k.0.e: value needs to be buffer of length 35" , defer()
   await run ((o) -> o.b.k[0].g = Buffer.alloc(3)), "At inner.b.k.0.g: value must be a seqno (sequence number)" , defer()
   await run ((o) -> o.b.k[0].a = 4), "At inner.b.k.0.a: must be set to value 1" , defer()
+  await run ((o) -> o.t.a = 10), "At inner.t.a: need a dictionary", defer()
+  await run ((o) -> o.t.a.i = 10), "At inner.t.a.i: value needs to be buffer of length 16", defer()
+  await run ((o) -> o.t.a.t = 4), "At inner.t.a.t: value must be a valid chain type", defer()
+  await run ((o) -> o.t.a.s = "f"), "At inner.t.a.s: value must be a seqno (sequence number)", defer()
 
   cb null
 

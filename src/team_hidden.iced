@@ -18,14 +18,23 @@ exports.TeamBase = class TeamBase extends Base
     obj = { i : Buffer.from(@team.id, 'hex') }
     obj.m = true if @team.is_implicit
     obj.p = true if @team.is_public
+    if @team.admin?
+      obj.a = {
+        i : @team.admin.id
+        s : @team.admin.seqno
+        t : @team.admin.chain_type
+      }
     json.t = obj
 
   _v_extend_schema : (schm) ->
-    schm.set_key "t", schema.dict {
+    schm.set_key "t", schema.dict({
+      a : schema.dict({
+        i : schema.binary(16).name("team_id")
+        s : schema.seqno().name("seqno")
+        t : schema.chain_type().name("chain_type") }).optional().name("implicit_admin")
       i : schema.binary(16).name("team_id")
       m : schema.bool().optional().name("is_implicit")
-      p : schema.bool().optional().name("is_public")
-    }
+      p : schema.bool().optional().name("is_public") })
 
   _v_decode_inner : ({json}, cb) ->
     @team = {
@@ -33,14 +42,27 @@ exports.TeamBase = class TeamBase extends Base
       is_public : !!json.t.p
       is_implicit : !!json.t.m
     }
+    if json.t.a?
+      @team.admin = {
+        id : json.t.a.i
+        seqno : json.t.a.s
+        chain_type : json.t.a.t
+      }
     cb null
 
   to_v2_team_obj : () ->
-    {
+    ret = {
       id : @team.id.toString('hex')
       is_implicit : @team.is_implicit
       is_public : @team.is_public
     }
+    if @team.admin?
+      ret.admin = {
+        id : @team.admin.toString('hex')
+        seqno : @team.admin.seqno
+        chain_type : @team.admin.chain_type
+      }
+    return ret
 
 #------------------
 

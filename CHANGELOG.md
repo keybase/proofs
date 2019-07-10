@@ -1,3 +1,6 @@
+## 2.3.4 (2019-07-10)
+- team rotate links now have admin pinning sections (as in the chain3 links)
+
 ## 2.3.3 (2019-06-25)
 - export schema system, it's quite useful
 

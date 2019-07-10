@@ -58,9 +58,9 @@ exports.TeamBase = class TeamBase extends Base
     }
     if @team.admin?
       ret.admin = {
-        id : @team.admin.toString('hex')
+        team_id : @team.admin.id.toString('hex')
         seqno : @team.admin.seqno
-        chain_type : @team.admin.chain_type
+        seq_type : @team.admin.chain_type
       }
     return ret
 

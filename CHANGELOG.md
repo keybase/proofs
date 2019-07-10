@@ -1,3 +1,6 @@
+## 2.3.5 (2019-07-10)
+- bugfixes for featuresin 2.3.4
+
 ## 2.3.4 (2019-07-10)
 - team rotate links now have admin pinning sections (as in the chain3 links)
 

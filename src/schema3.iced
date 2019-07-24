@@ -167,7 +167,6 @@ exports.enc_kid = () -> new KID { encryption : true }
 exports.seqno = () -> new Seqno {}
 exports.time = () -> new Time {}
 exports.int = () -> new Int {}
-exports.uid = () -> new Binary { len : 16 }
 exports.chain_type = () -> new ChainType {}
 exports.link_type = () -> new LinkType {}
 exports.string = () -> new String {}

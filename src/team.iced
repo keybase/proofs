@@ -163,3 +163,9 @@ exports.Settings = class Settings extends TeamBase
   _type_v2 : () -> constants.sig_types_v2.team.settings
 
 #--------------
+
+exports.BotSettings = class BotSettingsettings extends TeamBase
+  _type : () -> constants.sig_types.team.bot_settings
+  _type_v2 : () -> constants.sig_types_v2.team.bot_settings
+
+#--------------

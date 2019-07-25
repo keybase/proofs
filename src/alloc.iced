@@ -63,6 +63,7 @@ lookup_tab = {
   "team.delete_up_pointer"         : team.DeleteUpPointer
   "team.kbfs"                      : team.KBFS
   "team.settings"                  : team.Settings
+  "team.bot_settings"              : team.BotSettings
 }
 
 #--------------------------------------------

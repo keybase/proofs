@@ -1,3 +1,6 @@
+## 2.3.6 (2019-07-24)
+- add `bot_settings` signature type
+
 ## 2.3.5 (2019-07-10)
 - bugfixes for featuresin 2.3.4
 

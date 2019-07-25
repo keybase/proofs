@@ -43,6 +43,7 @@ exports.constants = constants =
       delete_up_pointer : "team.delete_up_pointer"
       kbfs : "team.kbfs"
       settings : "team.settings"
+      bot_settings : "team.bot_settings"
 
   sig_types_v2:
     eldest : 1
@@ -76,6 +77,7 @@ exports.constants = constants =
       # Note that 45 is retired; it used to be legacy_tlf_upgrade
       settings : 46
       kbfs : 47
+      bot_settings: 48
     wallet :
       stellar : 15
   sig_types_v3:

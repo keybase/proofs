@@ -1,3 +1,7 @@
+## 2.3.7 (2019-08-01)
+
+- small tweaks to team sig3, is_implicit and is_public bools are always there
+
 ## 2.3.6 (2019-07-24)
 - add `bot_settings` signature type
 

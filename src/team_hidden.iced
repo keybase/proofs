@@ -16,8 +16,8 @@ exports.TeamBase = class TeamBase extends Base
 
   _v_encode_inner : ({json}) ->
     obj = { i : Buffer.from(@team.id, 'hex') }
-    obj.m = true if @team.is_implicit
-    obj.p = true if @team.is_public
+    obj.m = !!@team.is_implicit
+    obj.p = !!@team.is_public
     if @team.admin?
       obj.a = {
         i : @team.admin.id

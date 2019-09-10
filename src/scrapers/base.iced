@@ -85,6 +85,13 @@ class BaseScraper
     opts.headers or= {}
     opts.headers["User-Agent"] ?= (opts.user_agent or user_agent)
     await @libs.fetch opts.url, opts, defer(err, response)
+    if opts.log_ratelimit
+      rl_limit     = parse_int_or_undefined response.headers.get 'X-RateLimit-Limit' # 5000 for github # https://developer.github.com/v3/#rate-limiting
+      rl_remaining = parse_int_or_undefined response.headers.get 'X-RateLimit-Remaining'
+      rl_reset     = parse_int_or_undefined response.headers.get 'X-RateLimit-Reset' # utc timestamp in seconds when limit will replenish
+      if rl_limit?
+        @log "| ratelimit info limit=#{rl_limit} remaining=#{rl_remaining} reset=#{rl_reset}"
+      @libs.ratelimit_inform? {limit: rl_limit, remaining: rl_remaining, reset: rl_reset}
 
     rc = if err?
       if err.message.includes('network timeout') then v_codes.TIMEOUT
@@ -113,6 +120,12 @@ class BaseScraper
 #==============================================================
 
 exports.BaseScraper = BaseScraper
+
+#==============================================================
+
+parse_int_or_undefined = (value) ->
+  if (out = Number(value)) is parseInt(value) and !isNaN(out)
+    return out
 
 #==============================================================
 

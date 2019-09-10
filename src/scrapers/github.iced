@@ -23,8 +23,6 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   hunt2 : ({username, proof_text_check, name}, cb) ->
-
-    # calls back with rc, out
     rc       = v_codes.OK
     out      = {}
 
@@ -109,6 +107,7 @@ exports.GithubScraper = class GithubScraper extends BaseScraper
     args =
       url : url
       headers : { Authorization : "Basic #{cred}" }
+      log_ratelimit : true
     args.json = 1 if json
     @_get_url_body args, cb
 

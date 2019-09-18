@@ -1,3 +1,7 @@
+## 2.3.9 (2019-09-18)
+
+- update facebook checker
+
 ## 2.3.8 (2019-09-10)
 
 - report rate limit

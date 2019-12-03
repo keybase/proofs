@@ -1,6 +1,10 @@
-## 2.3.10 (2019-12-03)
+## 2.3.11 (2019-12-03)
 
 - upgrade schema checkers for binary values
+
+## 2.3.10 (2019-10-31)
+
+- fix rate limit reporting
 
 ## 2.3.9 (2019-09-18)
 

@@ -4,7 +4,7 @@
 pgp_utils = require('pgp-utils')
 {unix_time} = pgp_utils.util
 
-exports.new_uid = new_uid = () -> prng(16).toString('hex')
+exports.new_uid = new_uid = () -> Buffer.concat([ prng(15), Buffer.from([0x19])]).toString('hex')
 exports.new_username = new_username = () -> "u_" + prng(5).toString('hex')
 
 exports.skip = 1

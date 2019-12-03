@@ -87,14 +87,19 @@ class Struct extends Node
 
 class Binary extends Node
 
-  constructor : ({len}) ->
+  constructor : ({len, bottom_bytes}) ->
     @_len = len
+    @_bottom_bytes = bottom_bytes
 
   _check : ({path, obj}) ->
     if @_convert and typeof(obj) is 'string'
       obj = Buffer.from(obj, 'hex')
     unless Buffer.isBuffer(obj) and obj.length is @_len
       return mkerr path, "value needs to be buffer of length #{@_len}"
+    if @_bottom_bytes?
+      bot = obj[obj.length-1]
+      unless @_bottom_bytes[bot]
+        return mkerr path, "value has wrong bottom byte (#{bot})"
     return null
 
 class KID extends Binary
@@ -160,8 +165,8 @@ class Object extends Node
   _check : ({path, obj}) -> null
 
 exports.dict = (keys) -> new Dict { keys }
-exports.binary = (l) -> new Binary { len : l }
-exports.uid = () -> new Binary { len : 16 }
+exports.binary = (l, bottom_bytes) -> new Binary { len : l, bottom_bytes }
+exports.uid = () -> new Binary { len : 16, bottom_bytes : { 0x19 : true, 0x00 : true} }
 exports.kid = () -> new KID { encryption : false }
 exports.enc_kid = () -> new KID { encryption : true }
 exports.seqno = () -> new Seqno {}

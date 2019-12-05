@@ -1,3 +1,8 @@
+## 2.3.12 (2019-12-04)
+
+- different schema checkers for binary values bottom bytes
+- also allow arrays to be empty if flagged
+
 ## 2.3.11 (2019-12-03)
 
 - upgrade schema checkers for binary values

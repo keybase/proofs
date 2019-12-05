@@ -59,11 +59,16 @@ class Array extends Node
 
   constructor : ({elem}) ->
     @_elem = elem
+    @_empty_is_ok = false
+
+  empty_is_ok : () ->
+    @_empty_is_ok = true
+    @
 
   _check : ({path, obj}) ->
     unless parse.is_array(obj)
       return mkerr path, "need an array"
-    if obj.length < 1
+    if not @_empty_is_ok and obj.length < 1
       return mkerr path, "need 1 or more objects"
     for o, i in obj
       new_path = path.extend(i.toString())
@@ -89,7 +94,7 @@ class Binary extends Node
 
   constructor : ({len, bottom_bytes}) ->
     @_len = len
-    @_bottom_bytes = bottom_bytes
+    @_bottom_bytes = if bottom_bytes? then bottom_bytes.reduce(((d,x) -> d[x] = true; return d); {}) else null
 
   _check : ({path, obj}) ->
     if @_convert and typeof(obj) is 'string'
@@ -166,7 +171,7 @@ class Object extends Node
 
 exports.dict = (keys) -> new Dict { keys }
 exports.binary = (l, bottom_bytes) -> new Binary { len : l, bottom_bytes }
-exports.uid = () -> new Binary { len : 16, bottom_bytes : { 0x19 : true, 0x00 : true} }
+exports.uid = () -> new Binary { len : 16, bottom_bytes : [0x19, 0x00] }
 exports.kid = () -> new KID { encryption : false }
 exports.enc_kid = () -> new KID { encryption : true }
 exports.seqno = () -> new Seqno {}

@@ -194,7 +194,6 @@ exports.Base = class Base
 
   _hash : (inner) -> sha256 pack inner
 
-
   check : ({now}, cb) ->
     esc = make_esc cb
     await @_check_clock_skew { now }, esc defer()

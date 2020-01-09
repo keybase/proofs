@@ -44,6 +44,9 @@ exports.constants = constants =
       kbfs : "team.kbfs"
       settings : "team.settings"
       bot_settings : "team.bot_settings"
+    wot :
+      attest : "wot.attest"
+      react  : "wot.react"
 
   sig_types_v2:
     eldest : 1
@@ -80,6 +83,10 @@ exports.constants = constants =
       bot_settings: 48
     wallet :
       stellar : 15
+    wot :
+      attest : 16
+      attest_with_revoke : 17
+      react : 18
   sig_types_v3:
     user:
       peg : 65

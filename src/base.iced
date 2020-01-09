@@ -11,6 +11,7 @@ util = require 'util'
 {errors,errsan} = require './errors'
 purepack = require 'purepack'
 {bufferify} = require './util'
+{expand_json,stub_json} = require './expand'
 
 #==========================================================================
 
@@ -75,7 +76,7 @@ compare_hash_buf_to_str = (b, s) ->
 
 class Verifier
 
-  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check, @inner, @outer}, @sig_eng, @base) ->
+  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check, @inner, @outer, @expansions}, @sig_eng, @base) ->
 
   #---------------
 
@@ -92,7 +93,7 @@ class Verifier
   verify : (cb) ->
     esc = make_esc cb, "Verifier::verfiy"
     await @_parse_and_process {@armored}, esc defer payload
-    await @_check_json {payload}, esc defer json_obj, json_str
+    await @_check_json {payload, @expansions}, esc defer json_obj, json_str
     await @_check_ctime esc defer() unless @skip_clock_skew_check
     await @_check_expired esc defer()
     await @_check_version { v : 1 }, esc defer()
@@ -104,7 +105,7 @@ class Verifier
     esc = make_esc cb, "Verifier::verfiy"
     await @_parse_and_process {@armored}, esc defer outer_raw
     inner_buf = Buffer.from @inner, 'utf8'
-    await @_check_json {payload : inner_buf}, esc defer json_obj, json_str
+    await @_check_json {payload : inner_buf, @expansions}, esc defer json_obj, json_str
     await @_check_inner_outer_match { outer_raw, inner_obj : json_obj, inner_buf }, esc defer outer_obj
     await @_check_ctime esc defer() unless @skip_clock_skew_check
     await @_check_expired esc defer()
@@ -223,7 +224,8 @@ class Verifier
 
   #---------------
 
-  _check_json : ({payload}, cb) ->
+  _check_json : ({payload, expansions}, cb) ->
+    esc = make_esc cb
     json_str_buf = payload
 
     # Before we run any checks on the input json, let's trim any leading
@@ -233,15 +235,17 @@ class Verifier
     err = null
     if not /^[\x20-\x7e]+$/.test json_str_utf8_trimmed
       err = new Error "All JSON proof characters must be in the visible ASCII set (properly escaped UTF8 is permissible)"
-    else
-      [e, @json] = katch (() -> JSON.parse json_str_buf)
-      err = new Error "Couldn't parse JSON signed message: #{e.message}" if e?
-      if not err?
-        if @strict and ((ours = trim(json_stringify_sorted(@json))) isnt json_str_utf8_trimmed)
-          err = new Error "non-canonical JSON found in strict mode (#{errsan ours} v #{errsan json_str_utf8_trimmed})"
-        else
-          await @base._v_check {@json}, defer err
-    cb err, @json, json_str_utf8
+      return cb err
+    [e, json_tmp] = katch (() -> JSON.parse json_str_buf)
+    if e?
+      err = new Error "Couldn't parse JSON signed message: #{e.message}"
+      return cb err
+    if @strict and ((ours = trim(json_stringify_sorted(@json))) isnt json_str_utf8_trimmed)
+      err = new Error "non-canonical JSON found in strict mode (#{errsan ours} v #{errsan json_str_utf8_trimmed})"
+      return cb err
+    await akatch (() -> expand_json({ json : json_tmp, expansions})), esc defer @json
+    await @base._v_check {@json}, esc defer()
+    cb null, @json, json_str_utf8
 
 #==========================================================================
 
@@ -249,7 +253,7 @@ class Base
 
   #------
 
-  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @ignore_if_unsupported, @high_skip, @eldest_kid, @expire_in, @ctime}) ->
+  constructor : ({@sig_eng, @seqno, @user, @host, @prev, @client, @merkle_root, @revoke, @seq_type, @ignore_if_unsupported, @high_skip, @eldest_kid, @expire_in, @ctime, @stub_paths}) ->
 
   #------
 
@@ -472,8 +476,17 @@ class Base
 
   #------
 
+  _do_stub_paths : ({json, expansions}, cb) ->
+    esc = make_esc cb
+    for path in (@stub_paths or [])
+      await akatch (() -> stub_json { path, json, expansions}), esc defer()
+    cb null
+
+  #------
+
   generate_json : ({expire_in, version} = {}, cb) ->
     err = null
+    esc = make_esc cb
 
     version or= constants.versions.sig_v1
 
@@ -534,9 +547,11 @@ class Base
 
     @_v_customize_json ret
 
-    await @_add_pgp_details {body: ret.body}, defer err
+    await @_add_pgp_details {body: ret.body}, esc defer()
+    expansions = {}
+    await @_do_stub_paths { json : ret, expansions }, esc defer()
 
-    cb err, json_stringify_sorted(ret), ret
+    cb err, json_stringify_sorted(ret), ret, expansions
 
   #------
 
@@ -549,11 +564,11 @@ class Base
     out = null
     opts = version : constants.versions.sig_v1
     await @_v_generate opts, esc defer()
-    await @generate_json opts, esc defer json, json_obj
+    await @generate_json opts, esc defer json, json_obj, expansions
     inner = { str : json, obj : json_obj }
     await @sig_eng.box json, esc defer {pgp, raw, armored}
     {short_id, id} = make_ids raw
-    out = { pgp, json, id, short_id, raw, armored, inner }
+    out = { pgp, json, id, short_id, raw, armored, inner, expansions }
     cb null, out
 
   #------
@@ -566,12 +581,12 @@ class Base
     out = null
     opts = { version : constants.versions.sig_v2 }
     await @_v_generate opts, esc defer()
-    await @generate_json opts, esc defer s, o
+    await @generate_json opts, esc defer s, o, expansions
     inner = { str : s, obj : o }
     await @generate_outer { inner }, esc defer outer
     await @sig_eng.box outer, esc defer {pgp, raw, armored}
     {short_id, id} = make_ids raw
-    out = { pgp, id, short_id, raw, armored, inner, outer}
+    out = { pgp, id, short_id, raw, armored, inner, outer, expansions }
     cb null, out
 
   #------
@@ -658,6 +673,7 @@ class Base
   # options obj {string} inner The inner payload
   # @option obj {string} id The keybase-appropriate ID that's the PGP signature's hash
   # @option obj {string} short_id The shortened sig ID that's for the tweet (or similar)
+  # @option obj {string} expansions Dictionary of hash -> object expansions
   # @option obj {bool} skip_ids Don't bother checking IDs
   # @option obj {bool} make_ids Make Ids when verifying
   # @option obj {bool} strict Turn on all strict-mode checks

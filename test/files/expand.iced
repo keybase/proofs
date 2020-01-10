@@ -1,7 +1,6 @@
 {prng} = require 'crypto'
-{expand_json,stub_json} = require '../../lib/expand'
+{expand_json,stub_json,hmac_obj} = require '../../lib/expand'
 triplesec = require('triplesec')
-{SHA256} = triplesec.hash
 pgp_utils = require('pgp-utils')
 {katch,json_stringify_sorted} = pgp_utils.util
 {KeyManager} = require('kbpgp').kb
@@ -14,16 +13,18 @@ pgp_utils = require('pgp-utils')
 
 new_uid = () -> prng(15).toString('hex') + "19"
 new_username = () -> "u_" + prng(5).toString('hex')
-new_device = () ->
-sha256 = (x) -> createHash('SHA256').update(x).digest('hex')
+
+twiddle_hex = (s) ->
+  b = Buffer.from(s, 'hex')
+  b[0] ^= 1
+  return b.toString('hex')
 
 make_expansions = (v) ->
   ret = {}
-  hash = (o) ->
-    s = json_stringify_sorted o
-    (new SHA256).bufhash(Buffer.from(s, 'utf8')).toString('hex')
-  for e in v
-    ret[hash(e)] = e
+  for obj in v
+    key = prng(16)
+    hmac = hmac_obj({obj, key}).toString('hex')
+    ret[hmac] = { obj, key : key.toString('hex') }
   return ret
 
 exports.happy = (T,cb) ->
@@ -55,12 +56,17 @@ exports.sad1 = (T,cb) ->
   h = Object.keys(expansions)
 
   tests = [
-    { expansions : { "a" : "10" }, json : 10, err : "bad hash" }
+    { expansions : { "a" : ["10"] }, json : 10, err : "bad hash" }
     { expansions : {}, json : 10, err : "hashcheck failure" }
     { expansions, json : 10, err : "Did not find expansion for" }
     { expansion : make_expansions(["💩"]), json : 10, err : "non-ASCII" }
+    { expansions : {}, json : 10, err : "hashcheck failure" }
+    { expansions : {}, json : 10, err : "bad hmac key" }
   ]
-  tests[1].expansions[h[0]] = ["a","b"]
+  expansion = expansions[h[0]]
+  tests[1].expansions[h[0]] = { obj : ["a","b"], key : expansion.key }
+  tests[4].expansions[h[0]] = { obj : expansion.obj, key : twiddle_hex(expansion.key) }
+  tests[5].expansions[h[0]] = { obj : expansion.obj, key : expansion.key[0...12] }
 
   for t in tests
     try
@@ -83,15 +89,9 @@ exports.check_unstub_expand = (T,cb) ->
   stub_json { json, expansions, path : "d.e"}
 
   expanded = expand_json { expansions, json }
-  T.equal expanded.a.b.c.entropy.length, 24, "entropy was there"
-  delete expanded.a.b.c.entropy
-  T.equal expanded.d.e.entropy.length, 24, "entropy was there"
-  delete expanded.d.e.entropy
-
   T.equal orig, expanded, "got the right value out"
 
   cb null
-
 
 exports.stubbed_chainlink = (T,cb) ->
   esc = make_esc cb, "@generate"
@@ -117,7 +117,7 @@ exports.stubbed_chainlink = (T,cb) ->
   varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions}
   await verifier.verify_v2 varg, esc defer()
   for k,v of out.expansions
-    v.foo = "bar"
+    v.obj.foo = "bar"
     out.expansions[k] = v
   await verifier.verify_v2 varg, defer err
   T.assert err?, "failed to destub"

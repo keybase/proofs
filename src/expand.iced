@@ -2,9 +2,8 @@ parse3 = require './parse3'
 pgp_utils = require('pgp-utils')
 {katch,json_stringify_sorted} = pgp_utils.util
 triplesec = require('triplesec')
-{SHA256} = triplesec.hash
 {ExpansionError} = require('./errors').errors
-{prng} = require 'crypto'
+{prng,createHmac} = require 'crypto'
 
 #========================================================
 
@@ -14,18 +13,20 @@ check_expansions = ({expansions}) ->
 
 #========================================================
 
-exports.hash_obj = hash_obj = (o) ->
-  s = json_stringify_sorted o
-  (new SHA256).bufhash(Buffer.from(s, 'utf8')).toString('hex')
+exports.hmac_obj = hmac_obj = ({obj, key}) ->
+  hmac = createHmac("sha256", key)
+  s = json_stringify_sorted obj
+  hmac.update(Buffer.from(s, 'utf8')).digest()
 
 #========================================================
 
 check_expansion_kv = ({k,v}) ->
   if not parse3.is_hex(k, 32) then throw new ExpansionError "bad hash: #{k}"
-  s = json_stringify_sorted v
+  if not parse3.is_hex(v.key, 16) then throw new ExpansionError "bad hmac key: #{v[1]}"
+  s = JSON.stringify v.obj
   if not /^[\x20-\x7e]+$/.test(s) then throw new ExpansionError "JSON stub has non-ASCII"
-  h = (new SHA256).bufhash(Buffer.from(s, 'utf8')).toString('hex')
-  if k isnt h then throw new ExpansionError "hashcheck failure in stub import"
+  hmac_computed = hmac_obj({ obj : v.obj, key : Buffer.from(v.key, 'hex') }).toString('hex')
+  if (hmac_computed isnt k) then throw new ExpansionError "hashcheck failure in stub import"
 
 #========================================================
 
@@ -41,7 +42,7 @@ exports.expand_json = ({json, expansions}) ->
 
     if typeof(o) is 'string' and (expansion = expansions[o])?
       found[o] = true
-      return expansion
+      return expansion.obj
 
     if typeof(o) isnt 'object' then return o
 
@@ -85,9 +86,9 @@ json_at_path = ({json, path, repl}) ->
 exports.stub_json = ({json, expansions, path}) ->
   obj = json_at_path { json, path }
   obj = JSON.parse JSON.stringify obj
-  obj.entropy = prng(16).toString('base64')
-  h = hash_obj obj
-  expansions[h] = obj
+  key = prng(16)
+  h = hmac_obj({ obj, key }).toString('hex')
+  expansions[h] = { obj, key : key.toString('hex') }
   json_at_path { json, path, repl : h }
   null
 

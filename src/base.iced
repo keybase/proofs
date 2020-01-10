@@ -473,12 +473,13 @@ class Base
   #------
 
   _v_customize_json : (ret) ->
+  _v_stub_paths : () -> null
 
   #------
 
   _do_stub_paths : ({json, expansions}, cb) ->
     esc = make_esc cb
-    for path in (@stub_paths or [])
+    for path in (@stub_paths or @_v_stub_paths() or [])
       await akatch (() -> stub_json { path, json, expansions}), esc defer()
     cb null
 

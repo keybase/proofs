@@ -84,7 +84,7 @@ json_at_path = ({json, path, repl}) ->
 
 exports.stub_json = ({json, expansions, path}) ->
   obj = json_at_path { json, path }
-  obh = JSON.parse JSON.stringify obj
+  obj = JSON.parse JSON.stringify obj
   obj.entropy = prng(16).toString('base64')
   h = hash_obj obj
   expansions[h] = obj

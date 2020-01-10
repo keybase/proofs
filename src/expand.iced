@@ -4,6 +4,7 @@ pgp_utils = require('pgp-utils')
 triplesec = require('triplesec')
 {SHA256} = triplesec.hash
 {ExpansionError} = require('./errors').errors
+{prng} = require 'crypto'
 
 #========================================================
 
@@ -83,8 +84,10 @@ json_at_path = ({json, path, repl}) ->
 
 exports.stub_json = ({json, expansions, path}) ->
   obj = json_at_path { json, path }
+  obh = JSON.parse JSON.stringify obj
+  obj.entropy = prng(16).toString('base64')
   h = hash_obj obj
-  expansions[h] = JSON.parse JSON.stringify obj
+  expansions[h] = obj
   json_at_path { json, path, repl : h }
   null
 

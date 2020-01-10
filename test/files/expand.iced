@@ -83,6 +83,11 @@ exports.check_unstub_expand = (T,cb) ->
   stub_json { json, expansions, path : "d.e"}
 
   expanded = expand_json { expansions, json }
+  T.equal expanded.a.b.c.entropy.length, 24, "entropy was there"
+  delete expanded.a.b.c.entropy
+  T.equal expanded.d.e.entropy.length, 24, "entropy was there"
+  delete expanded.d.e.entropy
+
   T.equal orig, expanded, "got the right value out"
 
   cb null

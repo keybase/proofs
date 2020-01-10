@@ -23,11 +23,7 @@ exports.hmac_obj = hmac_obj = ({obj, key}) ->
 check_expansion_kv = ({k,v}) ->
   if not parse3.is_hex(k, 32) then throw new ExpansionError "bad hash: #{k}"
   if not parse3.is_hex(v.key, 16) then throw new ExpansionError "bad hmac key: #{v[1]}"
-  console.log "check_expansion_kv"
-  console.log k
-  console.log v
   s = JSON.stringify v.obj
-  console.log s
   if not /^[\x20-\x7e]+$/.test(s) then throw new ExpansionError "JSON stub has non-ASCII"
   hmac_computed = hmac_obj({ obj : v.obj, key : Buffer.from(v.key, 'hex') }).toString('hex')
   if (hmac_computed isnt k) then throw new ExpansionError "hashcheck failure in stub import"

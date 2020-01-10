@@ -59,7 +59,7 @@ exports.sad1 = (T,cb) ->
     { expansions : { "a" : ["10"] }, json : 10, err : "bad hash" }
     { expansions : {}, json : 10, err : "hashcheck failure" }
     { expansions, json : 10, err : "Did not find expansion for" }
-    { expansion : make_expansions(["💩"]), json : 10, err : "non-ASCII" }
+    { expansions : make_expansions(["💩"]), json : 10, err : "non-ASCII" }
     { expansions : {}, json : 10, err : "hashcheck failure" }
     { expansions : {}, json : 10, err : "bad hmac key" }
   ]
@@ -69,7 +69,6 @@ exports.sad1 = (T,cb) ->
   tests[5].expansions[h[0]] = { obj : expansion.obj, key : expansion.key[0...12] }
 
   for t in tests
-    console.log t
     try
       expand_json t
       T.assert false, "should not make it past throw"

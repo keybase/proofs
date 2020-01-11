@@ -69,12 +69,13 @@ exports.sad1 = (T,cb) ->
   tests[5].expansions[h[0]] = { obj : expansion.obj, key : expansion.key[0...12] }
 
   for t in tests
+    err = null
     try
       expand_json t
-      T.assert false, "should not make it past throw"
     catch e
-      T.assert e?, "error for case #{JSON.stringify t}"
-      T.assert e.toString().indexOf(t.err) >= 0, "found #{t.err}"
+      err = e
+    T.assert err?, "error for case #{JSON.stringify t}"
+    T.assert err.toString().indexOf(t.err) >= 0, "found #{t.err}"
 
   cb null
 

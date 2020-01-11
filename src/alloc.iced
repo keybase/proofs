@@ -66,6 +66,7 @@ lookup_tab = {
   "team.settings"                  : team.Settings
   "team.bot_settings"              : team.BotSettings
   "wot.attest"                     : wot.Attest
+  "wot.react"                      : wot.React
 }
 
 #--------------------------------------------

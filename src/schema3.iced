@@ -199,6 +199,7 @@ class Object extends Node
 exports.dict = (keys) -> new Dict { keys }
 exports.binary = (l, bottom_bytes) -> new Binary { len : l, bottom_bytes }
 exports.uid = () -> new Binary { len : 16, bottom_bytes : [0x19, 0x00] }
+exports.sig_id = () -> new Binary { len : 33, bottom_bytes : [0x0f, 0x22] }
 exports.kid = () -> new KID { encryption : false }
 exports.enc_kid = () -> new KID { encryption : true }
 exports.seqno = () -> new Seqno {}

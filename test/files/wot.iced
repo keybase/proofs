@@ -1,7 +1,7 @@
 {alloc,wot} = require '../../'
 {EncKeyManager,KeyManager} = require('kbpgp').kb
 {make_esc} = require 'iced-error'
-{new_uid,new_km_and_sig_arg} = require './util'
+{new_uid,new_km_and_sig_arg,new_sig_id} = require './util'
 pgp_utils = require('pgp-utils')
 {json_stringify_sorted} = pgp_utils.util
 
@@ -40,6 +40,16 @@ exports.wot_attest_happy = (T,cb) ->
   T.equal hsh.length, 64, "64-byte hex string"
   T.assert out.expansions[hsh]?.obj?, "expansion was there"
 
+  verifier = alloc out.inner.obj.body.type, me
+  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions}
+  await verifier.verify_v2 varg, esc defer()
+
+  me.wot =
+    react :
+      sig_id : new_sig_id()
+      reaction : "accept"
+  obj = new wot.React me
+  await obj.generate_v2 esc defer out
   verifier = alloc out.inner.obj.body.type, me
   varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions}
   await verifier.verify_v2 varg, esc defer()

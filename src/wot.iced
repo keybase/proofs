@@ -56,3 +56,27 @@ exports.Attest = class Attest extends Base
     ret.body.wot_attest = t if (t = @wot.attest)?
 
 #==========================================================================
+
+exports.React = class React extends Base
+
+  constructor : (obj) ->
+    @wot = obj.wot
+    super obj
+
+  _v_stub_paths : () -> [ "body.wot_react" ]
+  _type : () -> constants.sig_types.wot.react
+
+  _type_v2 : (revoke_flag) -> constants.sig_types_v2.wot.react
+
+  _v_check : ({json}, cb) ->
+    obj = json.body.wot_react
+    schm = schema.dict({
+      sig_id : schema.sig_id().convert()
+      reaction : schema.string_enum(["accept", "reject"])
+    })
+    cb schm.check(obj)
+
+   _v_customize_json : (ret) ->
+    ret.body.wot_react = t if (t = @wot.react)?
+
+#==========================================================================

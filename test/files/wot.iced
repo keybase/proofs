@@ -40,7 +40,6 @@ exports.wot_attest_happy = (T,cb) ->
   T.equal hsh.length, 64, "64-byte hex string"
   T.assert out.expansions[hsh]?.obj?, "expansion was there"
 
-
   verifier = alloc out.inner.obj.body.type, me
   varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions}
   await verifier.verify_v2 varg, esc defer()

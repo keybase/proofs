@@ -23,6 +23,7 @@ $(BUILD_STAMP): \
 	lib/device.js \
 	lib/eldest.js \
 	lib/errors.js \
+	lib/expand.js \
 	lib/main.js \
 	lib/parse3.js \
 	lib/revoke.js \

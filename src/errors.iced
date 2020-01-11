@@ -5,6 +5,7 @@ exports.errors = make_errors {
   WRONG_SEQNO : "wrong seqno"
   BAD_HIGH_SKIP : "bad high skip"
   BAD_PREV : "bad prev pointer"
+  EXPANSION : "bad expansion"
 }
 
 exports.errsan = errsan = (s) ->

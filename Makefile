@@ -48,6 +48,7 @@ $(BUILD_STAMP): \
 	lib/track.js \
 	lib/wallet.js \
 	lib/web_service.js \
+	lib/wot.js \
 	lib/update_passphrase_hash.js \
 	lib/update_settings.js \
 	lib/util.js

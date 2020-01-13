@@ -32,6 +32,7 @@ mods = [
   require('./scrapers/hackernews')
   require('./scrapers/generic_social')
   require('./errors')
+  require('./wot')
 ]
 
 for m in mods
@@ -43,3 +44,4 @@ exports.team = require('./team')
 exports.team_hidden = require('./team_hidden')
 exports.sig3 = require('./sig3')
 exports.schema = require('./schema3')
+exports.wot = require('./wot')

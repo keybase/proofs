@@ -26,9 +26,10 @@ exports.wot_attest_happy = (T,cb) ->
         eldest_seqno : 1
       confidence :
         vouched_by : (new_uid() for _ in [0...4])
-        keybase_username : "audio"
+        username_verified_via : "audio"
         other : "lorem ipsum"
         proofs : [ proof, proof]
+        known_on_keybase_days : 60
       failing_proofs : [ proof, proof ]
       attestation : [
         "darn rootin tootin"

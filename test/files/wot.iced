@@ -1,7 +1,7 @@
 {alloc,wot} = require '../../'
 {EncKeyManager,KeyManager} = require('kbpgp').kb
 {make_esc} = require 'iced-error'
-{new_uid,new_km_and_sig_arg,new_sig_id} = require './util'
+{new_uid,new_km_and_sig_arg,new_sig_id,new_payload_hash} = require './util'
 pgp_utils = require('pgp-utils')
 {json_stringify_sorted} = pgp_utils.util
 
@@ -21,9 +21,13 @@ exports.wot_attest_happy = (T,cb) ->
       user :
         username : them.user.local.username
         uid : them.user.local.uid
-        eldest_kid : them.sig_eng.km.key.ekid().toString('hex')
-        last_seqno : 20
-        eldest_seqno : 1
+        eldest:
+          kid : them.sig_eng.km.key.ekid().toString('hex')
+          seqno : 1
+        seq_tail :
+          seqno : 20
+          sig_id : new_sig_id()
+          payload_hash : new_payload_hash()
       confidence :
         vouched_by : (new_uid() for _ in [0...4])
         username_verified_via : "audio"

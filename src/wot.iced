@@ -36,9 +36,15 @@ exports.Attest = class Attest extends Base
       user : schema.dict({
         username : schema.string()
         uid : schema.uid().convert()
-        eldest_seqno : schema.int()
-        last_seqno : schema.int()
-        eldest_kid : schema.kid().convert()
+        eldest : schema.dict({
+          seqno : schema.int()
+          kid : schema.kid().convert()
+        })
+        seq_tail : schema.dict({
+         seqno : schema.int()
+         sig_id : schema.sig_id().convert()
+         payload_hash : schema.hash().convert()
+        })
       })
       confidence : schema.dict({
         proofs : schema.array(proof_schema).optional()

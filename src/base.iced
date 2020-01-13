@@ -76,7 +76,7 @@ compare_hash_buf_to_str = (b, s) ->
 
 class Verifier
 
-  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check, @inner, @outer, @expansions}, @sig_eng, @base) ->
+  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check, @inner, @outer, @expansions, @assert_pgp_hash}, @sig_eng, @base) ->
 
   #---------------
 
@@ -215,7 +215,7 @@ class Verifier
 
   _parse_and_process : ({armored}, cb) ->
     err = null
-    await @sig_eng.unbox armored, defer err, payload, body
+    await @sig_eng.unbox armored, defer(err, payload, body), { @assert_pgp_hash }
     if not err? and not @skip_ids
       await @_check_ids body, defer err
     if not err? and @make_ids
@@ -244,7 +244,7 @@ class Verifier
       err = new Error "non-canonical JSON found in strict mode (#{errsan ours} v #{errsan json_str_utf8_trimmed})"
       return cb err
     await akatch (() -> expand_json({ json : json_tmp, expansions})), esc defer @json
-    await @base._v_check {@json}, esc defer()
+    await @base._v_check {@json, @assert_pgp_hash}, esc defer()
     cb null, @json, json_str_utf8
 
 #==========================================================================
@@ -656,6 +656,7 @@ class Base
   # @option obj {bool} skip_ids Don't bother checking IDs
   # @option obj {bool} make_ids Make Ids when verifying
   # @option obj {bool} strict Turn on all strict-mode checks
+  # @option obj {Function} assert_pgp_hash Callback to reject specific PGP hash functions if encountered
   verify : (obj, cb) ->
     verifier = new Verifier obj, @sig_eng, @
     await verifier.verify defer err, json_obj, json_str
@@ -671,7 +672,7 @@ class Base
 
   # @param {Object} obj with options as specified:
   # @option obj {string} armored The signature that's being uploaded (either PGP or KB NaCl)
-  # options obj {string} inner The inner payload
+  # @option obj {string} inner The inner payload
   # @option obj {string} id The keybase-appropriate ID that's the PGP signature's hash
   # @option obj {string} short_id The shortened sig ID that's for the tweet (or similar)
   # @option obj {string} expansions Dictionary of hash -> object expansions

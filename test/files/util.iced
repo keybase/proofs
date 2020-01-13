@@ -8,6 +8,7 @@ pgp_utils = require('pgp-utils')
 exports.new_uid = new_uid = () -> Buffer.concat([ prng(15), Buffer.from([0x19])]).toString('hex')
 exports.new_sig_id = new_sig_id = () -> Buffer.concat([ prng(32), Buffer.from([0x22])]).toString('hex')
 exports.new_username = new_username = () -> "u_" + prng(5).toString('hex')
+exports.new_payload_hash = new_payload_hash = () -> prng(32).toString('hex')
 
 exports.skip = 1
 

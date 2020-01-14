@@ -665,7 +665,7 @@ class Base
       id = obj.id = verifier.id
       short_id = obj.short_id = verifier.short_id
     out = if err? then {}
-    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, version : constants.versions.sig_v1 }
+    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, @reverse_sig, version : constants.versions.sig_v1 }
     cb err, out
 
   #-------
@@ -687,7 +687,7 @@ class Base
       id = obj.id = verifier.id
       short_id = obj.short_id = verifier.short_id
     out = if err? then {}
-    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, outer, version : constants.versions.sig_v2 }
+    else {json_obj, json_str, id, short_id, etime : verifier.get_etime(), @reverse_sig_kid, @reverse_sig, outer, version : constants.versions.sig_v2 }
     cb err, out
 
   #-------

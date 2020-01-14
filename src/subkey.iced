@@ -90,6 +90,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
         err = new Error "Sibkey KID mismatch: #{a} != #{b}"
       else
         @reverse_sig_kid = rsk
+        @reverse_sig = sig
     else if @need_reverse_sig json
       err = new Error "Need a reverse sig, but didn't find one"
     cb err

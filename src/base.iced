@@ -240,7 +240,7 @@ class Verifier
     if e?
       err = new Error "Couldn't parse JSON signed message: #{e.message}"
       return cb err
-    if @strict and ((ours = trim(json_stringify_sorted(@json))) isnt json_str_utf8_trimmed)
+    if @strict and ((ours = trim(json_stringify_sorted(json_tmp))) isnt json_str_utf8_trimmed)
       err = new Error "non-canonical JSON found in strict mode (#{errsan ours} v #{errsan json_str_utf8_trimmed})"
       return cb err
     await akatch (() -> expand_json({ json : json_tmp, expansions})), esc defer @json
@@ -829,4 +829,3 @@ exports.add_ids = add_ids
 exports.proof_text_check_to_med_id = proof_text_check_to_med_id
 
 #==========================================================================
-

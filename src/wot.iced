@@ -22,6 +22,7 @@ exports.Attest = class Attest extends Base
 
   _v_check : ({json}, cb) ->
     obj = json.body.wot_attest
+    if not obj? then return cb null
 
     proof_schema = schema.dict({
       check_data_json : schema.or([
@@ -56,10 +57,11 @@ exports.Attest = class Attest extends Base
       failing_proofs : schema.array(proof_schema).optional()
       attestation : schema.array(schema.string())
     })
-    cb schm.check(obj)
+    err = schm.check(obj)
+    cb err
 
    _v_customize_json : (ret) ->
-    ret.body.wot_attest = t if (t = @wot.attest)?
+    ret.body.wot_attest = t if (t = @wot?.attest)?
 
 #==========================================================================
 

@@ -1,9 +1,10 @@
-{alloc,wot} = require '../../'
+{alloc,wot,constants} = require '../../'
 {EncKeyManager,KeyManager} = require('kbpgp').kb
 {make_esc} = require 'iced-error'
 {new_uid,new_km_and_sig_arg,new_sig_id,new_payload_hash} = require './util'
 pgp_utils = require('pgp-utils')
 {json_stringify_sorted} = pgp_utils.util
+{unpack} = require 'purepack'
 
 exports.wot_attest_happy = (T,cb) ->
   esc = make_esc cb
@@ -58,5 +59,18 @@ exports.wot_attest_happy = (T,cb) ->
   verifier = alloc out.inner.obj.body.type, me
   varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions}
   await verifier.verify_v2 varg, esc defer()
-  cb null
 
+  # try to revoke both with and without a replacement...
+  me.revoke = { sig_ids : [ new_sig_id() ]}
+  obj = new wot.Attest me
+  await obj.generate_v2 esc defer out
+  outer = unpack out.outer
+  T.equal outer[4], constants.sig_types_v2.wot.attest_with_revoke, "revoke picked up"
+
+  me.wot = null
+  obj = new wot.Attest me
+  await obj.generate_v2 esc defer out
+  outer = unpack out.outer
+  T.equal outer[4], constants.sig_types_v2.wot.attest_with_revoke, "revoke picked up"
+
+  cb null

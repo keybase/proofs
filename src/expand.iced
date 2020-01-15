@@ -75,7 +75,7 @@ json_at_path = ({json, path, repl}) ->
     prev = json
     last_component = c
     json = json[c]
-    if not json? then throw new Error "cannot find path #{path}"
+    if not json? then return null
   if repl?
     if not prev? or not last_component? then throw new ExpansionError "failed to replace at #{path}"
     prev[last_component] = repl
@@ -85,6 +85,7 @@ json_at_path = ({json, path, repl}) ->
 
 exports.stub_json = ({json, expansions, path}) ->
   obj = json_at_path { json, path }
+  if not obj? then return null
   obj = JSON.parse JSON.stringify obj
   key = prng(16)
   h = hmac_obj({ obj, key }).toString('hex')
@@ -93,4 +94,3 @@ exports.stub_json = ({json, expansions, path}) ->
   null
 
 #========================================================
-

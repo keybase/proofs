@@ -1,3 +1,8 @@
+## 2.3.13 (2020-01-14)
+
+- WoT proof types
+- generic stubbing support
+
 ## 2.3.12 (2019-12-04)
 
 - different schema checkers for binary values bottom bytes

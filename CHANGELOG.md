@@ -1,3 +1,7 @@
+## 2.3.14 (2020-01-15)
+
+- allow revoke for wot proofs
+
 ## 2.3.13 (2020-01-14)
 
 - WoT proof types

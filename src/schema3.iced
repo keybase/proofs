@@ -29,6 +29,7 @@ class Node
   _check : ({path, obj}) -> mkerr path, "internal error, no checker found"
 
   check : (obj) -> @_check { path : Path.top(@_name), obj }
+  debug_localize : (obj) -> obj
 
   _check_value : ({checker, path, obj}) ->
     if not obj? and checker.is_optional() then return null
@@ -52,6 +53,12 @@ class Dict extends Node
       if not obj[k]? and not v.is_optional() then return mkerr new_path, "key is missing but is mandatory"
     return null
 
+  debug_localize : (obj) ->
+    ret = {}
+    for k,v of @_keys when obj[k]?
+      ret[v._name or k] = v.debug_localize obj[k]
+    ret
+
   set_key : (k,v) ->
     @_keys[k] = v
 
@@ -64,6 +71,12 @@ class Array extends Node
   empty_is_ok : () ->
     @_empty_is_ok = true
     @
+
+  debug_localize : (obj) ->
+    ret = []
+    for v,i in obj
+      ret[i] = @_elem.debug_localize obj[i]
+    ret
 
   _check : ({path, obj}) ->
     unless parse.is_array(obj)
@@ -79,6 +92,12 @@ class Struct extends Node
 
   constructor : ({slots}) ->
     @_slots = slots
+
+  debug_localize : (obj) ->
+    ret = []
+    for v,i in obj
+      ret[i] = @_slots[i].debug_localize obj[i]
+    ret
 
   _check : ({path, obj}) ->
     unless parse.is_array(obj)

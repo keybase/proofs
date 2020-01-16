@@ -105,7 +105,7 @@ exports.Base = class Base
     @prev = outer_obj.prev
     @ignore_if_unsupported = outer_obj.ignore_if_unsupported
 
-  _enforce_schema : ({json}, cb) ->
+  get_schema : () ->
     schm = schema.dict({
       c : schema.time().name("ctime")
       e : schema.binary(16).name("entropy")
@@ -127,6 +127,10 @@ exports.Base = class Base
       }).optional().name("client_info")
     }).name("inner")
     @_v_extend_schema schm
+    return schm
+
+  _enforce_schema : ({json}, cb) ->
+    schm = @get_schema()
     cb schm.check json
 
   decode_inner : ({json, outer_obj}, cb) ->

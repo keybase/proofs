@@ -1,3 +1,8 @@
+## 2.3.16 (2020-01-22)
+
+- Add sig3/Base::get_schema() and schema3/Node::debug_localize for transforming
+  message-packed sig3 signatures to user-readable JSON objects.
+
 ## 2.3.15 (2020-01-16)
 
 - Support `assert_pgp_hash` optional argument, passed to KBPGP.

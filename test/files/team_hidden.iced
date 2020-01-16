@@ -290,3 +290,32 @@ exports.test_bad_reverse_sig = (T,cb) ->
   T.equal err.message, "Signature failed to verify", "right error"
   T.assert (err.stack.indexOf("_v_verify_reverse_sig") > 0), "we find a reverse sig in the stack"
   cb null
+
+exports.test_schema_localize = (T, cb) ->
+  esc = make_esc cb
+  await gen { T }, esc defer { km, ret, arg }
+  [err, outer_obj] = sig3.OuterLink.decode ret.raw.outer
+  T.no_error err
+
+  obj = new team_hidden.RotateKey {}
+  await obj.decode_inner { json: ret.raw.inner, outer_obj }, esc defer()
+  localized = obj.get_schema().debug_localize(ret.raw.inner)
+
+  for f in ['ctime', 'entropy', 'merkle_root', 'signer', 'parent_chain_tail', 'client_info', 'team', 'body']
+    T.assert localized[f]?, "looking for field #{f}"
+  for f in ['ctime', 'hash_meta', 'seqno']
+    T.assert localized.merkle_root?[f]?, "looking for field merkle_root.#{f}"
+  for f in ['eldest_seqno', 'kid', 'uid']
+    T.assert localized.signer?[f]?, "looking for field signer.#{f}"
+  for f in ['tail', 'seqno', 'chain_type']
+    T.assert localized.parent_chain_tail?[f]?, "looking for field parent_chain_tail.#{f}"
+  for f in ['description', 'version']
+    T.assert localized.client_info?[f]?, "looking for field client_info.#{f}"
+  for f in ['team_id', 'is_implicit', 'is_public']
+    T.assert localized.team?[f]?, "looking for field team.#{f}"
+  T.assert localized.body?.keys?, "looking for localized.body.keys"
+  for k in localized.body?.keys ? []
+    for f in ['appkey_derivation_version', 'seed_check', 'encryption_kid', 'generation', 'reverse_sig', 'signing_kid', 'ptk_type']
+      T.assert k[f]?, "looking for field body.keys.#{f}"
+
+  cb null

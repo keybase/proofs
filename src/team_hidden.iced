@@ -34,7 +34,7 @@ exports.TeamBase = class TeamBase extends Base
         t : schema.chain_type().name("chain_type") }).optional().name("implicit_admin")
       i : schema.binary(16).name("team_id")
       m : schema.bool().optional().name("is_implicit")
-      p : schema.bool().optional().name("is_public") })
+      p : schema.bool().optional().name("is_public") }).name('team')
 
   _v_decode_inner : ({json}, cb) ->
     @team = {

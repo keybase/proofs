@@ -1,3 +1,8 @@
+## 2.3.15 (2020-01-16)
+
+- Support `assert_pgp_hash` optional argument, passed to KBPGP.
+- Return `reverse_sig` (along with `reverse_sig_kid`) if found and verified.
+
 ## 2.3.14 (2020-01-15)
 
 - allow revoke for wot proofs

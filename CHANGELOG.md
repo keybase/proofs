@@ -1,3 +1,7 @@
+## 2.3.17 (2020-02-04)
+
+- allow PGP signing keys for eldest
+
 ## 2.3.16 (2020-01-22)
 
 - Add sig3/Base::get_schema() and schema3/Node::debug_localize for transforming

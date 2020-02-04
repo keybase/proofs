@@ -139,8 +139,8 @@ class KID extends Binary
   _check : ({path, obj}) ->
     [err, obj] = @_convert_and_check { path, obj }
     return err if err?
-    typ = if @_encryption then 0x21 else 0x20
-    if obj[0] isnt 0x01 or obj[1] isnt typ or obj[-1...][0] isnt 0x0a
+    typ = if @_encryption then [0x21] else [0x20, 0x01, 0x11, 0x13, 0x16]
+    if (obj[0] isnt 0x01) or (obj[1] not in typ) or (obj[-1...][0] isnt 0x0a)
       return mkerr path, "value must be a KID#{if @_encryption then ' (for encryption)' else ''}"
     return null
 

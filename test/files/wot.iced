@@ -6,7 +6,7 @@ pgp_utils = require('pgp-utils')
 {json_stringify_sorted} = pgp_utils.util
 {unpack} = require 'purepack'
 
-exports.wot_attest_happy = (T,cb) ->
+exports.wot_vouch_happy = (T,cb) ->
   esc = make_esc cb
   await new_km_and_sig_arg {}, esc defer me
   await new_km_and_sig_arg {}, esc defer them
@@ -18,7 +18,7 @@ exports.wot_attest_happy = (T,cb) ->
     proof_type : 2
   }
   me.wot =
-    attest :
+    vouch :
       user :
         username : them.user.local.username
         uid : them.user.local.uid
@@ -36,12 +36,12 @@ exports.wot_attest_happy = (T,cb) ->
         proofs : [ proof, proof]
         known_on_keybase_days : 60
       failing_proofs : [ proof, proof ]
-      attestation : [
+      vouch_text : [
         "darn rootin tootin"
       ]
-  obj = new wot.Attest me
+  obj = new wot.Vouch me
   await obj.generate_v2 esc defer out
-  hsh = out.inner.obj.body.wot_attest
+  hsh = out.inner.obj.body.wot_vouch
   T.assert hsh?, "hash was there"
   T.equal hsh.length, 64, "64-byte hex string"
   T.assert out.expansions[hsh]?.obj?, "expansion was there"
@@ -62,15 +62,15 @@ exports.wot_attest_happy = (T,cb) ->
 
   # try to revoke both with and without a replacement...
   me.revoke = { sig_ids : [ new_sig_id() ]}
-  obj = new wot.Attest me
+  obj = new wot.Vouch me
   await obj.generate_v2 esc defer out
   outer = unpack out.outer
-  T.equal outer[4], constants.sig_types_v2.wot.attest_with_revoke, "revoke picked up"
+  T.equal outer[4], constants.sig_types_v2.wot.vouch_with_revoke, "revoke picked up"
 
   me.wot = null
-  obj = new wot.Attest me
+  obj = new wot.Vouch me
   await obj.generate_v2 esc defer out
   outer = unpack out.outer
-  T.equal outer[4], constants.sig_types_v2.wot.attest_with_revoke, "revoke picked up"
+  T.equal outer[4], constants.sig_types_v2.wot.vouch_with_revoke, "revoke picked up"
 
   cb null

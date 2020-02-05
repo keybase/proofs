@@ -7,21 +7,21 @@ schema = require './schema3'
 
 #==========================================================================
 
-exports.Attest = class Attest extends Base
+exports.Vouch = class Vouch extends Base
 
   constructor : (obj) ->
     @wot = obj.wot
     super obj
 
-  _v_stub_paths : () -> [ "body.wot_attest" ]
-  _type : () -> constants.sig_types.wot.attest
+  _v_stub_paths : () -> [ "body.wot_vouch" ]
+  _type : () -> constants.sig_types.wot.vouch
 
   _type_v2 : (revoke_flag) ->
-    if @revoke? or revoke_flag then constants.sig_types_v2.wot.attest_with_revoke
-    else constants.sig_types_v2.wot.attest
+    if @revoke? or revoke_flag then constants.sig_types_v2.wot.vouch_with_revoke
+    else constants.sig_types_v2.wot.vouch
 
   _v_check : ({json}, cb) ->
-    obj = json.body.wot_attest
+    obj = json.body.wot_vouch
     if not obj? then return cb null
 
     proof_schema = schema.dict({
@@ -55,13 +55,13 @@ exports.Attest = class Attest extends Base
         known_on_keybase_days : schema.int().optional()
       })
       failing_proofs : schema.array(proof_schema).optional()
-      attestation : schema.array(schema.string())
+      vouch_text : schema.array(schema.string())
     })
     err = schm.check(obj)
     cb err
 
    _v_customize_json : (ret) ->
-    ret.body.wot_attest = t if (t = @wot?.attest)?
+    ret.body.wot_vouch = t if (t = @wot?.vouch)?
 
 #==========================================================================
 

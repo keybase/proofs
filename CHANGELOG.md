@@ -1,3 +1,7 @@
+## 2.3.18 (2020-02-05)
+
+- rename WoT attest -> vouch
+
 ## 2.3.17 (2020-02-04)
 
 - allow PGP signing keys for eldest

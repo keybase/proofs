@@ -45,8 +45,8 @@ exports.constants = constants =
       settings : "team.settings"
       bot_settings : "team.bot_settings"
     wot :
-      attest : "wot.attest"
-      react  : "wot.react"
+      vouch : "wot.vouch"
+      react : "wot.react"
 
   sig_types_v2:
     eldest : 1
@@ -84,8 +84,8 @@ exports.constants = constants =
     wallet :
       stellar : 15
     wot :
-      attest : 16
-      attest_with_revoke : 17
+      vouch : 16
+      vouch_with_revoke : 17
       react : 18
   sig_types_v3:
     user:

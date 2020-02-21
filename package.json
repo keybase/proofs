@@ -27,7 +27,7 @@
     "iced-error": ">=0.0.9",
     "iced-lock": "^1.0.1",
     "iced-runtime": ">=0.0.1",
-    "kbpgp": ">=2.1.12",
+    "kbpgp": ">=2.1.7",
     "pgp-utils": ">=0.0.22",
     "purepack": "^1.0.4",
     "triplesec": ">=3.0.16"

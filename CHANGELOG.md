@@ -1,7 +1,3 @@
-## 2.3.19 (2020-02-21)
-
-- the client field was in the wrong place and didn't agree with Go
-
 ## 2.3.18 (2020-02-05)
 
 - rename WoT attest -> vouch

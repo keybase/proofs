@@ -560,14 +560,14 @@ class Base
 
   #------
 
-  generate : (cb) ->
+  generate : (cb, {dohash} = {}) ->
     esc = make_esc cb, "generate"
     out = null
     opts = version : constants.versions.sig_v1
     await @_v_generate opts, esc defer()
     await @generate_json opts, esc defer json, json_obj, expansions
     inner = { str : json, obj : json_obj }
-    await @sig_eng.box json, esc defer {pgp, raw, armored}
+    await @sig_eng.box json, esc(defer({pgp, raw, armored})), { dohash }
     {short_id, id} = make_ids raw
     out = { pgp, json, id, short_id, raw, armored, inner, expansions }
     cb null, out

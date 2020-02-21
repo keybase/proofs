@@ -1,3 +1,7 @@
+## 2.3.20 (2020-02-21)
+
+- more plumbing the dohash flag through
+
 ## 2.3.19 (2020-02-21)
 
 - the client field was in the wrong place and didn't agree with Go

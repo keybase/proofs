@@ -542,7 +542,7 @@ class Base
 
     ret.high_skip = @high_skip if @high_skip?
 
-    ret.body.client = @client if @client?
+    ret.client = @client if @client?
     ret.body.merkle_root = @merkle_root if @merkle_root?
     ret.body.revoke = @revoke if @has_revoke()
 
@@ -574,9 +574,10 @@ class Base
 
   #------
 
-  generate_v2 : (cb) ->
+  generate_v2 : (cb, {dohash} = {}) ->
     # If @seq_type isn't specified, then default to public
     @seq_type or= constants.seq_types.PUBLIC
+    dohash or= false
 
     esc = make_esc cb, "generate"
     out = null
@@ -585,17 +586,17 @@ class Base
     await @generate_json opts, esc defer s, o, expansions
     inner = { str : s, obj : o }
     await @generate_outer { inner }, esc defer outer
-    await @sig_eng.box outer, esc defer {pgp, raw, armored}
+    await @sig_eng.box outer, esc(defer({pgp, raw, armored})), { dohash }
     {short_id, id} = make_ids raw
     out = { pgp, id, short_id, raw, armored, inner, outer, expansions }
     cb null, out
 
   #------
 
-  generate_versioned : ({version}, cb) ->
+  generate_versioned : ({version, dohash}, cb) ->
     switch version
-      when constants.versions.sig_v2 then @generate_v2 cb
-      else @generate cb
+      when constants.versions.sig_v2 then @generate_v2(cb, {dohash})
+      else @generate(cb, {dohash})
 
   #------
 

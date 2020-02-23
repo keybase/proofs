@@ -15,10 +15,10 @@ test_klass = ({T,arg, klass, keys}, cb) ->
     await KeyManager.generate {}, esc defer arg.kms.signing
     arg.kms.generation = 10
   obj = new klass arg
-  await obj.generate_v2 esc defer out
+  await obj.generate_v2 esc(defer(out)), {dohash:true}
   typ = out.inner.obj.body.type
   obj2 = alloc typ, arg
-  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str }
+  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, strict_packet_hash : true }
   await obj2.verify_v2 varg, esc defer()
   T.waypoint "checked #{typ} #{if keys then 'with' else 'without'} keys"
   cb null
@@ -48,10 +48,10 @@ exports.test_key_section_bad_and_good = (T,cb) ->
 
   verify_from_arg = ({arg}, cb) ->
     obj = new team.RotateKey arg
-    await obj.generate_v2 esc defer out
+    await obj.generate_v2 esc(defer(out)), {dohash:true}
     typ = out.inner.obj.body.type
     obj2 = alloc typ, arg
-    varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str }
+    varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, strict_packet_hash : true }
     await obj2.verify_v2 varg, defer err
     cb err
   await verify_from_arg { arg }, defer err
@@ -99,10 +99,10 @@ round_trip_with_corrupted_reverse_sig = ({T, corrupt}, cb) ->
     x.reverse_sig = armored
     cb null
 
-  await obj.generate_v2 esc defer out
+  await obj.generate_v2 esc(defer(out)), {dohash:true}
   typ = out.inner.obj.body.type
   obj2 = alloc typ, arg
-  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str }
+  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, strict_packet_hash : true }
   await obj2.verify_v2 varg, defer err
   if corrupt
     T.assert err?, "got an error back"

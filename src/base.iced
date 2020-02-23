@@ -76,7 +76,7 @@ compare_hash_buf_to_str = (b, s) ->
 
 class Verifier
 
-  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check, @inner, @outer, @expansions, @assert_pgp_hash}, @sig_eng, @base) ->
+  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check, @inner, @outer, @expansions, @assert_pgp_hash, @strict_packet_hash}, @sig_eng, @base) ->
 
   #---------------
 
@@ -215,7 +215,7 @@ class Verifier
 
   _parse_and_process : ({armored}, cb) ->
     err = null
-    await @sig_eng.unbox armored, defer(err, payload, body), { @assert_pgp_hash }
+    await @sig_eng.unbox armored, defer(err, payload, body), { @assert_pgp_hash, @strict_packet_hash }
     if not err? and not @skip_ids
       await @_check_ids body, defer err
     if not err? and @make_ids
@@ -583,7 +583,7 @@ class Base
     out = null
     opts = { version : constants.versions.sig_v2 }
     await @_v_generate opts, esc defer()
-    await @generate_json opts, esc defer s, o, expansions
+    await @generate_json opts, esc(defer(s, o, expansions))
     inner = { str : s, obj : o }
     await @generate_outer { inner }, esc defer outer
     await @sig_eng.box outer, esc(defer({pgp, raw, armored})), { dohash }

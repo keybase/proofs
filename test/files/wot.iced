@@ -40,14 +40,14 @@ exports.wot_vouch_happy = (T,cb) ->
         "darn rootin tootin"
       ]
   obj = new wot.Vouch me
-  await obj.generate_v2 esc defer out
+  await obj.generate_v2 esc(defer(out)), {dohash:true}
   hsh = out.inner.obj.body.wot_vouch
   T.assert hsh?, "hash was there"
   T.equal hsh.length, 64, "64-byte hex string"
   T.assert out.expansions[hsh]?.obj?, "expansion was there"
 
   verifier = alloc out.inner.obj.body.type, me
-  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions}
+  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions, strict_packet_hash:true}
   await verifier.verify_v2 varg, esc defer()
 
   me.wot =
@@ -55,21 +55,21 @@ exports.wot_vouch_happy = (T,cb) ->
       sig_id : new_sig_id()
       reaction : "accept"
   obj = new wot.React me
-  await obj.generate_v2 esc defer out
+  await obj.generate_v2 esc(defer(out)), {dohash:true}
   verifier = alloc out.inner.obj.body.type, me
-  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions}
+  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions, strict_packet_hash:true}
   await verifier.verify_v2 varg, esc defer()
 
   # try to revoke both with and without a replacement...
   me.revoke = { sig_ids : [ new_sig_id() ]}
   obj = new wot.Vouch me
-  await obj.generate_v2 esc defer out
+  await obj.generate_v2 esc(defer(out)), {dohash:true}
   outer = unpack out.outer
   T.equal outer[4], constants.sig_types_v2.wot.vouch_with_revoke, "revoke picked up"
 
   me.wot = null
   obj = new wot.Vouch me
-  await obj.generate_v2 esc defer out
+  await obj.generate_v2 esc(defer(out)), {dohash:true}
   outer = unpack out.outer
   T.equal outer[4], constants.sig_types_v2.wot.vouch_with_revoke, "revoke picked up"
 

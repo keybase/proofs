@@ -1,6 +1,6 @@
 ## 2.3.21 (2020-02-23)
 
-- enforce full packet hash in nacl sig infos via flag
+- enforce full packet hash in nacl sig infos via flag (require_packet_hash in verify calls)
 
 ## 2.3.20 (2020-02-21)
 

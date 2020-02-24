@@ -251,7 +251,26 @@ isarray@^2.0.5:
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-2.0.5.tgz#8af1e4c1221244cc62459faf38940d4e644a5723"
   integrity sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==
 
-kbpgp@>=2.1.12, kbpgp@^2.0.0:
+kbpgp@>=2.1.13:
+  version "2.1.13"
+  resolved "https://registry.yarnpkg.com/kbpgp/-/kbpgp-2.1.13.tgz#5aef69330ccf1c8896910ff9d50544f1b391fb62"
+  integrity sha512-57ryh9TrOhkSqMXzaXsSJgffn11Qkkc960Wj9UzdNln6wERxesIbGoDBYCtlikvYZ/G5SscRNnXEP4Vx8lqKvQ==
+  dependencies:
+    bn "^1.0.5"
+    bzip-deflate "^1.0.0"
+    deep-equal "^1.1.0"
+    iced-error "0.0.13"
+    iced-lock "^1.0.2"
+    iced-runtime "^1.0.4"
+    keybase-ecurve "^1.0.1"
+    keybase-nacl "^1.1.2"
+    minimist "^1.2.0"
+    pgp-utils "0.0.35"
+    purepack "^1.0.5"
+    triplesec "^4.0.3"
+    tweetnacl "^0.13.1"
+
+kbpgp@^2.0.0:
   version "2.1.12"
   resolved "https://registry.yarnpkg.com/kbpgp/-/kbpgp-2.1.12.tgz#d9c3b7a9cbce795ab4359c82d8d05ec09fb89a97"
   integrity sha512-Cb0YexMlErZOfug6tnQM5Ad9x1GRRJkggUAXJkZNyJnal4jIA8Ghe7zIeNzkPTIJQiW7jmycwkTkhZA97hzgWg==

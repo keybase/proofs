@@ -76,7 +76,7 @@ compare_hash_buf_to_str = (b, s) ->
 
 class Verifier
 
-  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check, @inner, @outer, @expansions, @assert_pgp_hash, @strict_packet_hash}, @sig_eng, @base) ->
+  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check, @inner, @outer, @expansions, @assert_pgp_hash, @require_packet_hash}, @sig_eng, @base) ->
 
   #---------------
 
@@ -215,7 +215,7 @@ class Verifier
 
   _parse_and_process : ({armored}, cb) ->
     err = null
-    await @sig_eng.unbox armored, defer(err, payload, body), { @assert_pgp_hash, @strict_packet_hash }
+    await @sig_eng.unbox armored, defer(err, payload, body), { @assert_pgp_hash, @require_packet_hash }
     if not err? and not @skip_ids
       await @_check_ids body, defer err
     if not err? and @make_ids
@@ -657,6 +657,7 @@ class Base
   # @option obj {bool} skip_ids Don't bother checking IDs
   # @option obj {bool} make_ids Make Ids when verifying
   # @option obj {bool} strict Turn on all strict-mode checks
+  # @option obj {bool} require_packet_hash Turn on if we require a packet hash
   # @option obj {Function} assert_pgp_hash Callback to reject specific PGP hash functions if encountered
   verify : (obj, cb) ->
     verifier = new Verifier obj, @sig_eng, @
@@ -680,6 +681,7 @@ class Base
   # @option obj {bool} skip_ids Don't bother checking IDs
   # @option obj {bool} make_ids Make Ids when verifying
   # @option obj {bool} strict Turn on all strict-mode checks
+  # @option obj {bool} require_packet_hash Turn on if we require a packet hash
   verify_v2 : (obj, cb) ->
     verifier = new Verifier obj, @sig_eng, @
     await verifier.verify_v2 defer err, outer, json_obj, json_str

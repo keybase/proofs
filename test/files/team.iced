@@ -18,7 +18,7 @@ test_klass = ({T,arg, klass, keys}, cb) ->
   await obj.generate_v2 esc(defer(out)), {dohash:true}
   typ = out.inner.obj.body.type
   obj2 = alloc typ, arg
-  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, strict_packet_hash : true }
+  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, require_packet_hash : true }
   await obj2.verify_v2 varg, esc defer()
   T.waypoint "checked #{typ} #{if keys then 'with' else 'without'} keys"
   cb null
@@ -51,7 +51,7 @@ exports.test_key_section_bad_and_good = (T,cb) ->
     await obj.generate_v2 esc(defer(out)), {dohash:true}
     typ = out.inner.obj.body.type
     obj2 = alloc typ, arg
-    varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, strict_packet_hash : true }
+    varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, require_packet_hash : true }
     await obj2.verify_v2 varg, defer err
     cb err
   await verify_from_arg { arg }, defer err
@@ -102,7 +102,7 @@ round_trip_with_corrupted_reverse_sig = ({T, corrupt}, cb) ->
   await obj.generate_v2 esc(defer(out)), {dohash:true}
   typ = out.inner.obj.body.type
   obj2 = alloc typ, arg
-  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, strict_packet_hash : true }
+  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, require_packet_hash : true }
   await obj2.verify_v2 varg, defer err
   if corrupt
     T.assert err?, "got an error back"

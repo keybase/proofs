@@ -47,7 +47,7 @@ exports.wot_vouch_happy = (T,cb) ->
   T.assert out.expansions[hsh]?.obj?, "expansion was there"
 
   verifier = alloc out.inner.obj.body.type, me
-  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions, strict_packet_hash:true}
+  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions, require_packet_hash :true}
   await verifier.verify_v2 varg, esc defer()
 
   me.wot =
@@ -57,7 +57,7 @@ exports.wot_vouch_happy = (T,cb) ->
   obj = new wot.React me
   await obj.generate_v2 esc(defer(out)), {dohash:true}
   verifier = alloc out.inner.obj.body.type, me
-  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions, strict_packet_hash:true}
+  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions, require_packet_hash :true}
   await verifier.verify_v2 varg, esc defer()
 
   # try to revoke both with and without a replacement...

@@ -1,3 +1,7 @@
+## 2.3.22 (2020-03-10)
+
+- update WOT schema
+
 ## 2.3.21 (2020-02-23)
 
 - enforce full packet hash in nacl sig infos via flag (require_packet_hash in verify calls)

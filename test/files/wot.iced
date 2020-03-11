@@ -10,7 +10,10 @@ exports.wot_vouch_happy = (T,cb) ->
   esc = make_esc cb
   await new_km_and_sig_arg {}, esc defer me
   await new_km_and_sig_arg {}, esc defer them
-  sig_id = "24786764ee0861eb134925fe967c03975fba5df02edfabcf4048c71d8cb8623c0f"
+  proof1 = { proof_type : 4, name : "reddit", username : "betaveros" }
+  proof2 = { proof_type : 9, name : "mastodon.social", username : "gammaveros" }
+  proof3 = { proof_type : 1000, protocol : "https:", hostname : "beta.veros" }
+  proof4 = { proof_type : 1001, protocol : "dns", hostname : "beta.veros" }
   me.wot =
     vouch :
       user :
@@ -26,8 +29,8 @@ exports.wot_vouch_happy = (T,cb) ->
       confidence :
         username_verified_via : "audio"
         other : "lorem ipsum"
-        proofs : [ sig_id, sig_id]
-      failing_proofs : [ sig_id, sig_id ]
+        proofs : [ proof1, proof2]
+      failing_proofs : [ proof3, proof4 ]
       vouch_text : [
         "darn rootin tootin"
       ]

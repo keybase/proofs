@@ -24,14 +24,23 @@ exports.Vouch = class Vouch extends Base
     obj = json.body.wot_vouch
     if not obj? then return cb null
 
-    proof_schema = schema.dict({
-      check_data_json : schema.or([
-        schema.dict({name : schema.string(),   username : schema.string() }),
-        schema.dict({domain : schema.string(), protocol : schema.string() })
-      ])
-      state : schema.int()
-      proof_type : schema.int()
-    })
+    proof_schema = schema.or([
+      schema.dict({
+        proof_type : schema.int(), # keybase1.ProofType
+        name : schema.string(),
+        username : schema.string()
+      }),
+      schema.dict({
+        proof_type : schema.int(),
+        protocol : schema.string(),
+        hostname : schema.string()
+      }),
+      schema.dict({
+        proof_type : schema.int(),
+        protocol : schema.string(),
+        domain : schema.string()
+      })
+    ])
 
     schm = schema.dict({
       user : schema.dict({
@@ -48,11 +57,9 @@ exports.Vouch = class Vouch extends Base
         })
       })
       confidence : schema.dict({
-        proofs : schema.array(proof_schema).optional()
-        vouched_by : schema.array(schema.uid().convert()).optional()
-        username_verified_via : schema.string_enum(["audio","video","email","other_chat","in_person"]).optional()
+        username_verified_via : schema.string_enum(["in_person", "proofs", "video", "audio", "other_chat", "familiar", "other"]).optional()
+        proofs: schema.array(proof_schema).optional()
         other : schema.string().optional()
-        known_on_keybase_days : schema.int().optional()
       })
       failing_proofs : schema.array(proof_schema).optional()
       vouch_text : schema.array(schema.string())

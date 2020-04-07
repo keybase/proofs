@@ -61,7 +61,6 @@ exports.Vouch = class Vouch extends Base
         proofs: schema.array(proof_schema).optional()
         other : schema.string({max_length: 90}).optional()
       })
-      failing_proofs : schema.array(proof_schema).optional()
       vouch_text : schema.string({max_length: 700})
     })
     err = schm.check(obj)

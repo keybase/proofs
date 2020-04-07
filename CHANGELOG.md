@@ -1,3 +1,7 @@
+## 2.3.23 (2020-03-10)
+
+- update WOT schema again
+
 ## 2.3.22 (2020-03-10)
 
 - update WOT schema

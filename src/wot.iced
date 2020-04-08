@@ -65,7 +65,15 @@ exports.Vouch = class Vouch extends Base
       vouch_text : schema.array(schema.string())
     })
     err = schm.check(obj)
-    cb err
+    if err?
+      cb err
+    
+    for text in obj.vouch_text
+      if text.length > 700
+        cb E.make("vouch_text too long")
+
+    if obj.confidence.other?.length > 90
+        cb E.make("confidence.other too long")
 
    _v_customize_json : (ret) ->
     ret.body.wot_vouch = t if (t = @wot?.vouch)?

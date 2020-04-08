@@ -94,6 +94,7 @@ exports.wot_vouch_bad = (T,cb) ->
   verifier = alloc out.inner.obj.body.type, me
   varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions, require_packet_hash :true}
   await verifier.verify_v2 varg, defer err
-  T.assert err?, "expecting error"
+  T.assert err?, "got an error back"
+  T.assert (err.message.indexOf(".confidence.other") >= 0), "found right error message"
 
   cb null

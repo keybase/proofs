@@ -59,10 +59,10 @@ exports.Vouch = class Vouch extends Base
       confidence : schema.dict({
         username_verified_via : schema.string_enum(["in_person", "proofs", "video", "audio", "other_chat", "familiar", "other"]).optional()
         proofs: schema.array(proof_schema).optional()
-        other : schema.string({maxLength: 90}).optional()
+        other : schema.string({max_length: 90}).optional()
       })
       failing_proofs : schema.array(proof_schema).optional()
-      vouch_text : schema.string({maxLength: 700})
+      vouch_text : schema.string({max_length: 700})
     })
     err = schm.check(obj)
     cb err

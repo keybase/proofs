@@ -170,8 +170,8 @@ class String extends Node
 
   _check : ({path, obj}) ->
     if typeof(obj) isnt 'string' or obj.length is 0 then return mkerr path, "value must be a string"
-    if @_args? and @_args.maxLength?
-      if obj.length > @_args.maxLength then return mkerr path, "value length needs to be < #{@_args.maxLength}"
+    if (max_length = @_args?.max_length)?
+      if obj.length > max_length then return mkerr path, "value length needs to be < #{max_length}"
     return null
 
 class StringEnum extends Node

@@ -31,9 +31,7 @@ exports.wot_vouch_happy = (T,cb) ->
         other : "lorem ipsum"
         proofs : [ proof1, proof2]
       failing_proofs : [ proof3, proof4 ]
-      vouch_text : [
-        "darn rootin tootin"
-      ]
+      vouch_text : "darn rootin tootin"
   obj = new wot.Vouch me
   await obj.generate_v2 esc(defer(out)), {dohash:true}
   hsh = out.inner.obj.body.wot_vouch

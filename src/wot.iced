@@ -62,7 +62,7 @@ exports.Vouch = class Vouch extends Base
         other : schema.string().optional()
       })
       failing_proofs : schema.array(proof_schema).optional()
-      vouch_text : schema.array(schema.string())
+      vouch_text : schema.string()
     })
     err = schm.check(obj)
     cb err

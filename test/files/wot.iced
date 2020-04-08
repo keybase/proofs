@@ -67,3 +67,33 @@ exports.wot_vouch_happy = (T,cb) ->
   T.equal outer[4], constants.sig_types_v2.wot.vouch_with_revoke, "revoke picked up"
 
   cb null
+
+exports.wot_vouch_bad = (T,cb) ->
+  esc = make_esc cb
+  await new_km_and_sig_arg {}, esc defer me
+  await new_km_and_sig_arg {}, esc defer them
+  me.wot =
+    vouch :
+      user :
+        username : them.user.local.username
+        uid : them.user.local.uid
+        eldest:
+          kid : them.sig_eng.km.key.ekid().toString('hex')
+          seqno : 1
+        seq_tail :
+          seqno : 20
+          sig_id : new_sig_id()
+          payload_hash : new_payload_hash()
+      confidence :
+        username_verified_via : "audio"
+        other : "this string is longer than 90 char this string is longer than 90 char this string is longer than 90 char this string is longer than 90 char"
+      vouch_text : "darn rootin tootin"
+  obj = new wot.Vouch me
+  await obj.generate_v2 esc(defer(out)), {dohash:true}
+
+  verifier = alloc out.inner.obj.body.type, me
+  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions, require_packet_hash :true}
+  await verifier.verify_v2 varg, defer err
+  T.assert err?, "expecting error"
+
+  cb null

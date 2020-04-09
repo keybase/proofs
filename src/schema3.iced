@@ -165,8 +165,13 @@ class ChainType extends Node
     return null
 
 class String extends Node
+  constructor : ({args}) ->
+    @_args = args
+
   _check : ({path, obj}) ->
     if typeof(obj) isnt 'string' or obj.length is 0 then return mkerr path, "value must be a string"
+    if (max_length = @_args?.max_length)?
+      if obj.length > max_length then return mkerr path, "value length needs to be < #{max_length}"
     return null
 
 class StringEnum extends Node
@@ -178,7 +183,6 @@ class StringEnum extends Node
     if typeof(obj) isnt 'string' then return mkerr path, "value must be a string"
     if not @_values[obj] then return mkerr path, "unknown enum value (#{obj})"
     return null
-
 
 class Value extends Node
   constructor : (@_value) ->
@@ -227,7 +231,7 @@ exports.time = () -> new Time {}
 exports.int = () -> new Int {}
 exports.chain_type = () -> new ChainType {}
 exports.link_type = () -> new LinkType {}
-exports.string = () -> new String {}
+exports.string = (args)-> new String { args: args }
 exports.value = (v) -> new Value v
 exports.bool = () -> new Bool {}
 exports.struct = (s) -> new Struct {slots : s}

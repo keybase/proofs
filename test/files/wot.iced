@@ -30,7 +30,6 @@ exports.wot_vouch_happy = (T,cb) ->
         username_verified_via : "audio"
         other : "lorem ipsum"
         proofs : [ proof1, proof2]
-      failing_proofs : [ proof3, proof4 ]
       vouch_text : "darn rootin tootin"
   obj = new wot.Vouch me
   await obj.generate_v2 esc(defer(out)), {dohash:true}

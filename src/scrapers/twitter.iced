@@ -312,35 +312,76 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       @log "null api_url for #{remote_id}/#{username}"
       return cb err, rc
 
-    u = urlmod.parse api_url
-    u.host = u.hostname = 'mobile.twitter.com'
+    # Do not try to fetch api_url (which is of form:
+    # "https://twitter.com/tacovontaco/status/673931888088625152")
+    # because Twitter serves a JavaScript-based page there and the contents of
+    # tweet are not available. Instead, construct a new url to oembed API with
+    # the tweet ID. That API doesn't need the API key (at least for now).
+    u = new urlmod.URL('https://api.twitter.com/1/statuses/oembed.json')
+    u.searchParams.set('id', remote_id.toString())
+    # tell twitter not to include their <script> tag in result.
+    u.searchParams.set('omit_script', '1')
+
     new_api_url = urlmod.format u
-    @log "| rewrite #{api_url} -> #{new_api_url} (since twitter was going to redirect us anyways)"
-    api_url = new_api_url
+    @log "| use oembed API #{new_api_url} for tweet at #{api_url} (remote_id=#{remote_id})"
 
     # calls back with a v_code or null if it was ok
-    await @_get_url_body { url : api_url }, defer err, rc, html
+    await @_get_url_body { url : new_api_url }, defer err, rc, body
 
     if rc is v_codes.OK
-
-      $ = @libs.cheerio.load html
-      #
-      # only look inside the permalink tweet container
-      #
-      div = $('.main-tweet .tweet-text')
-      if div.length isnt 1
+      try body_obj = JSON.parse(body)
+      catch e
         rc = v_codes.FAILED_PARSE
-      else
-        #
-        # make sure both the username and tweet id match our query,
-        # in case twitter printed other tweets into the page
-        # inside this container
-        #
-        found_username = $('.main-tweet .username').text()?.trim().replace( /^@/g , '')
-        found_tweet_id = "#{div.data('id')}"
-        rc = if not(sncmp(username, found_username)) then v_codes.BAD_USERNAME
-        else if (("" + remote_id) isnt (found_tweet_id)) then v_codes.BAD_REMOTE_ID
-        else @find_sig_in_tweet { tweet_p : div, proof_text_check }
+        err = new Error "failed to parse JSON: #{e.toString()}"
+        return cb err, rc
+
+      # "url" field returned by the API should match api_url.
+      if typeof body_obj.url isnt 'string'
+        err = new Error("expected string for url, got #{typeof body_obj.url}")
+        return cb err, v_codes.CONTENT_MISSING
+
+      if not(sncmp(body_obj.url, api_url))
+        err = new Error "returned url field doesn't match api_url (found: #{body_obj.url}, expected: #{api_url})"
+        return cb err, v_codes.API_URL_MISMATCH
+
+      # Extract username from URL, do not use "author_name" because it's the
+      # full name.
+      api_url_matches = api_url.match(new RegExp("^https://twitter\\.com/([^/]+)/status/(\\d+)(.*)$"))
+      if not api_url_matches
+        err = new Error "api_url field doesn't match regexp, got: #{api_url_matches}"
+        return cb err, v_codes.BAD_API_URL
+
+      # Check username and tweet ID.
+      [_, username_from_url, tweet_id] = api_url_matches
+      if not(sncmp(username, username_from_url))
+        err = new Error("username from api_url didn't match, expected: #{username}, got: #{username_from_url}")
+        return cb err, v_codes.BAD_USERNAME
+      if tweet_id isnt remote_id.toString()
+        return cb err, v_codes.BAD_REMOTE_ID
+
+      # Check "author_url" field, it contains a link to user's twitter profile.
+      # It should match our username.
+      if typeof body_obj.author_url isnt 'string'
+        err = new Error("expected string for author_url, got #{typeof body_obj.author_url}")
+        return cb err, v_codes.CONTENT_MISSING
+
+      author_url_matches = body_obj.author_url.match(new RegExp("^https://twitter\\.com/(.+)$"))
+      if not author_url_matches
+        err = new Error("author_url doesn't match regexp, got: #{body_obj.author_url}")
+        return cb err, v_codes.CONTENT_MISSING
+
+      [_, author_username] = author_url_matches
+      if not(sncmp(username, author_username))
+        err = new Error("username from author_url didn't match, expected: #{username}, got: #{author_username}")
+        return cb err, v_codes.BAD_USERNAME
+
+      $ = @libs.cheerio.load body_obj.html
+      tweet_p = $('blockquote.twitter-tweet p')
+      if tweet_p.length isnt 1
+        err = new Error("failed to find tweet <p> in returned 'html' field")
+        return cb err, v_codes.FAILED_PARSE
+
+      rc = @find_sig_in_tweet { tweet_p, proof_text_check }
 
     cb err, rc
 

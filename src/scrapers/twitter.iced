@@ -312,11 +312,13 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       @log "null api_url for #{remote_id}/#{username}"
       return cb err, rc
 
-    # Do not try to fetch api_url (which is of form:
-    # "https://twitter.com/tacovontaco/status/673931888088625152")
+    # Do not try to fetch api_url which is of form:
+    # "https://twitter.com/tacovontaco/status/673931888088625152"
     # because Twitter serves a JavaScript-based page there and the contents of
     # tweet are not available. Instead, construct a new url to oembed API with
-    # the tweet ID. That API doesn't need the API key (at least for now).
+    # the tweet ID. That API doesn't require authentication and claims not to
+    # be rate limited:
+    # https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/get-statuses-oembed
     u = new urlmod.URL('https://api.twitter.com/1/statuses/oembed.json')
     u.searchParams.set('id', remote_id.toString())
     # tell twitter not to include their <script> tag in result.

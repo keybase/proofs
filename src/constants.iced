@@ -163,8 +163,6 @@ exports.constants = constants =
     HTTP_400:          240
     HTTP_OTHER:        260
     EMPTY_JSON:        270
-    BAD_API_URL:       280
-    API_URL_MISMATCH:  281
 
     # Hard final errors
     DELETED:           301

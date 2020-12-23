@@ -349,14 +349,14 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
       if not(sncmp(body_obj.url, api_url))
         err = new Error "returned url field doesn't match api_url (found: #{body_obj.url}, expected: #{api_url})"
-        return cb err, v_codes.API_URL_MISMATCH
+        return cb err, v_codes.CONTENT_FAILURE
 
       # Extract username from URL, do not use "author_name" because it's the
       # full name.
       api_url_matches = api_url.match(new RegExp("^https://twitter\\.com/([^/]+)/status/(\\d+)(.*)$"))
       if not api_url_matches
         err = new Error "api_url field doesn't match regexp, got: #{api_url_matches}"
-        return cb err, v_codes.BAD_API_URL
+        return cb err, v_codes.CONTENT_FAILURE
 
       # Check username and tweet ID.
       [_, username_from_url, tweet_id] = api_url_matches

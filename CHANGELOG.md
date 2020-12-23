@@ -1,3 +1,7 @@
+## 2.3.24 (2020-12-23)
+
+- Use oembed API for twitter scraping.
+
 ## 2.3.23 (2020-03-10)
 
 - update WOT schema again

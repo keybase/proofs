@@ -328,14 +328,12 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
     @log "| use oembed API #{new_api_url} for tweet at #{api_url} (remote_id=#{remote_id})"
 
     # calls back with a v_code or null if it was ok
-    await @_get_url_body { url : new_api_url }, defer err, rc, body
+    await @_get_url_body { url : new_api_url, json : true }, defer err, rc, body_obj
 
-    if rc is v_codes.OK
-      try body_obj = JSON.parse(body)
-      catch e
-        rc = v_codes.FAILED_PARSE
-        err = new Error "failed to parse JSON: #{e.toString()}"
-        return cb err, rc
+    if not err and rc is v_codes.OK
+      if typeof body_obj isnt 'object' and not Array.isArray(body_obj)
+        err = new Error("malformed JSON response, expected object, got #{typeof body_obj}")
+        return cb err, v_codes.UNEXPECTED_JSON
 
       # "url" field returned by the API should match api_url.
       if typeof body_obj.url isnt 'string'
@@ -376,6 +374,14 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       if not(sncmp(username, author_username))
         err = new Error("username from author_url didn't match, expected: #{username}, got: #{author_username}")
         return cb err, v_codes.BAD_USERNAME
+
+      if typeof body_obj.html isnt 'string'
+        err = new Error("expected string for html, got #{typeof body_obj.html}")
+        return cb err, v_codes.CONTENT_MISSING
+
+      if body_obj.html.length > 1000
+        err = new Error("html is #{body_obj.html.length} characters, not trying to parse it")
+        return cb err, v_codes.CONTANT_MALFORMED
 
       $ = @libs.cheerio.load body_obj.html
       tweet_p = $('blockquote.twitter-tweet p')

@@ -105,8 +105,11 @@ class BaseScraper
     if rc is v_codes.OK
       try
         if opts.json
-          response.json().then (body) ->
+          response.json().then((body) ->
             cb err, rc, body
+          ).catch((err) ->
+            cb err, v_codes.BASE_HARD_ERROR
+          )
         else
           response.text().then (body) ->
             cb err, rc, body

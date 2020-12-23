@@ -5,6 +5,7 @@ pkg = require '../../package.json'
 {space_normalize} = require '../util'
 {b64find} = require '../b64extract'
 urlmod = require 'url'
+{callbackify} = require 'util'
 
 #==============================================================
 
@@ -105,8 +106,12 @@ class BaseScraper
     if rc is v_codes.OK
       try
         if opts.json
-          response.json().then (body) ->
-            cb err, rc, body
+          f = callbackify response.json
+          await f.call response, defer err, body
+          if err
+            @log "| _get_url_body response.json() failed with: #{err.toString()}"
+            rc = v_codes.CONTENT_FAILURE
+          cb err, rc, body
         else
           response.text().then (body) ->
             cb err, rc, body

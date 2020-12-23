@@ -5,6 +5,7 @@
 {v_codes} = constants
 {decode_sig} = require('kbpgp').ukm
 urlmod = require 'url'
+schema = require '../schema3'
 
 #================================================================================
 
@@ -312,35 +313,76 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       @log "null api_url for #{remote_id}/#{username}"
       return cb err, rc
 
-    u = urlmod.parse api_url
-    u.host = u.hostname = 'mobile.twitter.com'
+    # Do not try to fetch api_url which is of form:
+    # "https://twitter.com/tacovontaco/status/673931888088625152"
+    # because Twitter serves a JavaScript-based page there and the contents of
+    # tweet are not available. Instead, construct a new url to oembed API with
+    # the tweet ID. That API doesn't require authentication and claims not to
+    # be rate limited:
+    # https://developer.twitter.com/en/docs/twitter-api/v1/tweets/post-and-engage/api-reference/get-statuses-oembed
+    u = new urlmod.URL('https://api.twitter.com/1/statuses/oembed.json')
+    u.searchParams.set('id', remote_id.toString())
+    # tell twitter not to include their <script> tag in result.
+    u.searchParams.set('omit_script', '1')
+
     new_api_url = urlmod.format u
-    @log "| rewrite #{api_url} -> #{new_api_url} (since twitter was going to redirect us anyways)"
-    api_url = new_api_url
+    @log "| use oembed API #{new_api_url} for tweet at #{api_url} (remote_id=#{remote_id})"
 
     # calls back with a v_code or null if it was ok
-    await @_get_url_body { url : api_url }, defer err, rc, html
+    await @_get_url_body { url : new_api_url, json : true }, defer err, rc, body_obj
 
-    if rc is v_codes.OK
+    if not err and rc is v_codes.OK
+      schm = schema.dict({
+        url: schema.string().name('url')
+        author_url: schema.string().name('author_url')
+        html: schema.string().name('html')
+      }).allow_extra_keys()
+      if err = schm.check body_obj
+        return cb err, v_codes.CONTENT_FAILURE
 
-      $ = @libs.cheerio.load html
-      #
-      # only look inside the permalink tweet container
-      #
-      div = $('.main-tweet .tweet-text')
-      if div.length isnt 1
-        rc = v_codes.FAILED_PARSE
-      else
-        #
-        # make sure both the username and tweet id match our query,
-        # in case twitter printed other tweets into the page
-        # inside this container
-        #
-        found_username = $('.main-tweet .username').text()?.trim().replace( /^@/g , '')
-        found_tweet_id = "#{div.data('id')}"
-        rc = if not(sncmp(username, found_username)) then v_codes.BAD_USERNAME
-        else if (("" + remote_id) isnt (found_tweet_id)) then v_codes.BAD_REMOTE_ID
-        else @find_sig_in_tweet { tweet_p : div, proof_text_check }
+      # "url" field returned by the API should match api_url.
+      if not(sncmp(body_obj.url, api_url))
+        err = new Error "returned url field doesn't match api_url (found: #{body_obj.url}, expected: #{api_url})"
+        return cb err, v_codes.CONTENT_FAILURE
+
+      # Extract username from URL, do not use "author_name" because it's the
+      # full name.
+      api_url_matches = api_url.match(new RegExp("^https://twitter\\.com/([^/]+)/status/(\\d+)(.*)$"))
+      if not api_url_matches
+        err = new Error "api_url field doesn't match regexp, got: #{api_url_matches}"
+        return cb err, v_codes.CONTENT_FAILURE
+
+      # Check username and tweet ID.
+      [_, username_from_url, tweet_id] = api_url_matches
+      if not(sncmp(username, username_from_url))
+        err = new Error("username from api_url didn't match, expected: #{username}, got: #{username_from_url}")
+        return cb err, v_codes.BAD_USERNAME
+      if tweet_id isnt remote_id.toString()
+        return cb err, v_codes.BAD_REMOTE_ID
+
+      # Check "author_url" field, it contains a link to user's twitter profile.
+      # It should match our username.
+      author_url_matches = body_obj.author_url.match(new RegExp("^https://twitter\\.com/(.+)$"))
+      if not author_url_matches
+        err = new Error("author_url doesn't match regexp, got: #{body_obj.author_url}")
+        return cb err, v_codes.CONTENT_FAILURE
+
+      [_, author_username] = author_url_matches
+      if not(sncmp(username, author_username))
+        err = new Error("username from author_url didn't match, expected: #{username}, got: #{author_username}")
+        return cb err, v_codes.BAD_USERNAME
+
+      if body_obj.html.length > 1000
+        err = new Error("html is #{body_obj.html.length} characters, not trying to parse it")
+        return cb err, v_codes.CONTENT_FAILURE
+
+      $ = @libs.cheerio.load body_obj.html
+      tweet_p = $('blockquote.twitter-tweet p')
+      if tweet_p.length isnt 1
+        err = new Error("failed to find tweet <p> in returned 'html' field")
+        return cb err, v_codes.FAILED_PARSE
+
+      rc = @find_sig_in_tweet { tweet_p, proof_text_check }
 
     cb err, rc
 

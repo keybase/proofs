@@ -39,6 +39,8 @@ class Node
 class Dict extends Node
   constructor : ({keys}) ->
     @_keys = keys
+    # do not fail if there are extra keys unknown to schema
+    @_allow_extra_keys = false
     super
 
   _check : ({path, obj}) ->
@@ -46,7 +48,9 @@ class Dict extends Node
       return mkerr path, "need a dictionary"
     for k,v of obj
       new_path = path.extend(k)
-      if not (checker = @_keys[k])? then return mkerr new_path, "key is not supported"
+      if not (checker = @_keys[k])?
+        if @_allow_extra_keys then continue
+        return mkerr new_path, "key is not supported"
       if (err = @_check_value { checker, path : new_path, obj : v }) then return err
     for k,v of @_keys
       new_path = path.extend(k)
@@ -61,6 +65,10 @@ class Dict extends Node
 
   set_key : (k,v) ->
     @_keys[k] = v
+
+  allow_extra_keys : () ->
+    @_allow_extra_keys = true
+    @
 
 class Array extends Node
 

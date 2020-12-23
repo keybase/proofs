@@ -334,18 +334,18 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       # body_obj has to be an object (and not array, null, etc.)
       if typeof body_obj isnt 'object'
         err = new Error("malformed JSON response, expected object, got #{typeof body_obj}")
-        return cb err, v_codes.UNEXPECTED_JSON
+        return cb err, v_codes.CONTENT_FAILURE
       else if Array.isArray(body_obj)
         err = new Error("malformed JSON response, expected object, got array")
-        return cb err, v_codes.UNEXPECTED_JSON
+        return cb err, v_codes.CONTENT_FAILURE
       else if not body_obj
         err = new Error("_get_url_body returned #{body_obj}")
-        return cb err, v_codes.MISSING_JSON
+        return cb err, v_codes.CONTENT_FAILURE
 
       # "url" field returned by the API should match api_url.
       if typeof body_obj.url isnt 'string'
         err = new Error("expected string for url, got #{typeof body_obj.url}")
-        return cb err, v_codes.UNEXPECTED_JSON
+        return cb err, v_codes.CONTENT_FAILURE
 
       if not(sncmp(body_obj.url, api_url))
         err = new Error "returned url field doesn't match api_url (found: #{body_obj.url}, expected: #{api_url})"
@@ -370,12 +370,12 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       # It should match our username.
       if typeof body_obj.author_url isnt 'string'
         err = new Error("expected string for author_url, got #{typeof body_obj.author_url}")
-        return cb err, v_codes.UNEXPECTED_JSON
+        return cb err, v_codes.CONTENT_FAILURE
 
       author_url_matches = body_obj.author_url.match(new RegExp("^https://twitter\\.com/(.+)$"))
       if not author_url_matches
         err = new Error("author_url doesn't match regexp, got: #{body_obj.author_url}")
-        return cb err, v_codes.CONTENT_MISSING
+        return cb err, v_codes.CONTENT_FAILURE
 
       [_, author_username] = author_url_matches
       if not(sncmp(username, author_username))
@@ -384,11 +384,11 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
       if typeof body_obj.html isnt 'string'
         err = new Error("expected string for html, got #{typeof body_obj.html}")
-        return cb err, v_codes.UNEXPECTED_JSON
+        return cb err, v_codes.CONTENT_FAILURE
 
       if body_obj.html.length > 1000
         err = new Error("html is #{body_obj.html.length} characters, not trying to parse it")
-        return cb err, v_codes.CONTENT_MALFORMED
+        return cb err, v_codes.CONTENT_FAILURE
 
       $ = @libs.cheerio.load body_obj.html
       tweet_p = $('blockquote.twitter-tweet p')

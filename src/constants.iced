@@ -165,9 +165,6 @@ exports.constants = constants =
     EMPTY_JSON:        270
     BAD_API_URL:       280
     API_URL_MISMATCH:  281
-    MISSING_JSON:      282
-    UNEXPECTED_JSON:   283
-    CONTENT_MALFORMED: 284
 
     # Hard final errors
     DELETED:           301

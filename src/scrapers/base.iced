@@ -110,7 +110,7 @@ class BaseScraper
           await f.call response, defer err, body
           if err
             @log "| _get_url_body response.json() failed with: #{err.toString()}"
-            rc = v_codes.BASE_HARD_ERROR
+            rc = v_codes.CONTENT_FAILURE
           cb err, rc, body
         else
           response.text().then (body) ->

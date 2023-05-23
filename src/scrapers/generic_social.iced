@@ -52,7 +52,7 @@ exports.GenericSocialScraper = class GenericSocialScraper extends BaseScraper
     unless obj? and Array.isArray obj
       err = new Error "did not find proof list on #{check_path.join('.')} in json data"
       return [err, rc]
-    found = obj.find (x) -> sncmp(x.kb_username, kb_username) and sncmp(x.sig_hash, sig_id)
+    found = obj.find (x) -> x and sncmp(x.kb_username, kb_username) and sncmp(x.sig_hash, sig_id)
     if found?
       rc = v_codes.OK
     else

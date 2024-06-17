@@ -6,6 +6,7 @@ pkg = require '../../package.json'
 {b64find} = require '../b64extract'
 urlmod = require 'url'
 {callbackify} = require 'util'
+{Lock} = require '../util'
 
 #==============================================================
 
@@ -118,6 +119,8 @@ class BaseScraper
       catch err
         cb err, rc, null
     else
+      # TODO: It's possible to get response body here, which might be useful
+      # for debugging and logging.
       cb err, rc, null
 
   #--------------------------------------------------------------
@@ -125,6 +128,78 @@ class BaseScraper
 #==============================================================
 
 exports.BaseScraper = BaseScraper
+
+#==============================================================
+
+exports.BaseBearerToken = class BaseBearerToken
+  constructor : ({@name, @base, @access_token_url, @scope, @user_agent}) ->
+    unless @access_token_url?
+      throw new Error "@access_token_url is required"
+    if @scope? and not Array.isArray(@scope)
+      throw new Error "@scope has to be an array if present"
+
+    @_tok = null
+    @_created = 0
+    @_lock = new Lock()
+    @auth = @base.auth
+
+  #----------------
+
+  get : (cb) ->
+    await @_lock.acquire defer()
+    err = null
+    now = Math.floor(Date.now() / 1000)
+
+    if not (res = @_tok)? or (now - @_created > @auth.lifespan)
+
+      @base.log "+ Request for bearer token"
+
+      # Very crypto!  Not sure why this is done, but it's done
+      cred = (Buffer.from [ @auth.key, @auth.secret ].join(":")).toString('base64')
+
+      req = 'grant_type=client_credentials'
+      if @scope
+        req += "&scope=#{encodeURIComponent(@scope.join(' '))}"
+
+      opts =
+        url : @access_token_url
+        headers :
+          Authorization : "Basic #{cred}"
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+          'Content-Length': req.length
+        method : "post"
+        body : req
+      if @user_agent
+        opts.user_agent = @user_agent
+      await @base._get_url_body opts, defer err, rc, body
+
+      if err?
+        @base.logl 'error', "In getting bearer_token: #{err.message}"
+      else if (rc isnt v_codes.OK)
+        @base.logl 'error', "error in getting bearer token: #{rc}"
+        err = new Error "error: #{rc}"
+      else
+        try
+          body = JSON.parse body
+        catch e
+          @base.logl 'warn', "Could not parse JSON reply: #{e}"
+          err = e
+
+      if err? then # noop
+      else if not (tok = body.access_token)?
+        @base.logl 'warn', "No access token found in reply"
+        err = new Error "#{@name} error: no access token"
+      else
+        @_tok = tok
+        @_created = Math.floor(Date.now() / 1000)
+        res = @_tok
+
+      @base.log "- Request for bearer token for #{@name} -> err: #{err}"
+      unless err
+        @base.log "Bearer token for #{@name} is: #{res?.substr(0,5)}..."
+
+    @_lock.release()
+    cb err, res
 
 #==============================================================
 

@@ -1,3 +1,7 @@
+## 2.3.26 (2024-06-17)
+
+- Use oauth API for reddit scraping.
+
 ## 2.3.24 (2020-12-23)
 
 - Use oembed API for twitter scraping.

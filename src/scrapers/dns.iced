@@ -97,13 +97,23 @@ exports.DnsScraper = class DnsScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
+  _resolve_txt : (domain, cb) ->
+    # We can use a DNS library passed in (in the case of native-dns running on
+    # the server)
+    dnslib = @libs.dns or dns
+    try
+      dnslib.resolveTxt domain, (err, records) ->
+        cb err, records
+    catch err
+      cb err
+
+  # ---------------------------------------------------------------------------
+
   # calls back with a v_code or null if it was ok
   _check_status: ({domain, proof_text_check}, cb) ->
     @log "+ DNS check for #{domain}"
 
-    # We can use a DNS library passed in (in the case of native-dns running on the server)
-    dnslib = @libs.dns or dns
-    await dnslib.resolveTxt domain, defer err, records
+    await @_resolve_txt domain, defer err, records
     rc = if err?
       @log "| DNS error: #{err}"
       v_codes.DNS_ERROR

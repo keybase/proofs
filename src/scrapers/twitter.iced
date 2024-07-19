@@ -1,7 +1,6 @@
-{sncmp,BaseScraper} = require './base'
+{sncmp,BaseScraper,BaseBearerToken} = require './base'
 {make_ids} = require '../base'
 {constants} = require '../constants'
-{Lock} = require '../util'
 {v_codes} = constants
 {decode_sig} = require('kbpgp').ukm
 urlmod = require 'url'
@@ -17,78 +16,27 @@ ws_normalize = (x) ->
 
 #================================================================================
 
-class BearerToken
-
-  #----------------
-
+class TwitterBearerToken extends BaseBearerToken
   constructor : ({@base}) ->
-    @_tok = null
-    @_created = 0
-    @_lock = new Lock()
-    @auth = @base.auth
-
-  #----------------
-
-  get : (cb) ->
-    await @_lock.acquire defer()
-    err = null
-    now = Math.floor(Date.now() / 1000)
-
-    if not (res = @_tok)? or (now - @_created > @auth.lifespan)
-
-      @base.log "+ Request for bearer token"
-
-      # Very crypto!  Not sure why this is done, but it's done
-      cred = (Buffer.from [ @auth.key, @auth.secret].join(":")).toString('base64')
-
-      req = 'grant_type=client_credentials'
-      opts =
-        url : "https://api.twitter.com/oauth2/token"
-        headers :
-          Authorization : "Basic #{cred}"
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-          'Content-Length': req.length
-        method : "post"
-        body : req
-      await @base._get_url_body opts, defer err, rc, body
-
-      if err?
-        @base.logl 'error', "In getting bearer_token: #{err.message}"
-      else if (rc isnt v_codes.OK)
-        @base.logl 'error', "HTTP error in getting bearer token: #{rc}"
-        err = new Error "HTTP error: #{rc}"
-      else
-        try
-          body = JSON.parse body
-        catch e
-          @base.logl 'warn', "Could not parse JSON reply: #{e}"
-          err = e
-
-      if err? then # noop
-      else if not (tok = body.access_token)?
-        @base.logl 'warn', "No access token found in reply"
-        err = new Error "Twitter error: no access token"
-      else
-        @_tok = tok
-        @_created = Math.floor(Date.now() / 1000)
-        res = @_tok
-
-      @base.log "- Request for bearer token -> #{err}"
-
-    @_lock.release()
-    cb err, res
+    super {
+      name: "Twitter"
+      @base
+      access_token_url : "https://api.twitter.com/oauth2/token"
+      scope : [ 'history', 'read' ]
+    }
 
 #================================================================================
 
 _bearer_token = null
 bearer_token = ({base}) ->
   unless _bearer_token
-    _bearer_token = new BearerToken { base }
+    _bearer_token = new TwitterBearerToken { base }
   return _bearer_token
 
 #================================================================================
 
 exports.TwitterScraper = class TwitterScraper extends BaseScraper
+  username_regexp = /^[a-z0-9_-]{2,15}$/
 
   constructor: (opts) ->
     @auth = opts.auth
@@ -101,6 +49,8 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       new Error "Bad args to Twitter proof: no username given"
     else if not (args.name?) or (args.name isnt 'twitter')
       new Error "Bad args to Twitter proof: type is #{args.name}"
+    else if not args.username.match(username_regexp)
+      new Error "Invalid username passed to Twitter proof"
     else
       null
 
@@ -113,25 +63,26 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
     return cb(err,out) if (err = @_check_args { username, name })?
 
+    endpoint_name = "/2/tweets/search/recent"
     u = urlmod.format {
       host : "api.twitter.com"
       protocol : "https:"
-      pathname : "/1.1/statuses/user_timeline.json"
+      pathname : endpoint_name
       query :
-        count : 100
-        screen_name : username
+        query : "\"Verifying myself\" \"Keybase.io\" from:#{username}"
     }
-
-    await @_get_body_api { url : u }, defer err, rc, json
+    await @_get_body_api { url : u, endpoint_name }, defer err, rc, json
     @log "| search index #{u} -> #{rc}"
     if rc isnt v_codes.OK then #noop
     else if not json? or (json.length is 0) then rc = v_codes.EMPTY_JSON
+    else if not json.data? then rc = v_codes.INVALID_JSON
     else
-      for {text, id_str},i in json
+      rc = v_codes.NOT_FOUND
+      for {text, id},i in json.data
         if (@find_sig_in_tweet { inside : text, proof_text_check }) is v_codes.OK
           @log "| found valid tweet in stream @ #{i}"
           rc = v_codes.OK
-          remote_id = id_str
+          remote_id = id
           api_url = human_url = @_id_to_url username, remote_id
           out = { remote_id, api_url, human_url }
           break
@@ -397,7 +348,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   # Only the hunter needs this
-  _get_body_api : ({url}, cb) ->
+  _get_body_api : ({url, endpoint_name}, cb) ->
     rc = body = err = null
     await @_get_bearer_token defer err, rc, tok
     unless err?
@@ -408,6 +359,8 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
           Authorization : "Bearer #{tok}"
         method : "get"
         json : true
+        log_ratelimit : endpoint_name?
+        endpoint_name : endpoint_name
       await @_get_url_body args, defer err, rc, body
     cb err, rc, body
 

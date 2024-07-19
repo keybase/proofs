@@ -79,6 +79,14 @@ class BaseScraper
 
   #-------------------------------------------------------------
 
+  _get_rate_limit_header : (headers, name) ->
+    # Twitter and Github can't agree on rate limit header names.
+    if ((v = parse_int_or_undefined headers.get("X-RateLimit-#{name}")) or
+        (v = parse_int_or_undefined headers.get("X-Rate-Limit-#{name}")))
+      return v
+    else
+      return undefined
+
   _get_url_body: (opts, cb) ->
     ###
       cb(err, status, body) only replies with body if status is 200
@@ -88,13 +96,17 @@ class BaseScraper
     opts.headers["User-Agent"] ?= (opts.user_agent or user_agent)
     await @libs.fetch opts.url, opts, defer(err, response)
     if opts.log_ratelimit and response?
-      rl_limit     = parse_int_or_undefined response.headers.get 'X-RateLimit-Limit' # 5000 for github # https://developer.github.com/v3/#rate-limiting
-      rl_remaining = parse_int_or_undefined response.headers.get 'X-RateLimit-Remaining'
-      rl_reset     = parse_int_or_undefined response.headers.get 'X-RateLimit-Reset' # utc timestamp in seconds when limit will replenish
+      rl_limit     = @_get_rate_limit_header response.headers, 'Limit' # 5000 for github # https://developer.github.com/v3/#rate-limiting
+      rl_remaining = @_get_rate_limit_header response.headers, 'Remaining'
+      rl_reset     = @_get_rate_limit_header response.headers, 'Reset' # utc timestamp in seconds when limit will replenish
       if rl_limit?
         @log "| ratelimit info limit=#{rl_limit} remaining=#{rl_remaining} reset=#{rl_reset}"
-      @libs.ratelimit_inform? {limit: rl_limit, remaining: rl_remaining, reset: rl_reset}
-
+      @libs.ratelimit_inform? {
+        limit: rl_limit
+        remaining: rl_remaining
+        reset: rl_reset
+        endpoint_name : opts.endpoint_name
+      }
     rc = if err?
       if err.message.includes('network timeout') then v_codes.TIMEOUT
       else                                            v_codes.HOST_UNREACHABLE

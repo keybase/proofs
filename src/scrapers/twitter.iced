@@ -63,15 +63,15 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
     return cb(err,out) if (err = @_check_args { username, name })?
 
+    endpoint_name = "/2/tweets/search/recent"
     u = urlmod.format {
       host : "api.twitter.com"
       protocol : "https:"
-      pathname : "/2/tweets/search/recent"
+      pathname : endpoint_name
       query :
         query : "\"Verifying myself\" \"Keybase.io\" from:#{username}"
     }
-
-    await @_get_body_api { url : u }, defer err, rc, json
+    await @_get_body_api { url : u, endpoint_name }, defer err, rc, json
     @log "| search index #{u} -> #{rc}"
     if rc isnt v_codes.OK then #noop
     else if not json? or (json.length is 0) then rc = v_codes.EMPTY_JSON
@@ -348,7 +348,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   # Only the hunter needs this
-  _get_body_api : ({url}, cb) ->
+  _get_body_api : ({url, endpoint_name}, cb) ->
     rc = body = err = null
     await @_get_bearer_token defer err, rc, tok
     unless err?
@@ -359,7 +359,8 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
           Authorization : "Bearer #{tok}"
         method : "get"
         json : true
-        log_ratelimit : true
+        log_ratelimit : endpoint_name?
+        endpoint_name : endpoint_name
       await @_get_url_body args, defer err, rc, body
     cb err, rc, body
 

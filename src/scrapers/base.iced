@@ -101,7 +101,12 @@ class BaseScraper
       rl_reset     = @_get_rate_limit_header response.headers, 'Reset' # utc timestamp in seconds when limit will replenish
       if rl_limit?
         @log "| ratelimit info limit=#{rl_limit} remaining=#{rl_remaining} reset=#{rl_reset}"
-      @libs.ratelimit_inform? {limit: rl_limit, remaining: rl_remaining, reset: rl_reset}
+      @libs.ratelimit_inform? {
+        limit: rl_limit
+        remaining: rl_remaining
+        reset: rl_reset
+        endpoint_name : opts.endpoint_name
+      }
     rc = if err?
       if err.message.includes('network timeout') then v_codes.TIMEOUT
       else                                            v_codes.HOST_UNREACHABLE

@@ -1,3 +1,7 @@
+## 2.3.27 (2024-07-18)
+
+- Fix error handling when an invalid unicode domain is passed to DnsScraper.
+
 ## 2.3.26 (2024-06-17)
 
 - Use oauth API for reddit scraping.

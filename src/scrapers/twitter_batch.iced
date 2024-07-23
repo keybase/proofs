@@ -1,12 +1,9 @@
-{sncmp,BaseScraper,BaseBearerToken} = require './base'
+{BaseScraper,BaseBearerToken} = require './base'
 {TwitterScraper} = require './twitter'
-{make_ids} = require '../base'
 {constants} = require '../constants'
 {v_codes} = constants
-{decode_sig} = require('kbpgp').ukm
 {Lock} = require '../util'
 urlmod = require 'url'
-schema = require '../schema3'
 
 #================================================================================
 
@@ -25,6 +22,7 @@ exports.TwitterBatchScraper = class TwitterBatchScraper extends TwitterScraper
     super opts
 
   _hunt_batch : (cb) ->
+    # Make a query to find all keybase proofs since `last_id` (if present).
     query =
       query : "\"Verifying myself\" \"Keybase.io\""
       expansions: "author_screen_name"
@@ -46,9 +44,14 @@ exports.TwitterBatchScraper = class TwitterBatchScraper extends TwitterScraper
     @log "| search index #{u} -> #{rc}"
     if rc isnt v_codes.OK then #noop
     else if not json? or (json.length is 0) then rc = v_codes.EMPTY_JSON
-    else if not json.data? then rc = v_codes.INVALID_JSON
+    else if not json.data?
+      if json.meta?.result_count is 0
+        # No results.
+        rc = v_codes.OK
+      else
+        # Unknown JSON structure.
+        rc = v_codes.INVALID_JSON
     else
-      console.log json.data
       for {id, created_at, username, text}, i in json.data
         created_at = new Date(created_at)
         unless isFinite(created_at)
@@ -56,8 +59,10 @@ exports.TwitterBatchScraper = class TwitterBatchScraper extends TwitterScraper
           continue
         @log "ingesting tweet: id: #{id}, username: #{username}, text: \"#{text}\""
         @_tweet_cache.inform { id, created_at, username, text }
+      rc = v_codes.OK
 
-    cb null, v_codes.OK
+    @log "| _hunt_batch returning: #{rc}"
+    cb null, rc
 
   hunt2 : ({username, name, proof_text_check}, cb) ->
     # See if we should refresh cache.

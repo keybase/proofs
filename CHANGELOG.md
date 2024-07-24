@@ -1,3 +1,7 @@
+## 2.3.29 (2024-07-22)
+
+- Fix Twitter scraper to handle empty result list case.
+
 ## 2.3.28 (2024-07-19)
 
 - Use version 2 API for X (formerly known as Twitter) hunting.

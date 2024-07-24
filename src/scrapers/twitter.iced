@@ -75,7 +75,13 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
     @log "| search index #{u} -> #{rc}"
     if rc isnt v_codes.OK then #noop
     else if not json? or (json.length is 0) then rc = v_codes.EMPTY_JSON
-    else if not json.data? then rc = v_codes.INVALID_JSON
+    else if not json.data?
+      if json.meta?.result_count is 0
+        # No results.
+        rc = v_codes.NOT_FOUND
+      else
+        # Unknown JSON structure.
+        rc = v_codes.INVALID_JSON
     else
       rc = v_codes.NOT_FOUND
       for {text, id},i in json.data

@@ -126,8 +126,12 @@ class BaseScraper
             rc = v_codes.CONTENT_FAILURE
           cb err, rc, body
         else
-          response.text().then (body) ->
-            cb err, rc, body
+          f = callbackify response.text
+          await f.call response, defer err, body
+          if err
+            @log "| _get_url_body response.text() failed with: #{err.toString()}"
+            rc = v_codes.CONTENT_FAILURE
+          cb err, rc, body
       catch err
         cb err, rc, null
     else

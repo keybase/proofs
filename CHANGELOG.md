@@ -1,3 +1,8 @@
+## 2.3.30 (2025-02-28)
+
+- Fix BaseScraper not properly handling promise rejections when fetching text
+  body.
+
 ## 2.3.29 (2024-07-22)
 
 - Fix Twitter scraper to handle empty result list case.

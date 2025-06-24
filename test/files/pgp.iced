@@ -16,6 +16,11 @@ pgp_utils = require('pgp-utils')
 {SignatureEngine,Burner} = kbpgp
 {Message} = kbpgp.processor
 
+openpgp = require 'openpgp'
+
+promiseToCb = (promise, cb) ->
+  promise.then((res) -> cb(null, res)).catch((err) -> cb(err))
+
 # Making sure KBPGP is not vulnerable to CVE-2025-47934, which was a critical
 # message spoofing bug in OpenPGP.js
 #
@@ -121,7 +126,7 @@ exports.fake_track = (T,cb) ->
   uid = new_uid()
   username = new_username()
   userid = "#{username} <#{username}@keybase.io>"
-  await KeyManager.generate { nbits: 768, nsubs: 1, userid }, esc defer elder
+  await KeyManager.generate { nbits: 2048, nsubs: 1, userid }, esc defer elder
   await elder.sign {}, esc defer()
 
   # Elder makes a legit Track proof with a signature.
@@ -156,5 +161,60 @@ exports.fake_track = (T,cb) ->
   await obj2.verify varg, defer err
   T.assert err?, "got an error during verification"
   T.assert err?.message?.indexOf("Expected only one pgp literal; got 2") >= 0, "got the right message"
+
+  # Test vulnerable openpgp.js on the same signature:
+
+  await promiseToCb openpgp.readKey({ armoredKey: elder_pub_armored }), esc defer oPublicKey
+  await promiseToCb openpgp.readMessage({ armoredMessage: armored }), esc defer oMessage
+  await promiseToCb openpgp.verify({ message: oMessage, verificationKeys: oPublicKey }), esc defer oVerificationResult
+
+  console.log oVerificationResult.data
+  await promiseToCb oVerificationResult.signatures[0].verified, defer err, verified
+  console.log 'verified:',err, verified
+  T.no_error err, "OpenPGP.js returned no errors during verification"
+  T.assert verified, "OpenPGP.js returned verified=true"
+  console.log 'data again:', oVerificationResult.data
+  T.equal JSON.parse(oVerificationResult.data).body.track.username, "malicious username"
+
+  # ---
+
+  cb null
+
+exports.opgp2 = (T,cb) ->
+  esc = make_esc cb
+
+  armoredMessage = """
+-----BEGIN PGP MESSAGE-----
+
+kA0DAAoW1Fu2hl5UcsoByxFiAGhBNptsZWdpdGltYXRlCoh1BAAWCgAdFiEEXSzQbblMQiJ8GaYN
+1Fu2hl5UcsoFAmhBNpsACgkQ1Fu2hl5UcsqE0QD/bsWYHJrrrK8RM8VgB4Z3K64zWfp49BOi+x0s
+9VJKyRoBALJdQhGzPwCERCANPR+KdX5ZdrX54ZpY9mriFG6O4hsFyBIAyw9iAAAAAABtYWxpY2lv
+dXM=
+-----END PGP MESSAGE-----
+"""
+
+  publicKeyArmored = """
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+mDMEZSAfBhYJKwYBBAHaRw8BAQdAfdgd2yxL+pYN91ENyp/VZVdWXLjYDONG47jM
+4dDZDMG0IFRob21hcyBSaW5zbWEgPHRob21hc0Bjb2RlYW4uaW8+iI8EExYIADcW
+IQRdLNBtuUxCInwZpg3UW7aGXlRyygUCZSAfBgUJBaOagAIbAwQLCQgHBRUICQoL
+BRYCAwEAAAoJENRbtoZeVHLKpvIBANiaDeLPyaQyHkuzB8T6ZqvfJi4dXNlsqT2F
+dlUUip4ZAQDSAljghQC9jAQu8I8yMrQJd4SXD1EMH+NLNNYCDEZCC7g4BGUgHwYS
+CisGAQQBl1UBBQEBB0DOFmUm2nMIda8PzTquulLLy/bFwDtSqAiK1EBqEdvbaAMB
+CAeIfgQYFggAJhYhBF0s0G25TEIifBmmDdRbtoZeVHLKBQJlIB8GBQkFo5qAAhsM
+AAoJENRbtoZeVHLKCE8BAJEXE6za1G6pFpaZWKBRMlCbBDSE4rc7iEn5MpC56WtQ
+AQCnVhRNYBjQ7Bo/VX1rx2+6wx84EXOFmoW80F96QmN0Bw==
+=Obk+
+-----END PGP PUBLIC KEY BLOCK-----
+"""
+
+  await promiseToCb openpgp.readKey({ armoredKey: publicKeyArmored }), esc defer oPublicKey
+  await promiseToCb openpgp.readMessage({ armoredMessage }), esc defer oMessage
+  await promiseToCb openpgp.verify({ message: oMessage, verificationKeys: oPublicKey }), esc defer oVerificationResult
+
+  console.log oVerificationResult.data
+  await promiseToCb oVerificationResult.signatures[0].verified, defer err, verified
+  console.log err, verified
 
   cb null

@@ -35,5 +35,6 @@
   "devDependencies": {
     "iced-coffee-script": "^108.0.11",
     "iced-test": "0.0.22"
+    "openpgp": "6.1.0"
   }
 }

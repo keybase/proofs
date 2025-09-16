@@ -1,3 +1,8 @@
+## 2.3.31 (2025-09-16)
+
+- Update KBPGP dependency to >=2.1.17, to fix handling of PGP keys with AEAD
+  prefs.
+
 ## 2.3.30 (2025-02-28)
 
 - Fix BaseScraper not properly handling promise rejections when fetching text

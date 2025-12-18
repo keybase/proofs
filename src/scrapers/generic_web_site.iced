@@ -45,8 +45,10 @@ exports.GenericWebSiteScraper = class GenericWebSiteScraper extends BaseScraper
   # ---------------------------------------------------------------------------
 
   _check_url : ( { url, proof_text_check }, cb) ->
+    # limit how much data we want to receive from arbitrary websites
+    size = constants.generic_website_max_size
     # calls back with a v_code or null if it was ok
-    await @_get_url_body {url }, defer err, rc, raw
+    await @_get_url_body { url, size }, defer err, rc, raw
     rc = if rc isnt v_codes.OK                             then rc
     else if @_find_sig_in_raw(proof_text_check, raw)       then v_codes.OK
     else                                                   v_codes.NOT_FOUND

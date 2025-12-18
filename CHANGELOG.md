@@ -1,3 +1,7 @@
+## 2.3.31 (2025-12-18)
+
+- Set response size limit when making a request in GenericWebSiteScraper.
+
 ## 2.3.30 (2025-02-28)
 
 - Fix BaseScraper not properly handling promise rejections when fetching text

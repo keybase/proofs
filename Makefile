@@ -42,6 +42,7 @@ $(BUILD_STAMP): \
 	lib/scrapers/hackernews.js \
 	lib/scrapers/reddit.js \
 	lib/scrapers/twitter.js \
+	lib/scrapers/twitter_batch.js \
 	lib/scrapers/generic_social.js \
 	lib/team.js \
 	lib/team_hidden.js \

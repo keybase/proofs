@@ -262,6 +262,27 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
   # ---------------------------------------------------------------------------
 
+  _comp_twitter_url : (url_a_str, url_b_str) ->
+    # Do a smarter check for twitter URL but allowing hosts to be either
+    # x.com or twitter.com. Rest of the URL has to match (protocol, path,
+    # hash etc.)
+    if not url_a_str or not url_b_str
+      return false
+    twitter_hosts = ['x.com', 'twitter.com']
+    try
+      url_a = new urlmod.URL(url_a_str.toLowerCase())
+      url_b = new urlmod.URL(url_b_str.toLowerCase())
+      return (
+        twitter_hosts.includes(url_a.host) and
+        twitter_hosts.includes(url_b.host) and
+        url_a.protocol is url_b.protocol and
+        url_a.pathname is url_b.pathname and
+        url_a.search is url_b.search and
+        url_a.hash is url_b.hash
+        )
+    catch
+      return false
+
   check_status: ({username, api_url, proof_text_check, remote_id}, cb) ->
 
     if not api_url?.length
@@ -297,20 +318,22 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       if err = schm.check body_obj
         return cb err, v_codes.CONTENT_FAILURE
 
-      # "url" field returned by the API should match api_url.
-      if not(sncmp(body_obj.url, api_url))
+      # "url" field returned by the API should match api_url, but twitter may
+      # return x.com domain in the "url" field. Our `api_url` is always
+      # twitter.com right now (for new and existing proofs).
+      if not(@_comp_twitter_url(body_obj.url, api_url))
         err = new Error "returned url field doesn't match api_url (found: #{body_obj.url}, expected: #{api_url})"
         return cb err, v_codes.CONTENT_FAILURE
 
       # Extract username from URL, do not use "author_name" because it's the
       # full name.
-      api_url_matches = api_url.match(new RegExp("^https://twitter\\.com/([^/]+)/status/(\\d+)(.*)$"))
+      api_url_matches = api_url.match(new RegExp("^https://(x|twitter)\\.com/([^/]+)/status/(\\d+)(.*)$"))
       if not api_url_matches
         err = new Error "api_url field doesn't match regexp, got: #{api_url_matches}"
         return cb err, v_codes.CONTENT_FAILURE
 
       # Check username and tweet ID.
-      [_, username_from_url, tweet_id] = api_url_matches
+      [_, _, username_from_url, tweet_id] = api_url_matches
       if not(sncmp(username, username_from_url))
         err = new Error("username from api_url didn't match, expected: #{username}, got: #{username_from_url}")
         return cb err, v_codes.BAD_USERNAME
@@ -319,12 +342,12 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
       # Check "author_url" field, it contains a link to user's twitter profile.
       # It should match our username.
-      author_url_matches = body_obj.author_url.match(new RegExp("^https://twitter\\.com/(.+)$"))
+      author_url_matches = body_obj.author_url.match(new RegExp("^https://(x|twitter)\\.com/(.+)$"))
       if not author_url_matches
         err = new Error("author_url doesn't match regexp, got: #{body_obj.author_url}")
         return cb err, v_codes.CONTENT_FAILURE
 
-      [_, author_username] = author_url_matches
+      [_, _, author_username] = author_url_matches
       if not(sncmp(username, author_username))
         err = new Error("username from author_url didn't match, expected: #{username}, got: #{author_username}")
         return cb err, v_codes.BAD_USERNAME

@@ -1,3 +1,8 @@
+## 2.3.32 (2026-05-28)
+
+- Fix Twitter scraper, allow returned URL to be either in x.com or twitter.com
+  domain.
+
 ## 2.3.31 (2025-12-18)
 
 - Set response size limit when making a request in GenericWebSiteScraper.

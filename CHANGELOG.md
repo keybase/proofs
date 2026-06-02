@@ -1,3 +1,9 @@
+## 2.3.33 (2026-06-02)
+
+- Fix Twitter search query. We must not search for Keybase.io anymore when
+  hunting for new proofs, because URLs in tweets are shortened (previously
+  search queries would apply to original URLs.)
+
 ## 2.3.32 (2026-05-28)
 
 - Fix Twitter scraper, allow returned URL to be either in x.com or twitter.com

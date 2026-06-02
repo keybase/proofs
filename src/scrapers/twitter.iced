@@ -69,7 +69,7 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
       protocol : "https:"
       pathname : endpoint_name
       query :
-        query : "\"Verifying myself\" \"Keybase.io\" from:#{username}"
+        query : "\"Verifying myself: I am\" from:#{username}"
     }
     await @_get_body_api { url : u, endpoint_name }, defer err, rc, json
     @log "| search index #{u} -> #{rc}"

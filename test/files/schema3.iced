@@ -23,3 +23,34 @@ exports.or_combinator = (T, cb) ->
   T.equal err?.message, "At <top>: no structure worked"
 
   cb null
+
+exports.required_null_rejected = (T, cb) ->
+  for val in [null, undefined]
+    err = schema.array(schema.obj()).check [val]
+    T.assert err?, "array of obj() rejects null"
+    T.equal err?.message, "At <top>.0: value cannot be null"
+
+    err = schema.array(schema.string()).check [val]
+    T.assert err?, "array of obj() rejects null"
+    T.equal err?.message, "At <top>.0: value cannot be null"
+
+    err = schema.struct([schema.obj()]).check [val]
+    T.assert err?, "struct of obj() rejects null"
+    T.equal err?.message, "At <top>.0: value cannot be null"
+
+    err = schema.struct([schema.string()]).check [val]
+    T.assert err?, "struct of obj() rejects null"
+    T.equal err?.message, "At <top>.0: value cannot be null"
+
+    err = schema.dict({ x : schema.obj() }).check { x : val }
+    T.assert err?, "dict required obj() null is rejected"
+    T.equal err?.message, "At <top>.x: value cannot be null"
+
+    err = schema.dict({ x : schema.string() }).check { x : val }
+    T.assert err?, "dict required string null is rejected"
+    T.equal err?.message, "At <top>.x: value cannot be null"
+
+    err = schema.dict({ x : schema.string().optional() }).check { x : val }
+    T.assert not err?, "dict optional string null is accepted"
+
+  cb null

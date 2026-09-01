@@ -33,7 +33,7 @@ class Node
 
   _check_value : ({checker, path, obj}) ->
     if not obj? and checker.is_optional() then return null
-    if not obj? then mkerr path, "value cannot be null"
+    if not obj? then return mkerr path, "value cannot be null"
     return checker._check { path, obj  }
 
 class Dict extends Node

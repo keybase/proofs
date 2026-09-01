@@ -218,7 +218,7 @@ class Or extends Node
     @_terms = terms
   _check : ({path, obj}) ->
     ok = false
-    for t in @_terms when t.check(obj)
+    for t in @_terms when not t.check(obj)
       ok = true
       break
     if not ok then return mkerr path, "no structure worked"

@@ -15,10 +15,16 @@ exports.is_kid = (h) -> is_hex(h,35)
 exports.is_int = is_int = (s) ->
     n = Math.floor Number s
     return typeof(s) is 'number' and (n isnt Infinity) and (n is s) and n >= 0
+exports.decode_hex = decode_hex = (s) ->
+  return null unless typeof(s) is 'string'
+  buf = Buffer.from s, 'hex'
+  return null unless buf.toString('hex') is s.toLowerCase()
+  buf
 exports.is_hex = is_hex = (h, l) ->
   return false unless h?
-  if typeof(h) is 'string' then h = Buffer.from(h, 'hex')
-  else if not Buffer.isBuffer then return false
+  if typeof(h) is 'string'
+    return false unless (h = decode_hex(h))?
+  else if not Buffer.isBuffer(h) then return false
   return (h.length is l)
 exports.is_seqno = (s) ->
   return false unless s?
@@ -75,6 +81,6 @@ exports.is_chain_type = (x) ->
 exports.unhex = (b) ->
   if not b? then null
   else if Buffer.isBuffer(b) then b
-  else if typeof(b) is 'string' then Buffer.from(b, 'hex')
+  else if typeof(b) is 'string' and (h = decode_hex(b))? then h
   else throw new Error "bad binary or hex string"
 

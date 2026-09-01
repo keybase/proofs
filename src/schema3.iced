@@ -125,7 +125,7 @@ class Binary extends Node
 
   _convert_and_check : ({path, obj}) ->
     if @_convert and typeof(obj) is 'string'
-      obj = Buffer.from(obj, 'hex')
+      obj = parse.decode_hex(obj)
     unless Buffer.isBuffer(obj) and obj.length is @_len
       return [ (mkerr path, "value needs to be buffer of length #{@_len}"), null ]
     if @_bottom_bytes?

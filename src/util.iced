@@ -5,6 +5,17 @@ crypto = require 'crypto'
 
 #----------
 
+# Native hasOwnProperty, captured so schema/input keys named
+# "hasOwnProperty" cannot shadow the method. Use instead of obj[k] or
+# obj.hasOwnProperty(k) — those see Object.prototype (constructor, toString, …).
+_has_own = {}.constructor.prototype.hasOwnProperty
+exports.has_own = has_own = (o, k) -> _has_own.call o, k
+exports.get_own = get_own = (o, k) ->
+  if _has_own.call(o, k) then o[k]
+  else undefined
+
+#----------
+
 exports.json_secure_compare = json_secure_compare = (a,b) ->
   [o1,o2] = (json_stringify_sorted(x) for x in [a,b])
   err = if bufeq_secure((Buffer.from o1, 'utf8'), (Buffer.from o2, 'utf8')) then null

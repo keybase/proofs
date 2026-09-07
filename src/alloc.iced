@@ -15,6 +15,7 @@ base = require './base'
 {PGPUpdate} = require './pgp_update'
 {UpdatePassphraseHash} = require './update_passphrase_hash'
 {UpdateSettings} = require './update_settings'
+{get_own} = require './util'
 team = require './team'
 team_hidden = require './team_hidden'
 wot = require './wot'
@@ -73,7 +74,7 @@ lookup_tab = {
 
 get_klass = (type, extra_lookup_tab) ->
   err = klass = null
-  unless (klass = extra_lookup_tab?[type])? or (klass = lookup_tab[type])?
+  unless (extra_lookup_tab? and (klass = get_own(extra_lookup_tab, type))?) or (klass = get_own(lookup_tab, type))?
     err = new Error "Unknown proof class: #{type}"
   [err, klass]
 

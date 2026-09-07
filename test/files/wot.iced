@@ -97,3 +97,38 @@ exports.wot_vouch_bad = (T,cb) ->
   T.assert (err.message.indexOf(".confidence.other") >= 0), "found right error message"
 
   cb null
+
+exports.wot_vouch_bad_proof = (T,cb) ->
+  esc = make_esc cb
+  await new_km_and_sig_arg {}, esc defer me
+  await new_km_and_sig_arg {}, esc defer them
+  proof1 = { proof_type : 4, name : "reddit", username : "betaveros" }
+  bad_proof = { invalid : 1, obj : 2 }
+  me.wot =
+    vouch :
+        user :
+          username : them.user.local.username
+          uid : them.user.local.uid
+          eldest:
+            kid : them.sig_eng.km.key.ekid().toString('hex')
+            seqno : 1
+          seq_tail :
+            seqno : 20
+            sig_id : new_sig_id()
+            payload_hash : new_payload_hash()
+        confidence :
+          username_verified_via : "audio"
+          other : "lorem ipsum"
+          proofs : [ proof1, bad_proof ]
+        vouch_text : "darn rootin tootin"
+
+  obj = new wot.Vouch me
+  await obj.generate_v2 esc(defer(out)), {dohash:true}
+
+  verifier = alloc out.inner.obj.body.type, me
+  varg = { armored : out.armored, skip_ids : true, make_ids : true, inner : out.inner.str, expansions : out.expansions, require_packet_hash :true}
+  await verifier.verify_v2 varg, defer err
+  T.assert err?, "got an error back"
+  T.equal err?.message, "At <top>.confidence.proofs.1: no structure worked"
+
+  cb null

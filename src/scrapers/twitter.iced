@@ -148,12 +148,12 @@ exports.TwitterScraper = class TwitterScraper extends BaseScraper
 
     # twitter may not obey our matching request order
     if responses?.length
-      dict = {}
+      map = new Map
       key  = if ids? then "id_str" else "screen_name"
-      dict[r[key]] = r for r in responses
+      map.set String(r[key]), r for r in responses
       res = []
       for identifier, i in input_list
-        res[i] = dict[identifier] or null
+        res[i] = map.get(String(identifier)) or null
 
     cb err, res
 

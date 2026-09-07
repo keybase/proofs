@@ -1,7 +1,15 @@
 
 parse = require './parse3'
+{has_own,get_own} = require './util'
 
 mkerr = (path, err) -> new Error "At #{path.toString()}: #{err}"
+
+# __proto__ is not a data key. `{ __proto__: x }` and `obj["__proto__"] = x`
+# set [[Prototype]] instead of an own property. JSON.parse may store it as an
+# own key; msgpack unpack may throw. Ban it as a schema and payload key.
+# constructor, toString, hasOwnProperty, etc.  are allowed; has_own treats them
+# as own keys.
+is_reserved_key_name = (k) -> k is '__proto__'
 
 class Path
   constructor : (v) ->
@@ -33,11 +41,13 @@ class Node
 
   _check_value : ({checker, path, obj}) ->
     if not obj? and checker.is_optional() then return null
-    if not obj? then mkerr path, "value cannot be null"
+    if not obj? then return mkerr path, "value cannot be null"
     return checker._check { path, obj  }
 
 class Dict extends Node
   constructor : ({keys}) ->
+    for k of keys
+      if is_reserved_key_name k then throw new Error "schema key name is not allowed: #{k}"
     @_keys = keys
     # do not fail if there are extra keys unknown to schema
     @_allow_extra_keys = false
@@ -48,22 +58,24 @@ class Dict extends Node
       return mkerr path, "need a dictionary"
     for k,v of obj
       new_path = path.extend(k)
-      if not (checker = @_keys[k])?
+      if is_reserved_key_name k then return mkerr new_path, "key name is not allowed"
+      if not (checker = get_own(@_keys, k))?
         if @_allow_extra_keys then continue
         return mkerr new_path, "key is not supported"
       if (err = @_check_value { checker, path : new_path, obj : v }) then return err
     for k,v of @_keys
       new_path = path.extend(k)
-      if not obj[k]? and not v.is_optional() then return mkerr new_path, "key is missing but is mandatory"
+      if not has_own(obj, k) and not v.is_optional() then return mkerr new_path, "key is missing but is mandatory"
     return null
 
   debug_localize : (obj) ->
     ret = {}
-    for k,v of @_keys when obj[k]?
+    for k,v of @_keys when has_own obj, k
       ret[v._name or k] = v.debug_localize obj[k]
     ret
 
   set_key : (k,v) ->
+    if is_reserved_key_name k then throw new Error "schema key name is not allowed: #{k}"
     @_keys[k] = v
 
   allow_extra_keys : () ->
@@ -125,7 +137,7 @@ class Binary extends Node
 
   _convert_and_check : ({path, obj}) ->
     if @_convert and typeof(obj) is 'string'
-      obj = Buffer.from(obj, 'hex')
+      obj = parse.decode_hex(obj)
     unless Buffer.isBuffer(obj) and obj.length is @_len
       return [ (mkerr path, "value needs to be buffer of length #{@_len}"), null ]
     if @_bottom_bytes?
@@ -186,10 +198,11 @@ class StringEnum extends Node
   constructor : ({values}) ->
     @_values = {}
     for v in values
+      if is_reserved_key_name v then throw new Error "enum value is not allowed: #{v}"
       @_values[v] = true
   _check : ({path, obj}) ->
     if typeof(obj) isnt 'string' then return mkerr path, "value must be a string"
-    if not @_values[obj] then return mkerr path, "unknown enum value (#{obj})"
+    if not has_own(@_values, obj) then return mkerr path, "unknown enum value (#{obj})"
     return null
 
 class Value extends Node
@@ -218,7 +231,7 @@ class Or extends Node
     @_terms = terms
   _check : ({path, obj}) ->
     ok = false
-    for t in @_terms when t.check(obj)
+    for t in @_terms when not t.check(obj)
       ok = true
       break
     if not ok then return mkerr path, "no structure worked"

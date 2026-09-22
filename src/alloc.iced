@@ -18,7 +18,6 @@ base = require './base'
 {get_own} = require './util'
 team = require './team'
 team_hidden = require './team_hidden'
-wot = require './wot'
 
 #=======================================================
 
@@ -66,8 +65,6 @@ lookup_tab = {
   "team.kbfs"                      : team.KBFS
   "team.settings"                  : team.Settings
   "team.bot_settings"              : team.BotSettings
-  "wot.vouch"                      : wot.Vouch
-  "wot.react"                      : wot.React
 }
 
 #--------------------------------------------

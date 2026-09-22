@@ -44,6 +44,8 @@ exports.constants = constants =
       kbfs : "team.kbfs"
       settings : "team.settings"
       bot_settings : "team.bot_settings"
+    # wot proofs are deprecated, but constants must remain available to kbweb
+    # because of existing signatures.
     wot :
       vouch : "wot.vouch"
       react : "wot.react"
@@ -83,6 +85,8 @@ exports.constants = constants =
       bot_settings: 48
     wallet :
       stellar : 15
+    # wot proofs are deprecated, but constants must remain available to kbweb
+    # because of existing signatures.
     wot :
       vouch : 16
       vouch_with_revoke : 17

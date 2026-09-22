@@ -1,0 +1,14 @@
+src/constants.iced
+  h_f21e4bfbe3ac62 47-48,88-89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "080e39a5776ce6623341fa9280a07b4303479cd5",
+  "prompts": {},
+  "humans": {
+    "h_f21e4bfbe3ac62": {
+      "author": "Michał Zochniak <michal.zochniak@zoom.us>"
+    }
+  }
+}

@@ -1,3 +1,8 @@
+## 2.3.34 (2026-09-22)
+
+- Remove web of trust proof classes.
+- Various parsing and schema verification fixes.
+
 ## 2.3.33 (2026-06-02)
 
 - Fix Twitter search query. We must not search for Keybase.io anymore when

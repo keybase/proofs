@@ -1,0 +1,14 @@
+.github/workflows/ci.yml
+  h_f21e4bfbe3ac62 1-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "b89caecc11101173a1eb7fb309f1db32393d1725",
+  "prompts": {},
+  "humans": {
+    "h_f21e4bfbe3ac62": {
+      "author": "Michał Zochniak <michal.zochniak@zoom.us>"
+    }
+  }
+}

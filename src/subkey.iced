@@ -59,10 +59,10 @@ exports.SubkeyBase = class SubkeyBase extends Base
       err = new Error "Reverse sig json mismatch: #{a} != #{b}"
     return err
 
-  _v_check : ({json, assert_pgp_hash}, cb) ->
+  _v_check : ({json, assert_pgp_hash, pgp_max_length}, cb) ->
     esc = make_esc cb, "SubkeyBase::_v_check"
     await super { json }, esc defer()
-    await @reverse_sig_check { json, new_km: @get_new_km(), assert_pgp_hash }, esc defer()
+    await @reverse_sig_check { json, new_km: @get_new_km(), assert_pgp_hash, pgp_max_length }, esc defer()
     cb null
 
   _get_reverse_sig : (json) ->
@@ -73,7 +73,7 @@ exports.SubkeyBase = class SubkeyBase extends Base
     # body.sibkey.reverse_sig should be the only field different between the two
     outer.body[@get_key_field()].reverse_sig = null
 
-  reverse_sig_check : ({json, new_km, subkm, assert_pgp_hash}, cb) ->
+  reverse_sig_check : ({json, new_km, subkm, assert_pgp_hash, pgp_max_length}, cb) ->
 
     # For historical reasons, some people call 'new_km' 'subkm'
     new_km or= subkm
@@ -82,7 +82,9 @@ exports.SubkeyBase = class SubkeyBase extends Base
     err = null
     if (sig = @_get_reverse_sig(json))? and new_km?
       eng = new_km.make_sig_eng()
-      await eng.unbox sig, esc(defer(raw)), { assert_pgp_hash }
+      # pgp_max_length only applies to PGP messages since Keybase NaCl
+      # does not have a compression feature.
+      await eng.unbox sig, esc(defer(raw)), { assert_pgp_hash, pgp_max_length }
       await a_json_parse raw, esc defer payload
       rsk = new_km.get_ekid().toString('hex')
       if (err = @_match_json json, payload)? then # noop

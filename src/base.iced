@@ -76,7 +76,7 @@ compare_hash_buf_to_str = (b, s) ->
 
 class Verifier
 
-  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check, @inner, @outer, @expansions, @assert_pgp_hash, @require_packet_hash}, @sig_eng, @base) ->
+  constructor : ({@armored, @id, @short_id, @skip_ids, @make_ids, @strict, @now, @critical_clock_skew_secs, @skip_clock_skew_check, @inner, @outer, @expansions, @assert_pgp_hash, @require_packet_hash, @pgp_max_length}, @sig_eng, @base) ->
 
   #---------------
 
@@ -215,7 +215,9 @@ class Verifier
 
   _parse_and_process : ({armored}, cb) ->
     err = null
-    await @sig_eng.unbox armored, defer(err, payload, body), { @assert_pgp_hash, @require_packet_hash }
+    # pgp_max_length only applies to PGP messages since Keybase NaCl
+    # does not have a compression feature.
+    await @sig_eng.unbox armored, defer(err, payload, body), { @assert_pgp_hash, @require_packet_hash, @pgp_max_length }
     if not err? and not @skip_ids
       await @_check_ids body, defer err
     if not err? and @make_ids
@@ -244,7 +246,7 @@ class Verifier
       err = new Error "non-canonical JSON found in strict mode (#{errsan ours} v #{errsan json_str_utf8_trimmed})"
       return cb err
     await akatch (() -> expand_json({ json : json_tmp, expansions})), esc defer @json
-    await @base._v_check {@json, @assert_pgp_hash}, esc defer()
+    await @base._v_check {@json, @assert_pgp_hash, @pgp_max_length}, esc defer()
     cb null, @json, json_str_utf8
 
 #==========================================================================
@@ -659,6 +661,7 @@ class Base
   # @option obj {bool} strict Turn on all strict-mode checks
   # @option obj {bool} require_packet_hash Turn on if we require a packet hash
   # @option obj {Function} assert_pgp_hash Callback to reject specific PGP hash functions if encountered
+  # @option obj {number} pgp_max_length Max length of PGP message (after decompression)
   verify : (obj, cb) ->
     verifier = new Verifier obj, @sig_eng, @
     await verifier.verify defer err, json_obj, json_str

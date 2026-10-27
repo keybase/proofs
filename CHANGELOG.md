@@ -1,3 +1,7 @@
+## 2.3.35 (2026-10-27)
+
+- Add support for `pgp_max_length` parameter.
+
 ## 2.3.34 (2026-09-22)
 
 - Remove web of trust proof classes.

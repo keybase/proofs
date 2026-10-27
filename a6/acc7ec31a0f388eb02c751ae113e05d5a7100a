@@ -1,0 +1,27 @@
+package.json
+  h_f21e4bfbe3ac62 3,35
+  s_ccf178cce605bb::t_9e92ac6c1ce5b8 6-10
+CHANGELOG.md
+  h_f21e4bfbe3ac62 2-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "a6acc7ec31a0f388eb02c751ae113e05d5a7100a",
+  "prompts": {},
+  "humans": {
+    "h_f21e4bfbe3ac62": {
+      "author": "Michał Zochniak <michal.zochniak@zoom.us>"
+    }
+  },
+  "sessions": {
+    "s_ccf178cce605bb": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "b9138488-79a5-47bf-a121-e7263b7da23a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Michał Zochniak <michal.zochniak@zoom.us>"
+    }
+  }
+}
